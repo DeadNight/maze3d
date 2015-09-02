@@ -18,7 +18,7 @@ public class SimpleMaze3dGenerator extends CommonMaze3dGenerator {
 		for(int x = 1; x < volume.getWidth() - 1; ++x)
 			for(int y = 1; y < volume.getHeight() - 1; ++y)
 				for(int z = 1; z < volume.getDepth() - 1; ++z)
-					maze.setCell(new Position(x, y, z), rand.nextInt(2));
+					maze.setCell(new Position(x, y, z), (byte) rand.nextInt(2));
 		
 		maze.setStartPosition(getRandomEntrance(volume));
 		
@@ -80,7 +80,7 @@ public class SimpleMaze3dGenerator extends CommonMaze3dGenerator {
 				pos.getX() < volume.getWidth() - 1 &&
 				pos.getY() < volume.getHeight() - 1 &&
 				pos.getZ() < volume.getDepth() - 1) {
-			maze.setCell(pos, 0);
+			maze.setCell(pos, (byte) 0);
 			pos.move(directions[rand.nextInt(3)]);
 		}
 		

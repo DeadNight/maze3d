@@ -55,7 +55,7 @@ public class MyMaze3dGenerator extends CommonMaze3dGenerator {
 	}
 
 	private void addPath(Maze3d maze, Position cell, ArrayList<Position> walls) {
-		maze.setCell(cell, 0);
+		maze.setCell(cell, (byte) 0);
 		walls.addAll(maze.getAdjacentWalls(cell));
 	}
 	

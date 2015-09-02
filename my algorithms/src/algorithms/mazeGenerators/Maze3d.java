@@ -11,7 +11,7 @@ import java.util.ArrayList;
  * for printing sections of or all the maze to the console 
  */
 public class Maze3d {
-	private int[][][] maze;
+	private byte[][][] maze;
 	private Position startPosition;
 	private Position goalPosition;
 	
@@ -20,8 +20,8 @@ public class Maze3d {
 	 * @param volume The volume
 	 */
 	public Maze3d(Volume volume) {
-		maze = new int[volume.getHeight()][volume.getDepth()][volume.getWidth()];
-		fillMaze(1);
+		maze = new byte[volume.getHeight()][volume.getDepth()][volume.getWidth()];
+		fillMaze((byte) 1);
 	}
 
 	/**
@@ -41,9 +41,9 @@ public class Maze3d {
 	 */
 	public void setStartPosition(Position startPosition) {
 		if(this.startPosition != null)
-			setCell(this.startPosition, 1);
+			setCell(this.startPosition, (byte) 1);
 		this.startPosition = startPosition;
-		setCell(startPosition, 0);
+		setCell(startPosition, (byte) 0);
 	}
 
 	/**
@@ -63,9 +63,9 @@ public class Maze3d {
 	 */
 	public void setGoalPosition(Position goalPosition) {
 		if(this.goalPosition != null)
-			setCell(this.goalPosition, 1);
+			setCell(this.goalPosition, (byte) 1);
 		this.goalPosition = goalPosition;
-		setCell(goalPosition, 0);
+		setCell(goalPosition, (byte) 0);
 	}
 	
 	/**
@@ -93,7 +93,7 @@ public class Maze3d {
 	 * @param pos The position
 	 * @param fill The value
 	 */
-	public void setCell(Position pos, int fill) {
+	public void setCell(Position pos, byte fill) {
 		setCell(pos.getX(), pos.getY(), pos.getZ(), fill);
 	}
 	
@@ -104,7 +104,7 @@ public class Maze3d {
 	 * @param z The z coordinate
 	 * @param fill The value
 	 */
-	public void setCell(int x, int y, int z, int fill) {
+	public void setCell(int x, int y, int z, byte fill) {
 		maze[y][z][x] = fill;
 	}
 	
@@ -391,7 +391,7 @@ public class Maze3d {
 	 * Helper method to fill the maze with a given value
 	 * @param fill The value
 	 */
-	public void fillMaze(int fill) {
+	public void fillMaze(byte fill) {
 		for(int y = 0; y < getHeight(); ++y) {
 			for(int z = 0; z < getDepth(); ++z) {
 				for(int x = 0; x < getWidth(); ++x) {
