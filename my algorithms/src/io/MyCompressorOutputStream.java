@@ -2,7 +2,6 @@ package io;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Arrays;
 
 public class MyCompressorOutputStream extends OutputStream {
 	OutputStream out;
