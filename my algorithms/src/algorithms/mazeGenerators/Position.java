@@ -1,5 +1,7 @@
 package algorithms.mazeGenerators;
 
+import java.io.IOException;
+
 /**
  * @author Nir Leibovitch
  * <h1>A 3-dimensional position</h1>
@@ -22,6 +24,10 @@ public class Position extends CommonMetric {
 	 */
 	public Position(Position other) {
 		super(other);
+	}
+
+	public Position(byte[] data) throws IOException {
+		super(data);
 	}
 
 	/**

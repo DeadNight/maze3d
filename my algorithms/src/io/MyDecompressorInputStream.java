@@ -15,14 +15,14 @@ public class MyDecompressorInputStream extends InputStream {
 	@Override
 	public int read() throws IOException {
 		if(counter <= 0) {
-			counter = in.read();
-			if(counter == -1)
-				return -1;
-			if(counter == 0)
-				throw new IOException("expected positive counter");
 			lastByte = (byte) in.read();
 			if(lastByte == -1)
-				throw new IOException("expected byte value after counter");
+				return -1;
+			counter = in.read();
+			if(counter == -1)
+				throw new IOException("expected counter after value counter");
+			if(counter == 0)
+				throw new IOException("expected positive counter");
 		}
 		counter--;
 		return lastByte;

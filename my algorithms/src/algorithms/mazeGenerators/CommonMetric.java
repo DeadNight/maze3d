@@ -1,5 +1,11 @@
 package algorithms.mazeGenerators;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+
 /**
  * @author Nir Leibovitch
  * <h1>n-dimensional metric</h1>
@@ -7,7 +13,7 @@ package algorithms.mazeGenerators;
  */
 public class CommonMetric implements Metric {
 	int[] metrics;
-	
+
 	/**
 	 * Initialize the metric
 	 * @param metrics An array with n numbers, 1 for each dimension
@@ -24,6 +30,33 @@ public class CommonMetric implements Metric {
 	public CommonMetric(CommonMetric other) {
 		this.metrics = new int[other.metrics.length];
 		System.arraycopy(other.metrics, 0, metrics, 0, metrics.length);
+	}
+	
+	/**
+	 * Create a metric from given binary data
+	 * @param data The binary data
+	 * @throws IOException 
+	 */
+	public CommonMetric(byte[] data) throws IOException {
+		DataInputStream in = new DataInputStream(new ByteArrayInputStream(data));
+		try {
+			metrics = new int[in.readInt()];
+			for(int i = 0; i < metrics.length; ++i) {
+				metrics[i] = in.readInt();
+			}
+		} finally {
+			in.close();
+		}
+	}
+
+	public byte[] toByteArray() throws IOException {
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		DataOutputStream dataOut = new DataOutputStream(out);
+		dataOut.writeInt(metrics.length);
+		for(int i = 0; i < metrics.length; i++) {
+			dataOut.writeInt(metrics[i]);
+		}
+		return out.toByteArray();
 	}
 	
 	@Override

@@ -1,6 +1,10 @@
 package algorithms.mazeGenerators;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * @author Nir Leibovitch
@@ -14,7 +18,7 @@ public class Maze3d {
 	private byte[][][] maze;
 	private Position startPosition;
 	private Position goalPosition;
-	
+
 	/**
 	 * Create a new 3d maze with a given volume filled with walls
 	 * @param volume The volume
@@ -22,6 +26,51 @@ public class Maze3d {
 	public Maze3d(Volume volume) {
 		maze = new byte[volume.getHeight()][volume.getDepth()][volume.getWidth()];
 		fillMaze((byte) 1);
+	}
+	
+	/**
+	 * Create a 3d maze from given binary data
+	 * @param data The binary data
+	 * @throws IOException 
+	 */
+	public Maze3d(byte[] data) throws IOException {
+		ByteArrayInputStream in = new ByteArrayInputStream(data);
+		
+		int width = in.read();
+		int height = in.read();
+		int depth = in.read();
+		
+		int startLength = in.read();
+		byte[] startBytes = new byte[startLength];
+		in.read(startBytes);
+		startPosition = new Position(startBytes);
+		
+		int goalLength = in.read();
+		byte[] goalBytes = new byte[goalLength];
+		in.read(goalBytes);
+		goalPosition = new Position(goalBytes);
+		
+		maze = new byte[height][depth][width];
+		for(int y = 0; y < height; ++y)
+			for(int z = 0; z < depth; ++z)
+				for(int x = 0; x < width; ++x)
+					maze[y][z][x] = (byte) in.read();
+	}
+	
+	/**
+	 * Get the internal representation of the maze
+	 * @return The internal representation
+	 */
+	public byte[][][] getMaze() {
+		return maze;
+	}
+
+	/**
+	 * Set the internal representation of the maze
+	 * @param maze The internal representation
+	 */
+	public void setMaze(byte[][][] maze) {
+		this.maze = maze;
 	}
 
 	/**
@@ -394,11 +443,35 @@ public class Maze3d {
 	public void fillMaze(byte fill) {
 		for(int y = 0; y < getHeight(); ++y) {
 			for(int z = 0; z < getDepth(); ++z) {
-				for(int x = 0; x < getWidth(); ++x) {
-					setCell(new Position(x, y, z), fill);
-				}
+				Arrays.fill(maze[y][z], fill);
 			}
 		}
+	}
+	
+	/**
+	 * Get a binary representation of the maze 
+	 * @return The binary representation
+	 */
+	public byte[] toByteArray() throws IOException {
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		
+		out.write(getWidth());
+		out.write(getHeight());
+		out.write(getDepth());
+		
+		byte[] startBytes = startPosition.toByteArray();
+		out.write(startBytes.length);
+		out.write(startBytes);
+		
+		byte[] goalBytes = goalPosition.toByteArray();
+		out.write(goalBytes.length);
+		out.write(goalBytes);
+		
+		for(byte[][] plane : maze)
+			for(byte[] line : plane)
+				out.write(line);
+		
+		return out.toByteArray();
 	}
 	
 	/**
@@ -430,5 +503,22 @@ public class Maze3d {
 			System.out.print('/');
 		else
 			System.out.print(' ');
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(obj == null) return false;
+		if(!(obj instanceof Maze3d)) return false;
+		Maze3d other = (Maze3d) obj;
+		if(getWidth() != other.getWidth()) return false;
+		if(getHeight() != other.getHeight()) return false;
+		if(getDepth() != other.getDepth()) return false;
+		if(!startPosition.equals(other.startPosition)) return false;
+		if(!goalPosition.equals(other.goalPosition)) return false;
+		for(byte x = 0; x < getWidth(); ++x)
+			for(byte y = 0; y < getHeight(); ++y)
+				for(byte z = 0; z < getDepth(); ++z)
+					if(getCell(x, y, z) != other.getCell(x, y, z)) return false;
+		return true;
 	}
 }
