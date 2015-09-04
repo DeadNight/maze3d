@@ -10,7 +10,6 @@ public class MyCompressorOutputStream extends OutputStream {
 	
 	public MyCompressorOutputStream(OutputStream out) {
 		this.out = out;
-		counter = 0;
 	}
 
 	@Override

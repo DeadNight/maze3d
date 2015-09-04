@@ -35,7 +35,7 @@ public class CommonMetric implements Metric {
 	/**
 	 * Create a metric from given binary data
 	 * @param data The binary data
-	 * @throws IOException 
+	 * @throws IOException When reaches the end of data before reading the entire Metric
 	 */
 	public CommonMetric(byte[] data) throws IOException {
 		DataInputStream in = new DataInputStream(new ByteArrayInputStream(data));
@@ -49,12 +49,16 @@ public class CommonMetric implements Metric {
 		}
 	}
 
-	public byte[] toByteArray() throws IOException {
+	public byte[] toByteArray() {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		DataOutputStream dataOut = new DataOutputStream(out);
-		dataOut.writeInt(metrics.length);
-		for(int i = 0; i < metrics.length; i++) {
-			dataOut.writeInt(metrics[i]);
+		try {
+			dataOut.writeInt(metrics.length);
+			for(int i = 0; i < metrics.length; i++) {
+				dataOut.writeInt(metrics[i]);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		return out.toByteArray();
 	}

@@ -31,7 +31,7 @@ public class Maze3d {
 	/**
 	 * Create a 3d maze from given binary data
 	 * @param data The binary data
-	 * @throws IOException 
+	 * @throws IOException When reaches the end of data before reading the entire Maze
 	 */
 	public Maze3d(byte[] data) throws IOException {
 		ByteArrayInputStream in = new ByteArrayInputStream(data);
@@ -452,7 +452,7 @@ public class Maze3d {
 	 * Get a binary representation of the maze 
 	 * @return The binary representation
 	 */
-	public byte[] toByteArray() throws IOException {
+	public byte[] toByteArray() {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		
 		out.write(getWidth());
@@ -461,15 +461,20 @@ public class Maze3d {
 		
 		byte[] startBytes = startPosition.toByteArray();
 		out.write(startBytes.length);
-		out.write(startBytes);
 		
-		byte[] goalBytes = goalPosition.toByteArray();
-		out.write(goalBytes.length);
-		out.write(goalBytes);
+		try {
+			out.write(startBytes);
 		
-		for(byte[][] plane : maze)
-			for(byte[] line : plane)
-				out.write(line);
+			byte[] goalBytes = goalPosition.toByteArray();
+			out.write(goalBytes.length);
+			out.write(goalBytes);
+			
+			for(byte[][] plane : maze)
+				for(byte[] line : plane)
+					out.write(line);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 		return out.toByteArray();
 	}
