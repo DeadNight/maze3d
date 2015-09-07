@@ -25,13 +25,28 @@ public class CLI extends Thread {
 		try {
 			out.print("> ");
 			out.flush();
-			while((line = in.readLine()).intern() != "exit") {
-				if((command = commands.get(line)) != null) {
-					runCommandInThread(command);
-				} else {
+			while(!(line = in.readLine()).equals("exit")) {
+				String commandName = line;
+				while(!commandName.isEmpty()) {
+					if((command = commands.get(commandName)) != null) {
+						String[] args;
+						if(commandName.equals(line))
+							args = new String[0];
+						else
+							args = line.replace(commandName + " ", "").split(" ");
+						command.doCommand(args);
+						break;
+					} else {
+						commandName = commandName.replaceFirst("^\\S*$| \\S*$", "");
+					}
+				}
+				
+				if(commandName.isEmpty()) {
 					out.println("unknown command");
 					out.flush();
 				}
+				
+				//controller.close();
 				out.print("> ");
 				out.flush();
 			}
@@ -41,12 +56,9 @@ public class CLI extends Thread {
 		out.println("bye!");
 		out.flush();
 	}
-	
-	private void runCommandInThread(Command command){
-		new Thread(new Runnable() {
-			public void run() {
-				command.doCommand();
-			}
-		}).start();
+
+	public void display(String string) {
+		out.println(string);
+		out.flush();
 	}
 }

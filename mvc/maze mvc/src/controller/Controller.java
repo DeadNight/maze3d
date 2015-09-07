@@ -9,4 +9,6 @@ public interface Controller {
 	public void setModel(Model model);
 	public void setView(View view);
 	public HashMap<String, Command> getCommands();
+	public void displayError(String[] strings);
+	public void displayFiles(String[] list);
 }

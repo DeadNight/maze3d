@@ -20,4 +20,18 @@ public class MyView extends CommonView {
 	public void start() {
 		cli.start();
 	}
+
+	@Override
+	public void displayError(String[] strings) {
+		display(strings);
+	}
+
+	@Override
+	public void displayFiles(String[] list) {
+		display(list);
+	}
+	
+	private void display(String[] strings) {
+		cli.display(String.join(System.lineSeparator(), strings));
+	}
 }
