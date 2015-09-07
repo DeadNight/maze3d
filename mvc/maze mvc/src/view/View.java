@@ -1,12 +1,12 @@
 package view;
 
-import java.util.HashMap;
+import java.util.HashSet;
 
-import controller.Command;
 
 public interface View {
 	void start();
-	void setCommands(HashMap<String, Command> commands);
+	void setCommands(HashSet<String> commands);
 	void displayError(String[] strings);
 	void displayFiles(String[] list);
+	void displayAsyncMessage(String[] strings);
 }
