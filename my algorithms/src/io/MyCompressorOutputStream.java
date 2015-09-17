@@ -6,7 +6,7 @@ import java.io.OutputStream;
 public class MyCompressorOutputStream extends OutputStream {
 	OutputStream out;
 	byte lastByte;
-	int counter;
+	long counter;
 	
 	public MyCompressorOutputStream(OutputStream out) {
 		this.out = out;
@@ -19,8 +19,7 @@ public class MyCompressorOutputStream extends OutputStream {
 				counter++;
 				return;
 			} else {
-				out.write(lastByte);
-				out.write(counter);
+				write(lastByte, counter);
 			}
 		}
 		
@@ -32,8 +31,7 @@ public class MyCompressorOutputStream extends OutputStream {
 	public void write(byte[] b) throws IOException {
 		super.write(b);
 		if(counter > 0) {
-			out.write(lastByte);
-			out.write(counter);
+			write(lastByte, counter);
 			counter = 0;
 		}
 	}
@@ -41,10 +39,22 @@ public class MyCompressorOutputStream extends OutputStream {
 	@Override
 	public void flush() throws IOException {
 		if(counter > 0) {
-			out.write(lastByte);
-			out.write(counter);
+			write(lastByte, counter);
 			counter = 0;
 		}
 		out.flush();
+	}
+	
+	// handle case when counter is greater than byte
+	private void write(byte lastByte, long counter) throws IOException {
+		while(counter > 255) {
+			counter -= 255;
+			out.write(lastByte);
+			out.write(255);
+		}
+		if(counter > 0) {
+			out.write(lastByte);
+			out.write((byte) counter);
+		}
 	}
 }
