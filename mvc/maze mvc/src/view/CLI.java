@@ -59,6 +59,8 @@ public class CLI extends Thread {
 		}
 		
 		controller.stop();
+		out.print("good bye!");
+		out.flush();
 	}
 
 	public void display() {

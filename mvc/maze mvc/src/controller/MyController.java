@@ -93,7 +93,7 @@ public class MyController extends CommonController {
 	public void stop() {
 		view.displayMessage("shutting down...");
 		model.stop();
-		view.displayMessage("done. good bye!");
+		view.displayMessage("done");
 	}
 
 	@Override
