@@ -1,11 +1,9 @@
 package model;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.FutureTask;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
-import presenter.Properties;
 import algorithms.mazeGenerators.Maze3d;
 import algorithms.mazeGenerators.MyMaze3dGenerator;
 import algorithms.mazeGenerators.Position;
@@ -16,8 +14,8 @@ import algorithms.search.MazeAirDistance;
 import algorithms.search.MazeManhattanDistance;
 
 public class MyModel extends CommonModel {
-	public MyModel(Properties properties) {
-		super(properties);
+	public MyModel() throws ArrayIndexOutOfBoundsException, FileNotFoundException {
+		super();
 	}
 
 	@Override
@@ -45,34 +43,48 @@ public class MyModel extends CommonModel {
 			break;
 		}
 	}
+	
+	@Override
+	public void stop() {
+		threadPool.shutdown();
+		boolean terminated = false;
+		while(!terminated)
+			try {
+				terminated = threadPool.awaitTermination(10, TimeUnit.SECONDS);
+			} catch (InterruptedException e) {
+				// OK, keep waiting
+			}
+	}
 
 	@Override
-	public void generate3dMaze(String name, int width, int height, int depth) {
-		threadPool.submit(new FutureTask<Maze3d>(
-			new Callable<Maze3d>() {
-				@Override
-				public Maze3d call() throws Exception {
-					return mazeGenerator.generate(width, height, depth);
-				}
-			}
-		) {
+	public void generateMaze(String name, int width, int height, int depth) {
+		runCommandInBackground(new Task<Maze3d>() {
 			@Override
-			protected void done() {
-				if(isDone()) {
-					Maze3d maze;
-					try {
-						maze = this.get();
-						mazeCache.put(name, maze);
-						notifyObservers(new String[] { "maze", name });
-					} catch(CancellationException | InterruptedException e) {
-						System.err.println("this shouldn't happen when the task isDone");
-						e.printStackTrace();
-					} catch(ExecutionException e) {
-						e.printStackTrace();
-						return;
-					}
-				}
+			public Maze3d doTask() {
+				return mazeGenerator.generate(width, height, depth);
+			}
+
+			@Override
+			public void handleResult(Maze3d result) {
+				mazeCache.remove(name);
+				mazeCache.put(name, result);
+				setChanged();
+				notifyObservers(new String[] { "generated", name });
+			}
+
+			@Override
+			public void handleException(Exception e) {
+				notifyObservers(new String[] { "error", "generate", name });
 			}
 		});
+	}
+
+	@Override
+	public byte[] getMazeData(String name) throws IOException {
+		Maze3d maze = mazeCache.get(name);
+		if(maze == null) {
+			return null;
+		}
+		return compressData(maze.toByteArray());
 	}
 }

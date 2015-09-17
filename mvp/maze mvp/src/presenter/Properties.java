@@ -3,6 +3,10 @@ package presenter;
 import java.io.Serializable;
 
 public class Properties implements Serializable {
+	int threadPoolSize;
+	MazeGenerators mazeGenerator;
+	MazeSearchAlgorithms mazeSearchAlgorithm;
+	
 	public enum MazeGenerators {
 		SIMPLE,
 		MY
@@ -13,10 +17,6 @@ public class Properties implements Serializable {
 		AStar_Air,
 		AStar_Manhattan
 	}
-	
-	int threadPoolSize;
-	MazeGenerators mazeGenerator;
-	MazeSearchAlgorithms mazeSearchAlgorithm;
 	
 	public int getPoolSize() {
 		return threadPoolSize;
