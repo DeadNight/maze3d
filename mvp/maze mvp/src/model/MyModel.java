@@ -74,6 +74,7 @@ public class MyModel extends CommonModel {
 
 			@Override
 			public void handleException(Exception e) {
+				setChanged();
 				notifyObservers(new String[] { "error", "generate", name });
 			}
 		});

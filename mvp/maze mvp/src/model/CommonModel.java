@@ -64,11 +64,11 @@ public abstract class CommonModel extends Observable implements Model {
 	abstract void initMazeGenerator();
 	abstract void initMazeSearchAlgorithm();
 	
-	<T> void runTaskInBackground(Task<T> command) {
+	<T> void runTaskInBackground(Task<T> task) {
 		Future<T> future = threadPool.submit(new Callable<T>() {
 			@Override
 			public T call() throws Exception {
-				return command.doTask();
+				return task.doTask();
 			}
 		});
 		
@@ -80,14 +80,14 @@ public abstract class CommonModel extends Observable implements Model {
 					try {
 						T result = future.get();
 						waiting = false;
-						command.handleResult(result);
+						task.handleResult(result);
 					} catch (InterruptedException | CancellationException e) {
 						// OK, stop waiting
 						waiting = false;
 					} catch (ExecutionException e) {
 						waiting = false;
 						e.printStackTrace();
-						notifyObservers(new String[] { "error", "generate" });
+						task.handleException(e);
 					}
 			}
 		});
