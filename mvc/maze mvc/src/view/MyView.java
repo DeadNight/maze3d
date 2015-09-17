@@ -42,6 +42,7 @@ public class MyView extends CommonView {
 
 	@Override
 	public void start() {
+		// start the CLI and exit immediately
 		cli.start();
 	}
 

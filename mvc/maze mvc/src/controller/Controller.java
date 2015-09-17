@@ -4,10 +4,11 @@ import model.Model;
 import view.View;
 
 public interface Controller {
-	public void setModel(Model model);
-	public void setView(View view);
-	public void doCommand(String command, String[] args);
-	public void displayError(String error);
-	public void displayWrongArguments(String format);
-	public void displayMessage(String message);
+	void stop();
+	void setModel(Model model);
+	void setView(View view);
+	void doCommand(String command, String[] args);
+	void displayError(String error);
+	void displayWrongArguments(String format);
+	void displayMessage(String message);
 }

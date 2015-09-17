@@ -10,7 +10,7 @@ import controller.MyController;
 public class Run {
 	public static void main(String[] args) {
 		Controller controller = new MyController();
-		Model model = new MyModel(controller);
+		Model model = new MyModel(controller, 10);
 		View view = new MyView(controller);
 		controller.setModel(model);
 		controller.setView(view);

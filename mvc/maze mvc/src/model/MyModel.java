@@ -12,6 +12,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 import algorithms.demo.Maze3dSearchable;
 import algorithms.mazeGenerators.Maze3d;
@@ -29,11 +30,23 @@ public class MyModel extends CommonModel {
 	HashMap<String, Maze3d> mazeCache;
 	HashMap<Maze3d, Solution<Position>> solutionCache;
 	
-	public MyModel(Controller controller) {
-		super(controller);
+	public MyModel(Controller controller, int poolSize) {
+		super(controller, poolSize);
 		mazeGen = new MyMaze3dGenerator();
 		mazeCache = new HashMap<String, Maze3d>();
 		solutionCache = new HashMap<Maze3d, Solution<Position>>();
+	}
+	
+	@Override
+	public void stop() {
+		threadPool.shutdown();
+		boolean terminated = false;
+		while(!terminated)
+			try {
+				terminated = threadPool.awaitTermination(10, TimeUnit.SECONDS);
+			} catch (InterruptedException e) {
+				// OK, keep waiting for termination
+			}
 	}
 
 	@Override
@@ -65,7 +78,7 @@ public class MyModel extends CommonModel {
 			return;
 		}
 		
-		new Thread(new Runnable() {
+		threadPool.submit(new Runnable() {
 			
 			@Override
 			public void run() {
@@ -74,7 +87,7 @@ public class MyModel extends CommonModel {
 				mazeCache.put(args[0], maze);
 				controller.displayMessage("maze " + args[0] + " is ready");
 			}
-		}).start();
+		});
 	}
 
 	@Override
@@ -288,7 +301,7 @@ public class MyModel extends CommonModel {
 			return;
 		}
 		
-		new Thread(new Runnable() {
+		threadPool.submit(new Runnable() {
 			
 			@Override
 			public void run() {
@@ -302,7 +315,7 @@ public class MyModel extends CommonModel {
 				
 				controller.displayMessage("solution for " + args[0] + " is ready");
 			}
-		}).start();
+		});
 	}
 
 	@Override

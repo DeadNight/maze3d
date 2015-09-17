@@ -41,6 +41,7 @@ public class CLI extends Thread {
 						controller.doCommand(commandName, args);
 						break;
 					} else {
+						// remove last word
 						commandName = commandName.replaceFirst("^\\S*$| \\S*$", "");
 					}
 				}
@@ -57,9 +58,7 @@ public class CLI extends Thread {
 			e.printStackTrace();
 		}
 		
-		//controller.close();
-		out.println("bye!");
-		out.flush();
+		controller.stop();
 	}
 
 	public void display() {

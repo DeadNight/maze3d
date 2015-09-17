@@ -4,6 +4,8 @@ import algorithms.mazeGenerators.Position;
 import algorithms.search.Solution;
 
 public interface Model {
+	void stop();
+	
 	String[] getFileList(String[] args);
 
 	void generate3dMaze(String[] args);

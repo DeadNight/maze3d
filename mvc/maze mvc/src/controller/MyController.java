@@ -88,6 +88,13 @@ public class MyController extends CommonController {
 			}
 		});
 	}
+	
+	@Override
+	public void stop() {
+		view.displayMessage("shutting down...");
+		model.stop();
+		view.displayMessage("done. good bye!");
+	}
 
 	@Override
 	public void displayError(String error) {
