@@ -50,24 +50,39 @@ public class CLI extends Thread {
 					out.flush();
 				}
 				
-				//controller.close();
 				out.print("> ");
 				out.flush();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		//controller.close();
 		out.println("bye!");
 		out.flush();
 	}
 
-	public void display(String string) {
-		out.print(string);
+	public void display() {
+		out.print("");
 		out.flush();
 	}
 
-	public void displayLine(String string) {
-		out.println(string);
+	public void display(Object obj) {
+		out.print(obj);
 		out.flush();
+	}
+
+	public void displayLine() {
+		out.println("");
+		out.flush();
+	}
+
+	public void displayLine(Object obj) {
+		out.println(obj);
+		out.flush();
+	}
+	
+	public void displayLines(Object[] objs) {
+		out.println(String.join(System.lineSeparator(), (String[])objs));
 	}
 }

@@ -1,11 +1,22 @@
 package view;
 
+import io.MyDecompressorInputStream;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import algorithms.mazeGenerators.Maze3d;
+import algorithms.mazeGenerators.Position;
+import algorithms.search.Solution;
+import algorithms.search.State;
 import controller.Command;
 import controller.Controller;
 
@@ -13,10 +24,13 @@ public class MyView extends CommonView {
 	CLI cli;
 	HashMap<String, Command> commands;
 	
+	BufferedReader in;
+	PrintWriter out;
+	
 	public MyView(Controller controller) {
 		super(controller);
-		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-		PrintWriter out = new PrintWriter(System.out);
+		in = new BufferedReader(new InputStreamReader(System.in));
+		out = new PrintWriter(System.out);
 		cli = new CLI(controller, in, out);
 	}
 	
@@ -32,23 +46,87 @@ public class MyView extends CommonView {
 	}
 
 	@Override
-	public void displayError(String[] strings) {
-		displayLine(strings);
+	public void displayError(String error) {
+		cli.displayLine(error);
 	}
 
 	@Override
 	public void displayFiles(String[] list) {
-		displayLine(list);
+		cli.displayLines(list);
 	}
 
 	@Override
-	public void displayAsyncMessage(String[] strings) {
-		cli.displayLine("");
-		displayLine(strings);
+	public void displayMessage(String message) {
+		cli.displayLine();
+		cli.displayLine(message);
 		cli.display("> ");
 	}
-	
-	private void displayLine(String[] strings) {
-		cli.displayLine(String.join(System.lineSeparator(), strings));
+
+	@Override
+	public void displayMaze3d(byte[] mazeData) {
+		BufferedInputStream mazeIn = new BufferedInputStream(new MyDecompressorInputStream(new ByteArrayInputStream(mazeData)));
+		ByteArrayOutputStream mazeOut = new ByteArrayOutputStream();
+		BufferedOutputStream bufMazeOut = new BufferedOutputStream(mazeOut);
+		
+		try {
+			int b;
+			while((b = mazeIn.read()) != -1)
+				bufMazeOut.write(b);
+			bufMazeOut.flush();
+			
+			Maze3d maze = new Maze3d(mazeOut.toByteArray());
+			
+			for(int y = maze.getHeight() - 1; y >= 0 ; --y) {
+				cli.displayLine("Floor " + y + ":");
+				for(int z = maze.getDepth() - 1; z >= 0; --z) {
+					for(int x = 0; x < maze.getWidth(); ++x) {
+						if(maze.isWall(x, y, z))
+							cli.display((char)0x2593);
+						else if(y > 0 && y < maze.getHeight() - 1 &&
+								maze.isPath(x, y - 1, z) && maze.isPath(x, y + 1, z))
+							cli.display('x');
+						else if(y > 0 && maze.isPath(x, y - 1, z))
+							cli.display('\\');
+						else if(y < maze.getHeight() - 1 && maze.isPath(x, y + 1, z))
+							cli.display('/');
+						else
+							cli.display(' ');
+					}
+					cli.displayLine();
+				}
+				cli.displayLine();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void displayCrossSection(int[][] crossSection) {
+		for(int[] row : crossSection) {
+			for(int cell : row)
+				if(cell == 1)
+					cli.display((char)0x2593);
+				else
+					cli.display(' ');
+			cli.displayLine();
+		}
+	}
+
+	@Override
+	public void displayMazeSize(int size) {
+		cli.displayLine(size);
+	}
+
+	@Override
+	public void displayFileSize(int size) {
+		cli.displayLine(size);
+	}
+
+	@Override
+	public void displaySolution(Solution<Position> solution) {
+		for(State<Position> state : solution.getSequence()) {
+			cli.displayLine(state.getState());
+		}
 	}
 }
