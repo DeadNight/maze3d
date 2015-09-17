@@ -58,7 +58,7 @@ public class MyModel extends CommonModel {
 
 	@Override
 	public void generateMaze(String name, int width, int height, int depth) {
-		runCommandInBackground(new Task<Maze3d>() {
+		runTaskInBackground(new Task<Maze3d>() {
 			@Override
 			public Maze3d doTask() {
 				return mazeGenerator.generate(width, height, depth);

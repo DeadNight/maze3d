@@ -64,7 +64,7 @@ public abstract class CommonModel extends Observable implements Model {
 	abstract void initMazeGenerator();
 	abstract void initMazeSearchAlgorithm();
 	
-	<T> void runCommandInBackground(Task<T> command) {
+	<T> void runTaskInBackground(Task<T> command) {
 		Future<T> future = threadPool.submit(new Callable<T>() {
 			@Override
 			public T call() throws Exception {
