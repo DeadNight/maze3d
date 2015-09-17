@@ -1,5 +1,6 @@
 package algorithms.mazeGenerators;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -34,7 +35,7 @@ public class Maze3d {
 	 * @throws IOException When reaches the end of data before reading the entire Maze
 	 */
 	public Maze3d(byte[] data) throws IOException {
-		ByteArrayInputStream in = new ByteArrayInputStream(data);
+		BufferedInputStream in = new BufferedInputStream(new ByteArrayInputStream(data));
 		
 		int width = in.read();
 		int height = in.read();
@@ -492,7 +493,7 @@ public class Maze3d {
 				System.out.println();
 			}
 			System.out.println();
-		}			
+		}
 	}
 
 	// helper method for print()
@@ -515,15 +516,6 @@ public class Maze3d {
 		if(obj == null) return false;
 		if(!(obj instanceof Maze3d)) return false;
 		Maze3d other = (Maze3d) obj;
-		if(getWidth() != other.getWidth()) return false;
-		if(getHeight() != other.getHeight()) return false;
-		if(getDepth() != other.getDepth()) return false;
-		if(!startPosition.equals(other.startPosition)) return false;
-		if(!goalPosition.equals(other.goalPosition)) return false;
-		for(byte x = 0; x < getWidth(); ++x)
-			for(byte y = 0; y < getHeight(); ++y)
-				for(byte z = 0; z < getDepth(); ++z)
-					if(getCell(x, y, z) != other.getCell(x, y, z)) return false;
-		return true;
+		return Arrays.deepEquals(maze, other.maze);
 	}
 }

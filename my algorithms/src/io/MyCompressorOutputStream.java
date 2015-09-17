@@ -37,4 +37,14 @@ public class MyCompressorOutputStream extends OutputStream {
 			counter = 0;
 		}
 	}
+	
+	@Override
+	public void flush() throws IOException {
+		if(counter > 0) {
+			out.write(lastByte);
+			out.write(counter);
+			counter = 0;
+		}
+		out.flush();
+	}
 }
