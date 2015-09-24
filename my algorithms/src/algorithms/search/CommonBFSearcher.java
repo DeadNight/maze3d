@@ -28,6 +28,10 @@ public abstract class CommonBFSearcher<T> extends CommonSearcher<T> {
 		addToOpenList(initialState);
 		
 		while(openList.size() > 0) {
+			if(Thread.interrupted())
+				// enable thread to be interrupted
+				return null;
+			
 			State<T> n = popOpenList();
 			
 			if(n.equals(goal))

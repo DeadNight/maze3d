@@ -24,6 +24,9 @@ public class MyMaze3dGenerator extends CommonMaze3dGenerator {
 		addPath(maze, getRandomInteriorPosition(volume), walls);
 		
 		while(!walls.isEmpty()) {
+			if(Thread.interrupted())
+				// enable thread to be interrupted
+				return null;
 			/*
 			 * choose a random wall and remove it from the walls list.
 			 * if it doesn't create an exit or connect 2 existing paths, turn it
