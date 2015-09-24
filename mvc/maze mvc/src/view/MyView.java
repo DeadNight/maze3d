@@ -20,6 +20,11 @@ import algorithms.search.State;
 import controller.Command;
 import controller.Controller;
 
+/**
+ * @author nirleibo
+ * <h1>My implementation of the View Façade</h1>
+ * Using a CLI as a user interface
+ */
 public class MyView extends CommonView {
 	CLI cli;
 	HashMap<String, Command> commands;
@@ -27,6 +32,10 @@ public class MyView extends CommonView {
 	BufferedReader in;
 	PrintWriter out;
 	
+	/**
+	 * Initialize the View Façade instance
+	 * @param controller Controller Façade instance
+	 */
 	public MyView(Controller controller) {
 		super(controller);
 		in = new BufferedReader(new InputStreamReader(System.in));
@@ -53,14 +62,8 @@ public class MyView extends CommonView {
 
 	@Override
 	public void displayFiles(String[] list) {
-		cli.displayLines(list);
-	}
-
-	@Override
-	public void displayMessage(String message) {
-		cli.displayLine();
-		cli.displayLine(message);
-		cli.display("> ");
+		for(String file : list)
+			cli.displayLine(file);
 	}
 
 	@Override
@@ -149,5 +152,15 @@ public class MyView extends CommonView {
 	@Override
 	public void displaySolutionReady(String name) {
 		cli.displayLine("solution for " + name + " is ready");
+	}
+
+	@Override
+	public void displayShuttingDown() {
+		cli.displayLine("shutting down...");
+	}
+
+	@Override
+	public void displayShutdown() {
+		cli.displayLine("done");
 	}
 }

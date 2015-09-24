@@ -1,25 +1,81 @@
 package model;
 
+/**
+ * @author nirleibo
+ * <h1>Model layer Façade</h1>
+ */
 public interface Model {
+	/**
+	 * Abort any threads waiting for execution, and block until all currently
+	 * executing threads finish their execution
+	 */
 	void stop();
 	
-	void calculateFileList(String[] args);
+	/**
+	 * Calculate the list of files under the given directory path
+	 * @param path Path of a directory
+	 */
+	void calculateFileList(String path);
 
-	void generate3dMaze(String[] args);
+	/**
+	 * Generate a new 3d maze
+	 * @param name Name for the new maze
+	 * @param width Width of the new maze
+	 * @param height Height of the new maze
+	 * @param depth Depth of the new maze
+	 */
+	void generate3dMaze(String name, int width, int height, int depth);
 
-	void get3dMaze(String[] args);
+	/**
+	 * Get a named 3d maze
+	 * @param name Name of the 3d maze 
+	 */
+	void get3dMaze(String name);
 
-	void getCrossSection(String[] args);
+	/**
+	 * Get a 2d cross section of a 3d maze
+	 * @param name Name of the maze
+	 * @param axis Axis of the cross section
+	 * @param index 0-based index of the cross section
+	 */
+	void getCrossSection(String name, String axis, int index);
 
-	void sazeMaze(String[] args);
+	/**
+	 * Save a named maze in the given file
+	 * @param name Name of the maze
+	 * @param fileName Path + name of the file
+	 */
+	void sazeMaze(String name, String fileName);
 
-	void loadMaze(String[] args);
+	/**
+	 * Load a maze from a given file and give it a name
+	 * @param fileName Path + name of the file
+	 * @param name Name for the loaded maze
+	 */
+	void loadMaze(String fileName, String name);
 
-	void mazeSize(String[] args);
+	/**
+	 * Calculate the size of a named maze
+	 * @param name Name of the maze
+	 */
+	void calculateMazeSize(String name);
 
-	void fileSize(String[] args);
+	/**
+	 * Calculate the compressed size of a named maze
+	 * @param name Name of the maze
+	 */
+	void calculateFileSize(String name);
 
-	void solveMaze(String[] args);
+	/**
+	 * Solve a named maze using the named algorithm
+	 * @param name Name of the maze
+	 * @param algorithmName Name of the algorithm
+	 */
+	void solveMaze(String name, String algorithmName);
 
-	void getSolution(String[] args);
+	/**
+	 * Get the solution for a named maze 
+	 * @param name Name of the maze
+	 */
+	void getSolution(String name);
 }

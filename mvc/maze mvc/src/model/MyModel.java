@@ -25,11 +25,20 @@ import algorithms.search.Searcher;
 import algorithms.search.Solution;
 import controller.Controller;
 
+/**
+ * @author nirleibo
+ * <h1>My implementation of the Model Façade</h1>
+ */
 public class MyModel extends CommonModel {
 	MyMaze3dGenerator mazeGen;
 	HashMap<String, Maze3d> mazeCache;
 	HashMap<Maze3d, Solution<Position>> solutionCache;
 	
+	/**
+	 * Initiate the my Model Façade instance
+	 * @param controller The Controller Façade instance
+	 * @param poolSize Size of the underlying thread pool
+	 */
 	public MyModel(Controller controller, int poolSize) {
 		super(controller, poolSize);
 		mazeGen = new MyMaze3dGenerator();
@@ -50,13 +59,7 @@ public class MyModel extends CommonModel {
 	}
 
 	@Override
-	public void calculateFileList(String[] args) {
-		if(args.length != 1) {
-			controller.displayWrongArguments("dir <path>");
-			return;
-		}
-		String path = args[0];
-		
+	public void calculateFileList(String path) {
 		File f = new File(path);
 		
 		if(!f.exists()) {
@@ -73,25 +76,7 @@ public class MyModel extends CommonModel {
 	}
 
 	@Override
-	public void generate3dMaze(String[] args) {
-		String format = "generate 3d maze <name> <width> <height> <depth>";
-		if(args.length != 4) {
-			controller.displayWrongArguments(format);
-			return;
-		}
-		String name = args[0];
-		int width;
-		int height;
-		int depth;
-		try {
-			width = Integer.parseInt(args[1]);
-			height = Integer.parseInt(args[2]);
-			depth = Integer.parseInt(args[3]);
-		} catch (NumberFormatException e) {
-			controller.displayWrongArguments(format);
-			return;
-		}
-		
+	public void generate3dMaze(String name, int width, int height, int depth) {
 		threadPool.execute(new Runnable() {
 			@Override
 			public void run() {
@@ -104,56 +89,26 @@ public class MyModel extends CommonModel {
 	}
 
 	@Override
-	public void get3dMaze(String[] args) {
-		if(args.length != 1) {
-			controller.displayWrongArguments("display <name>");
-			return;
-		}
-		String name = args[0];
-		
+	public void get3dMaze(String name) {
 		Maze3d maze;
 		if((maze = mazeCache.get(name)) == null) {
 			controller.displayError("maze '" + name + "' not found");
 			return;
 		}
-			
-		ByteArrayOutputStream mazeOut = new ByteArrayOutputStream();
-		BufferedOutputStream bufferedMazeCompressor = new BufferedOutputStream(new MyCompressorOutputStream(mazeOut));
+		
+		byte[] compressMazeData;
 		try {
-			bufferedMazeCompressor.write(maze.toByteArray());
-			bufferedMazeCompressor.flush();
+			compressMazeData = compressData(maze.toByteArray());
 		} catch (IOException e) {
-			controller.displayError("error occurred while compressing maze data");
+			// appropriate displayError was called by compressData
 			return;
-		} finally {
-			try {
-				bufferedMazeCompressor.close();
-			} catch (IOException e) {
-				controller.displayError("error occurred while closing the stream");
-			}
 		}
 		
-		controller.display3dMaze(mazeOut.toByteArray());
+		controller.display3dMaze(compressMazeData);
 	}
 
 	@Override
-	public void getCrossSection(String[] args) {
-		String format = "display cross section by <axis> <index> for <name>";
-		if(args.length != 4 || !args[2].equals("for")) {
-			controller.displayWrongArguments(format);
-			return;
-		}
-		String axis = args[0];
-		int index;
-		String name = args[3];
-		
-		try {
-			index = Integer.parseInt(args[1]);
-		} catch (NumberFormatException e) {
-			controller.displayWrongArguments(format);
-			return;
-		}
-		
+	public void getCrossSection(String name, String axis, int index) {
 		Maze3d maze;
 		if((maze = mazeCache.get(name)) == null) {
 			controller.displayError("maze '" + name + "' not found");
@@ -199,14 +154,7 @@ public class MyModel extends CommonModel {
 	}
 
 	@Override
-	public void sazeMaze(String[] args) {
-		if(args.length != 2) {
-			controller.displayWrongArguments("load maze <name> <file name>");
-			return;
-		}
-		String name = args[0];
-		String fileName = args[1];
-		
+	public void sazeMaze(String name, String fileName) {
 		Maze3d maze;
 		if((maze = mazeCache.get(name)) == null) {
 			controller.displayError("maze '" + name + "' not found");
@@ -240,14 +188,7 @@ public class MyModel extends CommonModel {
 	}
 
 	@Override
-	public void loadMaze(String[] args) {
-		if(args.length != 2) {
-			controller.displayWrongArguments("load maze <file name> <name>");
-			return;
-		}
-		String fileName = args[0];
-		String name = args[1];
-		
+	public void loadMaze(String fileName, String name) {
 		ByteArrayOutputStream mazeDataOut = new ByteArrayOutputStream();
 		BufferedOutputStream bufferedMazeDataOut = new BufferedOutputStream(mazeDataOut);
 		BufferedInputStream bufferedMazeDecompressor = null;
@@ -290,13 +231,7 @@ public class MyModel extends CommonModel {
 	}
 
 	@Override
-	public void mazeSize(String[] args) {
-		if(args.length != 1) {
-			controller.displayWrongArguments("maze size <name>");
-			return;
-		}
-		String name = args[0];
-		
+	public void calculateMazeSize(String name) {
 		Maze3d maze;
 		if((maze = mazeCache.get(name)) == null) {
 			controller.displayError("maze '" + name + "' not found");
@@ -307,13 +242,7 @@ public class MyModel extends CommonModel {
 	}
 
 	@Override
-	public void fileSize(String[] args) {
-		if(args.length != 1) {
-			controller.displayWrongArguments("maze size <name>");
-			return;
-		}
-		String name = args[0];
-		
+	public void calculateFileSize(String name) {
 		Maze3d maze;
 		if((maze = mazeCache.get(name)) == null) {
 			controller.displayError("maze '" + name + "' not found");
@@ -324,6 +253,7 @@ public class MyModel extends CommonModel {
 		try {
 			compressMazeData = compressData(maze.toByteArray());
 		} catch (IOException e) {
+			// appropriate displayError was called by compressData
 			return;
 		}
 		
@@ -331,14 +261,7 @@ public class MyModel extends CommonModel {
 	}
 
 	@Override
-	public void solveMaze(String[] args) {
-		if(args.length != 2) {
-			controller.displayWrongArguments("solve <name> <algorithm>");
-			return;
-		}
-		String name = args[0];
-		String algorithm = args[1];
-		
+	public void solveMaze(String name, String algorithmName) {
 		Maze3d maze;
 		if((maze = mazeCache.get(name)) == null) {
 			controller.displayError("maze '" + name + "' not found");
@@ -346,7 +269,7 @@ public class MyModel extends CommonModel {
 		}
 		
 		Searcher<Position> searcher;
-		switch(algorithm.toLowerCase()) {
+		switch(algorithmName.toLowerCase()) {
 		case "bfs":
 			searcher = new BFSearcher<Position>();
 			break;
@@ -384,13 +307,7 @@ public class MyModel extends CommonModel {
 	}
 
 	@Override
-	public void getSolution(String[] args) {
-		if(args.length != 1) {
-			controller.displayWrongArguments("display solution <name>");
-			return;
-		}
-		String name = args[0];
-		
+	public void getSolution(String name) {
 		Maze3d maze;
 		if((maze = mazeCache.get(name)) == null) {
 			controller.displayError("maze '" + name + "' not found");
@@ -398,7 +315,7 @@ public class MyModel extends CommonModel {
 		}
 		
 		if(!solutionCache.containsKey(maze)) {
-			controller.displayError("solution for '" + args[0] + "' not found");
+			controller.displayError("solution for '" + name + "' not found");
 			return;
 		}
 		
@@ -409,26 +326,5 @@ public class MyModel extends CommonModel {
 		}
 		
 		controller.displaySolution(solution);
-	}
-	
-	private byte[] compressData(byte[] data) throws IOException {
-		ByteArrayOutputStream dataOut = new ByteArrayOutputStream();
-		MyCompressorOutputStream dataCompressor = new MyCompressorOutputStream(new BufferedOutputStream(dataOut));
-		try {
-			dataCompressor.write(data);
-			dataCompressor.flush();
-		} catch (IOException e) {
-			controller.displayError("error occurred while compressing maze data");
-			throw e;
-		} finally {
-			try {
-				dataCompressor.close();
-			} catch (IOException e) {
-				controller.displayError("error occurred while closing the stream");
-				throw e;
-			}
-		}
-		
-		return dataOut.toByteArray();
 	}
 }

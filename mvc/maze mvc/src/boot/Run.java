@@ -7,7 +7,15 @@ import view.View;
 import controller.Controller;
 import controller.MyController;
 
+/**
+ * @author Nir Leibovitch
+ * Used to run the application
+ */
 public class Run {
+	/**
+	 * Initialize the MVC design and start the application
+	 * @param args Command line arguments
+	 */
 	public static void main(String[] args) {
 		Controller controller = new MyController();
 		Model model = new MyModel(controller, 10);

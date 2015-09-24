@@ -7,18 +7,35 @@ import java.util.HashSet;
 
 import controller.Controller;
 
+/**
+ * @author nirleibo
+ * <h1>Command Line Interface</h1>
+ * Get commands from the user and display results using the command line
+ * The command "exit" will stop the application
+ */
 public class CLI extends Thread {
 	Controller controller;
 	private BufferedReader in;
 	private PrintWriter out;
 	HashSet<String> commands;
 	
+	/**
+	 * Initialize the CLI
+	 * @param controller Controller Façade instance
+	 * @param in Input reader
+	 * @param out Output writer
+	 */
 	public CLI(Controller controller, BufferedReader in, PrintWriter out) {
 		this.in = in;
 		this.out = out;
 		this.controller = controller;
 	}
 	
+	/**
+	/**
+	 * Set the list of commands supported by the Controller Façade instance
+	 * @param commands List of commands
+	 */
 	public void setCommands(HashSet<String> commands) {
 		this.commands = commands;
 	}
@@ -29,15 +46,25 @@ public class CLI extends Thread {
 		try {
 			out.print("> ");
 			out.flush();
+			// The command "exit" will stop the application
 			while(!(line = in.readLine()).equals("exit")) {
-				String commandName = line;
-				while(!commandName.isEmpty()) {
+				String commandName = line.trim().replaceAll("\\s\\s+", " ");
+				// if the command is empty, ignore it
+				if(commandName.isEmpty())
+					continue;
+				
+				/*
+				 * slice the command backwards and try to find a matching command
+				 * supported by the Controller Façade instance
+				 */
+				while(!commandName.isEmpty()) {	
 					if(commands.contains(commandName)) {
 						String[] args;
 						if(commandName.equals(line))
 							args = new String[0];
 						else
 							args = line.replace(commandName + " ", "").split(" ");
+						// invoke the command
 						controller.doCommand(commandName, args);
 						break;
 					} else {
@@ -58,32 +85,35 @@ public class CLI extends Thread {
 			e.printStackTrace();
 		}
 		
+		// stop the application
 		controller.stop();
 		out.print("good bye!");
 		out.flush();
 	}
 
-	public void display() {
-		out.print("");
+	/**
+	 * Display a message to the user
+	 * @param message The message
+	 */
+	public void display(Object message) {
+		out.print(message);
 		out.flush();
 	}
 
-	public void display(Object obj) {
-		out.print(obj);
-		out.flush();
-	}
-
+	/**
+	 * Display a line break to the user
+	 */
 	public void displayLine() {
 		out.println("");
 		out.flush();
 	}
 
-	public void displayLine(Object obj) {
-		out.println(obj);
+	/**
+	 * Display a message to the user, followed by a line break
+	 * @param message The message
+	 */
+	public void displayLine(Object message) {
+		out.println(message);
 		out.flush();
-	}
-	
-	public void displayLines(Object[] objs) {
-		out.println(String.join(System.lineSeparator(), (String[])objs));
 	}
 }
