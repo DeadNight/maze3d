@@ -164,4 +164,11 @@ public class Position extends CommonMetric {
 		++metrics[2];
 		return this;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(obj == null) return false;
+		if(!(obj instanceof Position)) return false;
+		return super.equals(obj);
+	}
 }

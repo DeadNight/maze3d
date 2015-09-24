@@ -72,4 +72,11 @@ public class Volume extends CommonMetric {
 	public int getDepth() {
 		return metrics[2];
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(obj == null) return false;
+		if(!(obj instanceof Volume)) return false;
+		return super.equals(obj);
+	}
 }

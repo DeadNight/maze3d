@@ -66,9 +66,12 @@ public class CommonMetric implements Metric {
 	
 	@Override
 	public boolean equals(Object obj) {
+		if(obj == null) return false;
+		if(!(obj instanceof CommonMetric)) return false;
 		CommonMetric other = (CommonMetric)obj;
-		if(metrics.length != other.metrics.length)
-			return false;
+		
+		if(metrics.length != other.metrics.length) return false;
+		
 		for(int i = 0; i < metrics.length; ++i)
 			if(metrics[i] != other.metrics[i])
 				return false;
