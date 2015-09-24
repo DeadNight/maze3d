@@ -64,7 +64,7 @@ public class MyView extends CommonView {
 	}
 
 	@Override
-	public void displayMaze3d(byte[] mazeData) {
+	public void display3dMaze(byte[] mazeData) {
 		BufferedInputStream mazeIn = new BufferedInputStream(new MyDecompressorInputStream(new ByteArrayInputStream(mazeData)));
 		ByteArrayOutputStream mazeOut = new ByteArrayOutputStream();
 		BufferedOutputStream bufMazeOut = new BufferedOutputStream(mazeOut);
@@ -129,5 +129,25 @@ public class MyView extends CommonView {
 		for(State<Position> state : solution.getSequence()) {
 			cli.displayLine(state.getState());
 		}
+	}
+
+	@Override
+	public void displayMazeReady(String name) {
+		cli.displayLine("maze " + name + " is ready");
+	}
+
+	@Override
+	public void display3dMazeSaved(String name) {
+		cli.displayLine("maze " + name + " saved");
+	}
+
+	@Override
+	public void display3dMazeLoaded(String name) {
+		cli.displayLine("maze " + name + " loaded");
+	}
+
+	@Override
+	public void displaySolutionReady(String name) {
+		cli.displayLine("solution for " + name + " is ready");
 	}
 }

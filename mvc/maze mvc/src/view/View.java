@@ -12,9 +12,13 @@ public interface View {
 	void displayError(String error);
 	void displayFiles(String[] list);
 	void displayMessage(String message);
-	void displayMaze3d(byte[] mazeData);
+	void display3dMaze(byte[] mazeData);
 	void displayCrossSection(int[][] crossSection);
 	void displayMazeSize(int size);
 	void displayFileSize(int size);
 	void displaySolution(Solution<Position> solution);
+	void displayMazeReady(String name);
+	void display3dMazeSaved(String name);
+	void display3dMazeLoaded(String name);
+	void displaySolutionReady(String name);
 }
