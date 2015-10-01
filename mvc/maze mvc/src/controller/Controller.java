@@ -21,7 +21,7 @@ public interface Controller {
 	void setModel(Model model);
 	/**
 	 * Set the View Façade instance
-	 * @param model The View Façade instance
+	 * @param view The View Façade instance
 	 */
 	void setView(View view);
 	/**
