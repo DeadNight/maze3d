@@ -11,6 +11,13 @@ import java.util.Observable;
 import algorithms.mazeGenerators.Maze3d;
 
 public abstract class CommonView extends Observable implements View {
+	boolean running;
+	
+	@Override
+	public void stop() {
+		running = false;
+	}
+	
 	byte[] decompressData(byte[] compressedData) throws IOException {
 		MyDecompressorInputStream decompressor = new MyDecompressorInputStream(new BufferedInputStream(new ByteArrayInputStream(compressedData)));
 		ByteArrayOutputStream dataOut = new ByteArrayOutputStream();

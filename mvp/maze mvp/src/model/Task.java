@@ -1,7 +1,9 @@
 package model;
 
+import java.util.concurrent.ExecutionException;
+
 public interface Task<T> {
-	T doTask();
+	T doTask() throws Exception;
 	void handleResult(T result);
-	void handleException(Exception e);
+	void handleExecutionException(ExecutionException e);
 }

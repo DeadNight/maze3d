@@ -3,20 +3,10 @@ package presenter;
 import java.io.Serializable;
 
 public class Properties implements Serializable {
+	private static final long serialVersionUID = -3069362332373746033L;
 	int threadPoolSize;
 	MazeGenerators mazeGenerator;
-	MazeSearchAlgorithms mazeSearchAlgorithm;
-	
-	public enum MazeGenerators {
-		SIMPLE,
-		MY
-	}
-	
-	public enum MazeSearchAlgorithms {
-		BFS,
-		AStar_Air,
-		AStar_Manhattan
-	}
+	MazeSearchers mazeSearcher;
 	
 	public int getPoolSize() {
 		return threadPoolSize;
@@ -26,12 +16,12 @@ public class Properties implements Serializable {
 		this.threadPoolSize = threadPoolSize;
 	}
 	
-	public MazeSearchAlgorithms getMazeSearchAlgorithm() {
-		return mazeSearchAlgorithm;
+	public MazeSearchers getMazeSearcher() {
+		return mazeSearcher;
 	}
 	
-	public void setMazeSearchAlgorithm(MazeSearchAlgorithms mazeSearchAlgorithm) {
-		this.mazeSearchAlgorithm = mazeSearchAlgorithm;
+	public void setMazeSearcher(MazeSearchers mazeSolver) {
+		this.mazeSearcher = mazeSolver;
 	}
 	
 	public MazeGenerators getMazeGenerator() {

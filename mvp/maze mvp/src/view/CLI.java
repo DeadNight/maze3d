@@ -1,17 +1,84 @@
 package view;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import algorithms.mazeGenerators.Maze3d;
+import algorithms.mazeGenerators.Position;
+import algorithms.search.Solution;
+import algorithms.search.State;
 
 public class CLI extends CommonView {
+	BufferedReader in;
+	PrintWriter out;
+	String userCommand;
+	
+	public CLI(BufferedReader in, PrintWriter out) {
+		this.in = in;
+		this.out = out;
+	}
+	
 	@Override
 	public void start() {
-		// TODO Auto-generated method stub
+		if(running)
+			return;
+		running = true;
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				while(running) {
+					out.print("> ");
+					out.flush();
+					
+					try {
+						userCommand = in.readLine();
+					} catch (IOException e) {
+						e.printStackTrace();
+						continue;
+					}
+					
+					userCommand = userCommand.trim().replaceAll("\\s\\s+", " ");
+					if(!userCommand.isEmpty()) {
+						setChanged();
+						notifyObservers();
+					}
+				}
+				
+				out.println("good bye!");
+				out.flush();
+			}
+		}).start();
+	}
+	
+	@Override
+	public String getUserCommand() {
+		return userCommand;
 	}
 
 	@Override
-	public void displayError(String message) {
+	public void displayPropertiesNotFound() {
+		displayError("properties.xml not found");
+		displayError("run Setup.bat to create a defualt properties file");
+	}
+
+	@Override
+	public void displayLoadPropertiesError() {
+		displayError("error loading properties.xml");
+		displayError("run Setup.bat to create a defualt properties file");
+	}
+
+	@Override
+	public void displayMazeNotFound() {
+		displayError("maze not found");
+	}
+
+	@Override
+	public void displayUnknownCommand() {
+		displayError("unknown command");
+	}
+	
+	private void displayError(String message) {
 		System.err.println(message);
 	}
 
@@ -37,6 +104,126 @@ public class CLI extends CommonView {
 		
 		printMaze(maze);
 	}
+
+	@Override
+	public void displayCommandTemplate(String commandName, String template) {
+		displayError("wrong params." + System.lineSeparator() + commandName + " " + template);
+	}
+
+	@Override
+	public void displayFilesList(String[] filesList) {
+		for(String file : filesList)
+			out.println(file);
+		out.flush();
+	}
+
+	@Override
+	public void displayDirectoryNotFound() {
+		displayError("directory not found");
+	}
+
+	@Override
+	public void displayNotDirectory() {
+		displayError("not a directory");
+	}
+
+	@Override
+	public void displayGetMazeError() {
+		out.println("error getting maze data");
+		out.flush();
+	}
+
+	@Override
+	public void displayMazeGenerated(String name) {
+		out.println("maze " + name + " generated");
+		out.flush();
+	}
+
+	@Override
+	public void displayCrossSection(int[][] crossSection) {
+		for(int[] row : crossSection) {
+			for(int cell : row)
+				if(cell == 1)
+					System.out.print((char)0x2593);
+				else
+					System.out.print(' ');
+			System.out.println();
+		}
+	}
+
+	@Override
+	public void displayIndexOutOfRange() {
+		displayError("index out of range");
+	}
+	
+	@Override
+	public void displaySaveMazeError() {
+		displayError("error occured while saving maze");
+	}
+
+	@Override
+	public void displayMazeSaved() {
+		out.println("maze saved successfully");
+		out.flush();
+	}
+
+	@Override
+	public void displayMazeLoaded() {
+		out.println("maze loaded successfully");
+		out.flush();
+	}
+
+	@Override
+	public void displayFileNotFound() {
+		displayError("file not found");
+	}
+
+	@Override
+	public void displayLoadMazeError() {
+		out.println("error occurred while loading maze");
+		out.flush();
+	}
+
+	@Override
+	public void displayMazeSize(int mazeSize) {
+		out.println(mazeSize);
+		out.flush();
+	}
+
+	@Override
+	public void displayDecompressionError() {
+		displayError("error occured while decompressing data");
+	}
+
+	@Override
+	public void displayFileSize(int fileSize) {
+		out.println(fileSize);
+		out.flush();
+	}
+
+	@Override
+	public void displayInvalidAxis() {
+		out.println("invlaid axis");
+		out.flush();
+	}
+
+	@Override
+	public void displayMazeSolved(String name) {
+		out.println("solution for " + name + " is ready");
+		out.flush();
+	}
+
+	@Override
+	public void displaySolveMazeError(String name) {
+		out.println("maze " + name + " could not be solved");
+		out.flush();
+	}
+
+	@Override
+	public void displayMazeSolutionNotFound() {
+		out.println("maze wasn't solved");
+		out.flush();
+	}
 	
 	private void printMaze(Maze3d maze) {
 		for(int y = maze.getHeight() - 1; y >= 0 ; --y) {
@@ -46,7 +233,7 @@ public class CLI extends CommonView {
 					if(maze.isWall(x, y, z))
 						System.out.print((char)0x2593);
 					else if(y > 0 && y < maze.getHeight() - 1 &&
-							maze.isPath(x, y - 1, z) && maze.isPath(x, y + 1, z))
+						maze.isPath(x, y - 1, z) && maze.isPath(x, y + 1, z))
 						System.out.print('x');
 					else if(y > 0 && maze.isPath(x, y - 1, z))
 						System.out.print('\\');
@@ -59,5 +246,14 @@ public class CLI extends CommonView {
 			}
 			System.out.println();
 		}
+	}
+
+	@Override
+	public void displayMazeSolution(Solution<Position> solution) {
+		for(State<Position> state : solution.getSequence())
+			out.println("{" + state.getState().getX() + ", "
+					+ state.getState().getY() + ", "
+					+ state.getState().getZ() + "}");
+		out.flush();
 	}
 }

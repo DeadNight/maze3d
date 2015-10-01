@@ -1,68 +1,100 @@
 package model;
 
 import io.MyCompressorOutputStream;
+import io.MyDecompressorInputStream;
 
-import java.beans.XMLDecoder;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Observable;
 import java.util.concurrent.Callable;
-import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
-import presenter.Properties;
 import algorithms.mazeGenerators.Maze3d;
 import algorithms.mazeGenerators.Maze3dGenerator;
 import algorithms.mazeGenerators.Position;
 import algorithms.search.Searcher;
+import algorithms.search.Solution;
 
 public abstract class CommonModel extends Observable implements Model {
-	Properties properties;
+	byte[] propertiesData;
 	ExecutorService threadPool;
 	Maze3dGenerator mazeGenerator;
 	Searcher<Position> mazeSearchAlgorithm;
 	HashMap<String, Maze3d> mazeCache;
+	HashMap<Maze3d, Solution<Position>> solutionCache;
 	
-	public CommonModel() throws ArrayIndexOutOfBoundsException, FileNotFoundException {
-		initProperties();
-		
-		threadPool = Executors.newFixedThreadPool(properties.getPoolSize());
+	public CommonModel() {
 		mazeCache = new HashMap<String, Maze3d>();
-		
-		initMazeGenerator();
-		initMazeSearchAlgorithm();
-	}
-	
-	void initProperties() throws ArrayIndexOutOfBoundsException, FileNotFoundException {
-		FileInputStream settingsIn;
-		try {
-			settingsIn = new FileInputStream("properties.xml");
-		} catch (FileNotFoundException e) {
-			System.err.println("properties.xml file not found");
-			throw e;
-		}
-		
-		XMLDecoder xmlDecoder = new XMLDecoder(new BufferedInputStream(settingsIn));
-		try {
-			properties = (Properties) xmlDecoder.readObject();
-		} catch(ArrayIndexOutOfBoundsException e) {
-			System.err.println("error while parsing properties.xml");
-			throw e;
-		} finally {
-			xmlDecoder.close();
-		}
+		solutionCache = new HashMap<Maze3d, Solution<Position>>();
 	}
 
-	abstract void initMazeGenerator();
-	abstract void initMazeSearchAlgorithm();
+	@Override
+	public void setMazeGenerator(Maze3dGenerator mazeGenerator) {
+		this.mazeGenerator = mazeGenerator;
+	}
+
+	@Override
+	public void setMazeSearchAlgorithm(Searcher<Position> mazeSearchAlgorithm) {
+		this.mazeSearchAlgorithm = mazeSearchAlgorithm;
+	}
+	
+	@Override
+	public void start(int poolSize) {
+		threadPool = Executors.newFixedThreadPool(poolSize);
+	}
+	
+	@Override
+	public void stop() {
+		threadPool.shutdownNow();
+		boolean terminated = false;
+		while(!terminated)
+			try {
+				terminated = threadPool.awaitTermination(10, TimeUnit.SECONDS);
+			} catch (InterruptedException e) {
+				// OK, keep waiting
+			}
+	}
+	
+	@Override
+	public void loadProperties() throws IOException {
+		FileInputStream settingsIn;
+		settingsIn = new FileInputStream("properties.xml");
+		
+		BufferedInputStream in = new BufferedInputStream(settingsIn);
+		
+		ByteArrayOutputStream byteArrayOut = new ByteArrayOutputStream();
+		BufferedOutputStream out = new BufferedOutputStream(byteArrayOut);
+		
+		int b;
+		try {
+			while((b = in.read()) != -1)
+				out.write(b);
+			out.flush();
+		} finally {
+			in.close();
+			out.close();
+		}
+		
+		propertiesData = byteArrayOut.toByteArray();
+		
+		setChanged();
+		notifyObservers(new String[] { "properties loaded" });
+	}
+	
+	@Override
+	public byte[] getPropertiesData() {
+		return propertiesData;
+	}
 	
 	<T> void runTaskInBackground(Task<T> task) {
 		Future<T> future = threadPool.submit(new Callable<T>() {
@@ -78,16 +110,17 @@ public abstract class CommonModel extends Observable implements Model {
 				boolean waiting = true;
 				while(waiting)
 					try {
-						T result = future.get();
+						T result = future.get(10, TimeUnit.SECONDS);
 						waiting = false;
 						task.handleResult(result);
-					} catch (InterruptedException | CancellationException e) {
-						// OK, stop waiting
-						waiting = false;
 					} catch (ExecutionException e) {
 						waiting = false;
-						e.printStackTrace();
-						task.handleException(e);
+						task.handleExecutionException(e);
+					} catch (InterruptedException e) {
+						waiting = false;
+						future.cancel(true);
+					} catch (TimeoutException e) {
+						// OK, keep waiting
 					}
 			}
 		});
@@ -108,5 +141,21 @@ public abstract class CommonModel extends Observable implements Model {
 		}
 		
 		return compressedDataOut.toByteArray();
+	}
+	
+	byte[] decompressData(byte[] compressedData) throws IOException {
+		MyDecompressorInputStream decompressor = new MyDecompressorInputStream(new BufferedInputStream(new ByteArrayInputStream(compressedData)));
+		ByteArrayOutputStream dataOut = new ByteArrayOutputStream();
+		
+		int b;
+		try {
+			while((b = decompressor.read()) != -1)
+				dataOut.write(b);
+			dataOut.flush();
+		} finally {
+			decompressor.close();
+		}
+		
+		return dataOut.toByteArray();
 	}
 }
