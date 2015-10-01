@@ -22,8 +22,14 @@ public abstract class CommonBFSearcher<T> extends CommonSearcher<T> {
 
 	@Override
 	public Solution<T> search(Searchable<T> s) {
+		if(s == null)
+			return null;
+		
 		State<T> goal = s.getGoalState();
 		State<T> initialState = s.getInitialState();
+		
+		if(initialState == null || goal == null)
+			return null;
 		
 		addToOpenList(initialState);
 		

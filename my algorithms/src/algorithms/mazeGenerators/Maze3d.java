@@ -25,7 +25,11 @@ public class Maze3d {
 	 * @param volume The volume
 	 */
 	public Maze3d(Volume volume) {
-		maze = new byte[volume.getHeight()][volume.getDepth()][volume.getWidth()];
+		this(volume.getWidth(), volume.getHeight(), volume.getDepth());
+	}
+	
+	public Maze3d(int width, int height, int depth) {
+		maze = new byte[height][depth][width];
 		fillMaze((byte) 1);
 	}
 	
@@ -57,7 +61,7 @@ public class Maze3d {
 				for(int x = 0; x < width; ++x)
 					maze[y][z][x] = (byte) in.read();
 	}
-	
+
 	/**
 	 * Get the internal representation of the maze
 	 * @return The internal representation

@@ -17,6 +17,13 @@ public class AStarSearcher<T> extends CommonBFSearcher<T> {
 	public AStarSearcher(Heuristic<T> heuristic) {
 		this.heuristic = heuristic;
 	}
+	
+	@Override
+	public Solution<T> search(Searchable<T> s) {
+		if(heuristic == null)
+			return null;
+		return super.search(s);
+	}
 
 	@Override
 	protected double calculateCost(Searchable<T> s, State<T> from, State<T> to) {

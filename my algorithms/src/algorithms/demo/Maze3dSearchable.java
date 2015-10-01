@@ -28,12 +28,22 @@ public class Maze3dSearchable implements Searchable<Position> {
 
 	@Override
 	public State<Position> getInitialState() {
-		return new State<Position>(maze.getStartPosition());
+		if(maze == null)
+			return null;
+		Position startPosition = maze.getStartPosition();
+		if(startPosition == null)
+			return null;
+		return new State<Position>(startPosition);
 	}
 
 	@Override
 	public State<Position> getGoalState() {
-		return new State<Position>(maze.getGoalPosition());
+		if(maze == null)
+			return null;
+		Position goalPosition = maze.getGoalPosition();
+		if(goalPosition == null)
+			return null;
+		return new State<Position>(goalPosition);
 	}
 
 	@Override
