@@ -8,6 +8,14 @@ import java.io.IOException;
  * Represents a 3d position in x,y,z coordinates
  */
 public class Position extends CommonMetric {
+	
+	/**
+	 * Initialize a new Position with 0 x, y &amp; z coordinates
+	 */
+	public Position() {
+		super(3);
+	}
+	
 	/**
 	 * Initialize a new Position with specific x,y,z coordinates
 	 * @param x The x coordinate

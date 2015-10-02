@@ -8,6 +8,13 @@ package algorithms.mazeGenerators;
 public class Volume extends CommonMetric {
 	
 	/**
+	 * Initialize a new Volume with 0 width, height &amp; depth
+	 */
+	public Volume() {
+		super(3);
+	}
+	
+	/**
 	 * Initialize a new Volume with specific width, height &amp; depth
 	 * @param width The width
 	 * @param height The height

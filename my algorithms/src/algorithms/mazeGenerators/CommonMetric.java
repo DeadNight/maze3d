@@ -14,6 +14,14 @@ import java.util.Arrays;
  */
 public class CommonMetric implements Metric {
 	int[] metrics;
+	
+	/**
+	 * Initialize a metric of size dimensions with 0's
+	 * @param metrics An array with n numbers, 1 for each dimension
+	 */
+	public CommonMetric(int size) {
+		metrics = new int[size];
+	}
 
 	/**
 	 * Initialize the metric
