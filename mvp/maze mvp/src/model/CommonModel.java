@@ -66,7 +66,7 @@ public abstract class CommonModel extends Observable implements Model {
 	}
 	
 	@Override
-	public void loadProperties() throws IOException {
+	public byte[] getPropertiesData() throws IOException {
 		FileInputStream settingsIn;
 		settingsIn = new FileInputStream("properties.xml");
 		
@@ -85,15 +85,7 @@ public abstract class CommonModel extends Observable implements Model {
 			out.close();
 		}
 		
-		propertiesData = byteArrayOut.toByteArray();
-		
-		setChanged();
-		notifyObservers(new String[] { "properties loaded" });
-	}
-	
-	@Override
-	public byte[] getPropertiesData() {
-		return propertiesData;
+		return byteArrayOut.toByteArray();
 	}
 	
 	<T> void runTaskInBackground(Task<T> task) {

@@ -6,9 +6,6 @@ import algorithms.search.Solution;
 public interface View {
 	String getUserCommand();
 	
-	void displayPropertiesNotFound();
-	void displayLoadPropertiesError();
-	
 	void start();
 	void stop();
 

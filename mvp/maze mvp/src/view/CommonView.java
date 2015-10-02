@@ -11,11 +11,11 @@ import java.util.Observable;
 import algorithms.mazeGenerators.Maze3d;
 
 public abstract class CommonView extends Observable implements View {
-	boolean running;
+	String userCommand;
 	
 	@Override
-	public void stop() {
-		running = false;
+	public String getUserCommand() {
+		return userCommand;
 	}
 	
 	byte[] decompressData(byte[] compressedData) throws IOException {

@@ -5,9 +5,10 @@ import java.io.BufferedOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
-import presenter.MazeGenerators;
-import presenter.MazeSearchers;
+import presenter.MazeGeneratorTypes;
+import presenter.MazeSearcherTypes;
 import presenter.Properties;
+import presenter.ViewTypes;
 
 public class Setup {
 	public static void main(String[] args) {
@@ -21,8 +22,9 @@ public class Setup {
 		
 		Properties props = new Properties();
 		props.setPoolSize(10);
-		props.setMazeGenerator(MazeGenerators.MY);
-		props.setMazeSearcher(MazeSearchers.A_STAR_MANHATTER);
+		props.setMazeGeneratorType(MazeGeneratorTypes.MY);
+		props.setMazeSearcherType(MazeSearcherTypes.A_STAR_MANHATTER);
+		props.setViewType(ViewTypes.GUI);
 		
 		xmlEncoder.writeObject(props);
 		xmlEncoder.close();

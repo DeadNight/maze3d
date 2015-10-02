@@ -1,15 +1,15 @@
 package presenter;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import model.Model;
-import view.View;
 import algorithms.mazeGenerators.Position;
 import algorithms.search.Solution;
 
 public class MyPresenter extends CommonPresenter {
-	public MyPresenter(View view, Model model) {
-		super(view, model);
+	public MyPresenter(Model model) throws FileNotFoundException, IOException {
+		super(model);
 	}
 	
 	@Override
@@ -186,8 +186,6 @@ public class MyPresenter extends CommonPresenter {
 
 	@Override
 	void initModelCommands() {
-		super.initModelCommands();
-		
 		modelCommands.put("maze generated", new Command() {
 			@Override
 			public void doCommand(String[] args) {

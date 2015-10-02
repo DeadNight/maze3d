@@ -5,9 +5,10 @@ import java.io.Serializable;
 public class Properties implements Serializable {
 	private static final long serialVersionUID = -3069362332373746033L;
 	int threadPoolSize;
-	MazeGenerators mazeGenerator;
-	MazeSearchers mazeSearcher;
-	
+	MazeGeneratorTypes mazeGeneratorType;
+	MazeSearcherTypes mazeSearcherType;
+	ViewTypes viewType;
+
 	public int getPoolSize() {
 		return threadPoolSize;
 	}
@@ -16,19 +17,27 @@ public class Properties implements Serializable {
 		this.threadPoolSize = threadPoolSize;
 	}
 	
-	public MazeSearchers getMazeSearcher() {
-		return mazeSearcher;
+	public MazeSearcherTypes getMazeSearcherType() {
+		return mazeSearcherType;
 	}
 	
-	public void setMazeSearcher(MazeSearchers mazeSolver) {
-		this.mazeSearcher = mazeSolver;
+	public void setMazeSearcherType(MazeSearcherTypes mazeSearcherType) {
+		this.mazeSearcherType = mazeSearcherType;
 	}
 	
-	public MazeGenerators getMazeGenerator() {
-		return mazeGenerator;
+	public MazeGeneratorTypes getMazeGeneratorType() {
+		return mazeGeneratorType;
 	}
 	
-	public void setMazeGenerator(MazeGenerators mazeGenerator) {
-		this.mazeGenerator = mazeGenerator;
+	public void setMazeGeneratorType(MazeGeneratorTypes mazeGeneratorType) {
+		this.mazeGeneratorType = mazeGeneratorType;
+	}
+	
+	public ViewTypes getViewType() {
+		return viewType;
+	}
+
+	public void setViewType(ViewTypes viewType) {
+		this.viewType = viewType;
 	}
 }

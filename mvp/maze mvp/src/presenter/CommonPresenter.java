@@ -3,6 +3,7 @@ package presenter;
 import java.beans.XMLDecoder;
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -27,9 +28,20 @@ public abstract class CommonPresenter implements Presenter {
 	HashMap<String, Command> modelCommands;
 	LinkedHashMap<String, Command> viewCommands;
 	
-	public CommonPresenter(View view, Model model) {
-		this.view = view;
+	public CommonPresenter(Model model) throws FileNotFoundException, IOException {
 		this.model = model;
+		
+		byte[] propertiesData = model.getPropertiesData();
+		XMLDecoder xmlDecoder = new XMLDecoder(new ByteArrayInputStream(propertiesData));
+		
+		try {
+			properties = (Properties) xmlDecoder.readObject();
+		} finally {
+			xmlDecoder.close();
+		}
+		
+		model.setMazeGenerator(getMazeGenerator(properties.getMazeGeneratorType()));
+		model.setMazeSearchAlgorithm(getMazeSearcher(properties.getMazeSearcherType()));
 		
 		viewCommands = new LinkedHashMap<String, Command>();
 		modelCommands = new HashMap<String, Command>();
@@ -39,25 +51,22 @@ public abstract class CommonPresenter implements Presenter {
 	}
 	
 	@Override
-	public void start() {
-		try {
-			model.loadProperties();
-		} catch (FileNotFoundException e) {
-			view.displayPropertiesNotFound();
-			return;
-		} catch (Exception e) {
-			view.displayLoadPropertiesError();
-			return;
-		}
-		
-		model.setMazeGenerator(getMazeGenerator(properties.getMazeGenerator()));
-		model.setMazeSearchAlgorithm(getMazeSearcher(properties.getMazeSearcher()));
-		model.start(properties.threadPoolSize);
-		
-		view.start();
+	public void setView(View view) {
+		this.view = view;
 	}
 
-	private Maze3dGenerator getMazeGenerator(MazeGenerators mazeGenerator) {
+	@Override
+	public void start() {
+		model.start(properties.threadPoolSize);
+		view.start();
+	}
+	
+	@Override
+	public ViewTypes getViewType() {
+		return properties.getViewType();
+	}
+
+	private Maze3dGenerator getMazeGenerator(MazeGeneratorTypes mazeGenerator) {
 		switch(mazeGenerator) {
 		case MY:
 			return new MyMaze3dGenerator();
@@ -67,7 +76,7 @@ public abstract class CommonPresenter implements Presenter {
 		return null;
 	}
 	
-	private Searcher<Position> getMazeSearcher(MazeSearchers mazeSearcher) {
+	private Searcher<Position> getMazeSearcher(MazeSearcherTypes mazeSearcher) {
 		switch(mazeSearcher) {
 		case A_STAR_AIR:
 			return new AStarSearcher<Position>(new MazeAirDistance());
@@ -89,21 +98,7 @@ public abstract class CommonPresenter implements Presenter {
 		});
 	}
 	
-	void initModelCommands() {
-		modelCommands.put("properties loaded", new Command() {
-			@Override
-			public void doCommand(String[] args) {
-				byte[] propertiesData = model.getPropertiesData();
-				XMLDecoder xmlDecoder = new XMLDecoder(new ByteArrayInputStream(propertiesData));
-				
-				try {
-					properties = (Properties) xmlDecoder.readObject();
-				} finally {
-					xmlDecoder.close();
-				}
-			}
-		});
-	}
+	abstract void initModelCommands();
 	
 	@Override
 	public void update(Observable o, Object arg) {

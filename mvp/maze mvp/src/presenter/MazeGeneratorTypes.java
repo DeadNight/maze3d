@@ -1,6 +1,6 @@
 package presenter;
 
-public enum MazeGenerators {
+public enum MazeGeneratorTypes {
 	SIMPLE,
 	MY
 }

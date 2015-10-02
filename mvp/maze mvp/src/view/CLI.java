@@ -10,9 +10,9 @@ import algorithms.search.Solution;
 import algorithms.search.State;
 
 public class CLI extends CommonView {
+	boolean running;
 	BufferedReader in;
 	PrintWriter out;
-	String userCommand;
 	
 	public CLI(BufferedReader in, PrintWriter out) {
 		this.in = in;
@@ -52,20 +52,8 @@ public class CLI extends CommonView {
 	}
 	
 	@Override
-	public String getUserCommand() {
-		return userCommand;
-	}
-
-	@Override
-	public void displayPropertiesNotFound() {
-		displayError("properties.xml not found");
-		displayError("run Setup.bat to create a defualt properties file");
-	}
-
-	@Override
-	public void displayLoadPropertiesError() {
-		displayError("error loading properties.xml");
-		displayError("run Setup.bat to create a defualt properties file");
+	public void stop() {
+		running = false;
 	}
 
 	@Override

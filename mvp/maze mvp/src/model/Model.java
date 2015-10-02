@@ -8,8 +8,7 @@ import algorithms.search.Searcher;
 import algorithms.search.Solution;
 
 public interface Model {
-	void loadProperties() throws ArrayIndexOutOfBoundsException, IOException;
-	byte[] getPropertiesData();
+	byte[] getPropertiesData() throws IOException;
 	
 	void setMazeGenerator(Maze3dGenerator mazeGenerator);
 	void setMazeSearchAlgorithm(Searcher<Position> mazeSearchAlgorithm);
