@@ -19,10 +19,10 @@ public class AStarSearcher<T> extends CommonBFSearcher<T> {
 	}
 	
 	@Override
-	public Solution<T> search(Searchable<T> s) {
+	protected Solution<T> doSearch(Searchable<T> s) {
 		if(heuristic == null)
 			return null;
-		return super.search(s);
+		return super.doSearch(s);
 	}
 
 	@Override

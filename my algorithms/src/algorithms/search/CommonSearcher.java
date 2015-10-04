@@ -27,6 +27,15 @@ public abstract class CommonSearcher<T> implements Searcher<T> {
 		});
 		evaluatedNodes = 0;
 	}
+	
+	@Override
+	public Solution<T> search(Searchable<T> s) {
+		openList.clear();
+		evaluatedNodes = 0;
+		return doSearch(s);
+	}
+	
+	protected abstract Solution<T> doSearch(Searchable<T> s);
 
 	/**
 	 * Add a state to the openList for later evaluation

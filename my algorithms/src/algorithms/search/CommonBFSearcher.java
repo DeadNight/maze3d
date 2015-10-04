@@ -21,7 +21,7 @@ public abstract class CommonBFSearcher<T> extends CommonSearcher<T> {
 	}
 
 	@Override
-	public Solution<T> search(Searchable<T> s) {
+	protected Solution<T> doSearch(Searchable<T> s) {
 		if(s == null)
 			return null;
 		
