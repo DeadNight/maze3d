@@ -57,5 +57,21 @@ public class Maze3dSearchable implements Searchable<Position> {
 		}
 		return states;
 	}
-
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(obj == null) return false;
+		if(!(obj instanceof Maze3dSearchable)) return false;
+		Maze3dSearchable other = (Maze3dSearchable) obj;
+		if(!other.maze.equals(maze)) return false;
+		if(!other.getInitialState().equals(getInitialState())) return false;
+		if(!other.getGoalState().equals(getGoalState())) return false;
+		return true;
+	}
+	
+	@Override
+	public int hashCode() {
+		String str = ""+maze.hashCode() + getInitialState().hashCode()+getGoalState().hashCode();
+		return str.hashCode();
+	}
 }

@@ -66,11 +66,9 @@ public class State<T> {
 	
 	@Override
 	public String toString() {
-		String prev;
-		if(cameFrom==null)
-			prev = "null";
-		else
-			prev = "" + cameFrom.state;
+		String prev = "";
+		if(cameFrom!=null)
+			prev += cameFrom.state;
 		return "{" + state + "," + cost + "," + prev + "}";
 	}
 	
