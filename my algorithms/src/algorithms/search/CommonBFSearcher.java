@@ -19,6 +19,12 @@ public abstract class CommonBFSearcher<T> extends CommonSearcher<T> {
 		super();
 		visitedMap = new HashMap<T, State<T>>();
 	}
+	
+	@Override
+	public Solution<T> search(Searchable<T> s) {
+		visitedMap.clear();
+		return super.search(s);
+	}
 
 	@Override
 	protected Solution<T> doSearch(Searchable<T> s) {
