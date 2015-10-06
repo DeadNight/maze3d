@@ -1,5 +1,6 @@
 package view;
 
+import presenter.Properties;
 import algorithms.mazeGenerators.Position;
 import algorithms.search.Solution;
 
@@ -58,4 +59,6 @@ public interface View {
 	void displayMazeSolution(Solution<Position> solution);
 
 	void displayFileNameError();
+
+	void displayProperties(Properties properties);
 }

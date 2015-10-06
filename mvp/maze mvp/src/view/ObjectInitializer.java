@@ -8,12 +8,12 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.events.VerifyEvent;
-import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
 public class ObjectInitializer {
@@ -49,13 +49,15 @@ public class ObjectInitializer {
 					
 					fieldName = fieldName.substring(3, fieldName.length());
 					
-					Method getter = null;
-					if(copyFrom != null)
+					Object value = null;
+					if(copyFrom != null) {
 						try {
-							getter = c.getMethod("get" + fieldName);
-						} catch (NoSuchMethodException e) {
+							Method getter = c.getMethod("get" + fieldName);
+							value = getter.invoke(copyFrom);
+						} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
 							// OK
 						}
+					}
 					
 					Label label = new Label(shell, SWT.READ_ONLY);
 					label.setText(fieldName);
@@ -64,48 +66,63 @@ public class ObjectInitializer {
 					Class<?> paramType = setter.getParameters()[0].getType();
 					
 					if(paramType.isAssignableFrom(int.class)) {
-						Text text = new Text(shell, SWT.SINGLE | SWT.BORDER);
-						text.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false));
-						if(getter != null)
-							try {
-								text.setText(""+(int)getter.invoke(copyFrom));
-							} catch (IllegalAccessException e) {
-								// shouldn't happen (the getter is public)
-								e.printStackTrace();
-								// continue
-							} catch (InvocationTargetException e) {
-								// getter threw an exception
-								e.printStackTrace();
-								// continue
-							}
-						text.addVerifyListener(new VerifyListener() {
-							@Override
-							public void verifyText(VerifyEvent event) {
-								if(event.text != null && !event.text.equals(""))
-									try {
-										Integer.parseInt(event.text);
-									} catch (NumberFormatException e) {
-										event.doit = false;
-									}
-							}
-						});
-						text.addModifyListener(new ModifyListener() {
+						Spinner spinner = new Spinner(shell, SWT.READ_ONLY);
+						spinner.setLayoutData(new GridData(SWT.NONE, SWT.NONE, false, false));
+						spinner.addModifyListener(new ModifyListener() {
 							@Override
 							public void modifyText(ModifyEvent event) {
-								int value = 0;
-								if(!(text.getText() == null || text.getText().equals(""))) {
-									// we passed VerifyEvent so the value can be parsed to int
-									value = Integer.parseInt(text.getText());
-								}
 								try {
-									setter.invoke(instance, value);
-								} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+									setter.invoke(instance, spinner.getSelection());
+								} catch (IllegalAccessException | InvocationTargetException e) {
 									displayError("Setter error", "Error setting value");
 									instance = null;
 									close();
 								}
 							}
 						});
+						if(value != null)
+							spinner.setSelection((int) value);
+					} else if(paramType.isEnum()) {
+						Combo combo = new Combo(shell, SWT.READ_ONLY);
+						combo.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false));
+						Enum<?>[] enumConstants = (Enum[]) paramType.getEnumConstants();
+						String[] items = new String[enumConstants.length];
+						for(int i = 0; i < items.length; ++i)
+							items[i] = enumConstants[i].name();
+						combo.setItems(items);
+						combo.addModifyListener(new ModifyListener() {
+							@Override
+							public void modifyText(ModifyEvent event) {
+								try {
+									setter.invoke(instance, enumConstants[combo.getSelectionIndex()]);
+								} catch (IllegalAccessException | InvocationTargetException e) {
+									displayError("Setter error", "Error setting value");
+									instance = null;
+									close();
+								}
+							}
+						});
+						if(value != null)
+							combo.select(((Enum<?>)value).ordinal());
+					} else if(paramType.isAssignableFrom(String.class)) {
+						Text text = new Text(shell, SWT.SINGLE | SWT.BORDER);
+						text.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false));
+						text.addModifyListener(new ModifyListener() {
+							@Override
+							public void modifyText(ModifyEvent event) {
+								try {
+									setter.invoke(instance, text.getText());
+								} catch (IllegalAccessException | InvocationTargetException e) {
+									displayError("Setter error", "Error setting value");
+									instance = null;
+									close();
+								}
+							}
+						});
+						if(value != null)
+							text.setText((String) value); 
+					} else {
+						
 					}
 				}
 				

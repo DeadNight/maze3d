@@ -117,15 +117,15 @@ public class MazeWindow extends BasicWindow {
 		saveMazeMenuItem.addSelectionListener(listener);
 	}
 	
+	public void addEditPropertiesListener(SelectionListener listener) {
+		editPropertiesMenuItem.addSelectionListener(listener);
+	}
+	
 	public void addImportPropertiesListener(SelectionListener listener) {
 		importPropertiesMenuItem.addSelectionListener(listener);
 	}
 	
 	public void addExportPropertiesListener(SelectionListener listener) {
-		exportPropertiesMenuItem.addSelectionListener(listener);
-	}
-	
-	public void addEditPropertiesListener(SelectionListener listener) {
 		exportPropertiesMenuItem.addSelectionListener(listener);
 	}
 	

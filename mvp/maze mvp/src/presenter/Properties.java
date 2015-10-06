@@ -40,4 +40,16 @@ public class Properties implements Serializable {
 	public void setViewType(ViewTypes viewType) {
 		this.viewType = viewType;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(obj == null) return false;
+		if(!(obj instanceof Properties)) return false;
+		Properties other = (Properties) obj;
+		if(other.threadPoolSize != threadPoolSize) return false;
+		if(other.mazeGeneratorType != mazeGeneratorType) return false;
+		if(other.mazeSearcherType != mazeSearcherType) return false;
+		if(other.viewType != viewType) return false;
+		return true;
+	};
 }

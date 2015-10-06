@@ -252,6 +252,13 @@ public class MyPresenter extends CommonPresenter {
 				model.solveMaze(name);
 			}
 		});
+		
+		viewCommands.put("get properties", new Command() {
+			@Override
+			public void doCommand(String[] args) {
+				view.displayProperties(properties);
+			}
+		});
 	}
 
 	@Override

@@ -12,6 +12,7 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
+import presenter.Properties;
 import algorithms.mazeGenerators.Maze3d;
 import algorithms.mazeGenerators.Position;
 import algorithms.mazeGenerators.Volume;
@@ -120,6 +121,18 @@ public class GUI extends CommonView {
 					setChanged();
 					notifyObservers();
 				}
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) { }
+		});
+		
+		mazeWindow.addEditPropertiesListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				userCommand = "get properties";
+				setChanged();
+				notifyObservers();
 			}
 			
 			@Override
@@ -326,5 +339,25 @@ public class GUI extends CommonView {
 	@Override
 	public void displayFileNameError() {
 		mazeWindow.displayError("File name error", "Error occurred while parsing file name");
+	}
+
+	@Override
+	public void displayProperties(Properties properties) {
+		Properties newProperties = (Properties) objectInitializer.initialize(Properties.class, properties);
+		if(newProperties != null && !newProperties.equals(properties)) {
+			if(properties.getViewType() != newProperties.getViewType())
+				mazeWindow.displayInfo("Edit info"
+						, "View type change will take only effect after restarting the game");
+			StringJoiner stringJoiner = new StringJoiner(" ");
+			stringJoiner
+				.add("edit properties")
+				.add(""+newProperties.getPoolSize())
+				.add(""+newProperties.getMazeGeneratorType())
+				.add(""+newProperties.getMazeSearcherType())
+				.add(""+newProperties.getViewType());
+			userCommand = stringJoiner.toString();
+			setChanged();
+			notifyObservers();
+		}
 	}
 }

@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import presenter.Properties;
 import algorithms.mazeGenerators.Maze3d;
 import algorithms.mazeGenerators.Position;
 import algorithms.search.Solution;
@@ -248,5 +249,10 @@ public class CLI extends CommonView {
 	@Override
 	public void displayFileNameError() {
 		displayError("Error occurred while parsing file name");
+	}
+
+	@Override
+	public void displayProperties(Properties properties) {
+		throw new UnsupportedOperationException();
 	}
 }
