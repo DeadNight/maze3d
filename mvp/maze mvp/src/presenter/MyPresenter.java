@@ -36,6 +36,18 @@ public class MyPresenter extends CommonPresenter {
 			};
 			
 			@Override
+			public boolean verifyParams(String[] args) {
+				try {
+					Integer.parseInt(args[1]);
+					Integer.parseInt(args[2]);
+					Integer.parseInt(args[3]);
+				} catch (NumberFormatException e) {
+					return false;
+				}
+				return true;
+			}
+			
+			@Override
 			public void doCommand(String[] args) {
 				String name = args[0];
 				int width = Integer.parseInt(args[1]);
@@ -74,6 +86,36 @@ public class MyPresenter extends CommonPresenter {
 				Integer index = Integer.parseInt(args[1]);
 				String name = args[3];
 				model.generateCrossSection(name, axis, index);
+			}
+		});
+		
+		viewCommands.put("display solution from", new Command() {
+			@Override
+			public String getTemplate() {
+				return "<name> <x> <y> <z>";
+			}
+			
+			@Override
+			public boolean verifyParams(String[] args) {
+				try {
+					Integer.parseInt(args[1]);
+					Integer.parseInt(args[2]);
+					Integer.parseInt(args[3]);
+				} catch (NumberFormatException e) {
+					return false;
+				}
+				return true;
+			}
+			
+			@Override
+			public void doCommand(String[] args) {
+				String name = args[0];
+				int x = Integer.parseInt(args[1]);
+				int y = Integer.parseInt(args[2]);
+				int z = Integer.parseInt(args[3]);
+				Solution<Position> solution = model.getMazeSolution(name, x, y, z);
+				if(solution != null)
+					view.displayMazeSolution(solution);
 			}
 		});
 		
@@ -170,6 +212,34 @@ public class MyPresenter extends CommonPresenter {
 			}
 		});
 		
+		viewCommands.put("solve from", new Command() {
+			@Override
+			public String getTemplate() {
+				return "<name> <x> <y> <z>";
+			}
+			
+			@Override
+			public boolean verifyParams(String[] args) {
+				try {
+					Integer.parseInt(args[1]);
+					Integer.parseInt(args[2]);
+					Integer.parseInt(args[3]);
+				} catch (NumberFormatException e) {
+					return false;
+				}
+				return true;
+			}
+			
+			@Override
+			public void doCommand(String[] args) {
+				String name = args[0];
+				int x = Integer.parseInt(args[1]);
+				int y = Integer.parseInt(args[2]);
+				int z = Integer.parseInt(args[3]);
+				model.solveMaze(name, x, y, z);
+			}
+		});
+		
 		viewCommands.put("solve", new Command() {
 			@Override
 			public String getTemplate() {
@@ -218,7 +288,8 @@ public class MyPresenter extends CommonPresenter {
 		modelCommands.put("maze loaded", new Command() {
 			@Override
 			public void doCommand(String[] args) {
-				view.displayMazeLoaded();
+				String name = args[0];
+				view.displayMazeLoaded(name);
 			}
 		});
 		
@@ -292,6 +363,13 @@ public class MyPresenter extends CommonPresenter {
 			@Override
 			public void doCommand(String[] args) {
 				view.displayFileNotFound();
+			}
+		});
+		
+		modelCommands.put("file name error", new Command() {
+			@Override
+			public void doCommand(String[] args) {
+				view.displayFileNameError();
 			}
 		});
 		

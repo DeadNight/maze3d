@@ -15,7 +15,7 @@ public interface View {
 
 	void displayUnknownCommand();
 
-	void displayCommandTemplate(String template, String string);
+	void displayCommandTemplate(String commandName, String template);
 
 	void displayFilesList(String[] filesList);
 
@@ -35,7 +35,7 @@ public interface View {
 
 	void displayMazeSaved();
 
-	void displayMazeLoaded();
+	void displayMazeLoaded(String name);
 
 	void displayLoadMazeError();
 
@@ -56,4 +56,6 @@ public interface View {
 	void displayMazeSolutionNotFound();
 
 	void displayMazeSolution(Solution<Position> solution);
+
+	void displayFileNameError();
 }

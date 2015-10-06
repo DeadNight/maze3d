@@ -34,7 +34,12 @@ public interface Model {
 
 	void calculateFileSize(String name);
 	int getFileSize(String name);
-
+	
 	void solveMaze(String name);
+	void solveMaze(String name, int fromX, int fromY, int fromZ);
+	void solveMaze(String name, Position from);
+	
 	Solution<Position> getMazeSolution(String name);
+	Solution<Position> getMazeSolution(String name, int fromX, int fromY, int fromZ);
+	Solution<Position> getMazeSolution(String name, Position from);
 }

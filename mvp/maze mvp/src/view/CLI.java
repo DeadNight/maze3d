@@ -156,8 +156,8 @@ public class CLI extends CommonView {
 	}
 
 	@Override
-	public void displayMazeLoaded() {
-		out.println("maze loaded successfully");
+	public void displayMazeLoaded(String name) {
+		out.println("maze " + name + " loaded successfully");
 		out.flush();
 	}
 
@@ -243,5 +243,10 @@ public class CLI extends CommonView {
 					+ state.getState().getY() + ", "
 					+ state.getState().getZ() + "}");
 		out.flush();
+	}
+
+	@Override
+	public void displayFileNameError() {
+		displayError("Error occurred while parsing file name");
 	}
 }

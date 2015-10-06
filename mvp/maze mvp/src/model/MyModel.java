@@ -8,12 +8,15 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.concurrent.ExecutionException;
 
 import algorithms.demo.Maze3dSearchable;
 import algorithms.mazeGenerators.Maze3d;
 import algorithms.mazeGenerators.Position;
 import algorithms.search.Solution;
+import algorithms.search.State;
 
 public class MyModel extends CommonModel {
 	String[] filesList;
@@ -48,7 +51,6 @@ public class MyModel extends CommonModel {
 
 	@Override
 	public void generateMaze(String name, int width, int height, int depth) {
-		MyModel thisModel = this;
 		runTaskInBackground(new Task<Maze3d>() {
 			@Override
 			public Maze3d doTask() {
@@ -60,8 +62,8 @@ public class MyModel extends CommonModel {
 				mazeCache.remove(name);
 				mazeCache.put(name, result);
 				
-				thisModel.setChanged();
-				thisModel.notifyObservers(new String[] { "maze generated", name });
+				setChanged();
+				notifyObservers(new String[] { "maze generated", name });
 			}
 
 			@Override
@@ -120,12 +122,19 @@ public class MyModel extends CommonModel {
 
 	@Override
 	public void saveMaze(String name, String fileName) {
-		MyModel thisModel = this;
-		
 		Maze3d maze = mazeCache.get(name);
 		if(maze == null) {
 			setChanged();
 			notifyObservers(new String[] { "maze not found" });
+			return;
+		}
+		
+		URI uri;
+		try {
+			uri = new URI(fileName);
+		} catch (URISyntaxException e) {
+			setChanged();
+			notifyObservers(new String[] { "file name error" });
 			return;
 		}
 		
@@ -141,7 +150,7 @@ public class MyModel extends CommonModel {
 		runTaskInBackground(new Task<Object>() {
 			@Override
 			public Object doTask() throws IndexOutOfBoundsException, IOException, FileNotFoundException {
-				BufferedOutputStream fileOut = new BufferedOutputStream(new FileOutputStream(fileName));
+				BufferedOutputStream fileOut = new BufferedOutputStream(new FileOutputStream(uri.getPath()));
 				try {
 					fileOut.write(compressedData);
 					fileOut.flush();
@@ -153,19 +162,19 @@ public class MyModel extends CommonModel {
 
 			@Override
 			public void handleResult(Object result) {
-				thisModel.setChanged();
-				thisModel.notifyObservers(new String[] { "maze saved" });
+				setChanged();
+				notifyObservers(new String[] { "maze saved" });
 			}
 
 			@Override
 			public void handleExecutionException(ExecutionException e) {
 				Throwable cause = e.getCause();
 				if(cause instanceof FileNotFoundException) {
-					thisModel.setChanged();
-					thisModel.notifyObservers(new String[] { "file not found" });
+					setChanged();
+					notifyObservers(new String[] { "file not found" });
 				} else if(cause instanceof IOException) {
-					thisModel.setChanged();
-					thisModel.notifyObservers(new String[] { "error saving maze" });
+					setChanged();
+					notifyObservers(new String[] { "error saving maze" });
 				}
 			}
 		});
@@ -173,11 +182,18 @@ public class MyModel extends CommonModel {
 
 	@Override
 	public void loadMaze(String fileName, String name) {
-		MyModel thisModel = this;
+		URI uri;
+		try {
+			uri = new URI(fileName);
+		} catch (URISyntaxException e) {
+			setChanged();
+			notifyObservers(new String[] { "file name error" });
+			return;
+		}
 		runTaskInBackground(new Task<Maze3d>() {
 			@Override
 			public Maze3d doTask() throws IOException, FileNotFoundException {
-				BufferedInputStream fileIn = new BufferedInputStream(new FileInputStream(fileName));
+				BufferedInputStream fileIn = new BufferedInputStream(new FileInputStream(uri.getPath()));
 				ByteArrayOutputStream compressedDataOut = new ByteArrayOutputStream();
 				BufferedOutputStream bufferedDataOut = new BufferedOutputStream(compressedDataOut);
 				
@@ -199,19 +215,19 @@ public class MyModel extends CommonModel {
 			public void handleResult(Maze3d result) {
 				mazeCache.remove(name);
 				mazeCache.put(name, result);
-				thisModel.setChanged();
-				thisModel.notifyObservers(new String[] { "maze loaded" });
+				setChanged();
+				notifyObservers(new String[] { "maze loaded", name });
 			}
 
 			@Override
 			public void handleExecutionException(ExecutionException e) {
 				Throwable cause = e.getCause();
 				if(cause instanceof FileNotFoundException) {
-					thisModel.setChanged();
-					thisModel.notifyObservers(new String[] { "file not found" });
+					setChanged();
+					notifyObservers(new String[] { "file not found" });
 				} else if(cause instanceof IOException) {
-					thisModel.setChanged();
-					thisModel.notifyObservers(new String[] { "error loading maze" });
+					setChanged();
+					notifyObservers(new String[] { "error loading maze" });
 				}
 			}
 		});
@@ -262,9 +278,19 @@ public class MyModel extends CommonModel {
 	public int getFileSize(String name) {
 		return fileSize;
 	}
-
+	
 	@Override
 	public void solveMaze(String name) {
+		solveMaze(name, null);
+	}
+	
+	@Override
+	public void solveMaze(String name, int fromX, int fromY, int fromZ) {
+		solveMaze(name, new Position(fromX, fromY, fromZ));
+	}
+
+	@Override
+	public void solveMaze(String name, Position from) {
 		Maze3d maze = mazeCache.get(name);
 		if(maze == null) {
 			setChanged();
@@ -272,7 +298,18 @@ public class MyModel extends CommonModel {
 			return;
 		}
 		
-		if(solutionCache.containsKey(maze)) {
+		if(from == null)
+			from = maze.getStartPosition();
+		State<Position> fromState = new State<Position>(from);
+		
+		Maze3dSearchable mazeSearchable = new Maze3dSearchable(maze) {
+			@Override
+			public State<Position> getInitialState() {
+				return fromState;
+			}
+		};
+		
+		if(solutionCache.containsKey(mazeSearchable)) {
 			setChanged();
 			notifyObservers(new String[] { "maze solved", name } );
 			return;
@@ -281,7 +318,7 @@ public class MyModel extends CommonModel {
 		runTaskInBackground(new Task<Solution<Position>>() {
 			@Override
 			public Solution<Position> doTask() throws Exception {
-				return mazeSearchAlgorithm.search(new Maze3dSearchable(maze));
+				return mazeSearchAlgorithm.search(mazeSearchable);
 			}
 
 			@Override
@@ -292,8 +329,8 @@ public class MyModel extends CommonModel {
 					return;
 				}
 					
-				solutionCache.remove(maze);
-				solutionCache.put(maze, result);
+				solutionCache.remove(mazeSearchable);
+				solutionCache.put(mazeSearchable, result);
 				
 				setChanged();
 				notifyObservers(new String[] { "maze solved", name } );
@@ -306,6 +343,16 @@ public class MyModel extends CommonModel {
 
 	@Override
 	public Solution<Position> getMazeSolution(String name) {
+		return getMazeSolution(name, null);
+	}
+
+	@Override
+	public Solution<Position> getMazeSolution(String name, int fromX, int fromY, int fromZ) {
+		return getMazeSolution(name, new Position(fromX, fromY, fromZ));
+	}
+
+	@Override
+	public Solution<Position> getMazeSolution(String name, Position from) {
 		Maze3d maze = mazeCache.get(name);
 		if(maze == null) {
 			setChanged();
@@ -313,7 +360,17 @@ public class MyModel extends CommonModel {
 			return null;
 		}
 		
-		Solution<Position> solution = solutionCache.get(maze);
+		if(from == null)
+			from = maze.getStartPosition();
+		State<Position> fromState = new State<Position>(from); 
+		Maze3dSearchable mazeSearchable = new Maze3dSearchable(maze) {
+			@Override
+			public State<Position> getInitialState() {
+				return fromState;
+			}
+		};
+		
+		Solution<Position> solution = solutionCache.get(mazeSearchable);
 		if(solution == null) {
 			setChanged();
 			notifyObservers(new String[] { "solution not found" } );

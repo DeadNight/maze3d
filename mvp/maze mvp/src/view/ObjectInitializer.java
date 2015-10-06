@@ -2,7 +2,6 @@ package view;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -22,6 +21,10 @@ public class ObjectInitializer {
 	Object instance;
 	
 	public Object initialize(Class<?> c) {
+		return initialize(c, null);
+	}
+	
+	public Object initialize(Class<?> c, Object copyFrom) {
 		String className = c.getName().replaceAll(".*\\.", "");
 		// clear the instance to enable multiple uses of the same ObjectInitializer instance
 		instance = null;
@@ -37,7 +40,7 @@ public class ObjectInitializer {
 					close();
 				}
 				
-				shell.setLayout(new GridLayout(2, false)); // (2, false)
+				shell.setLayout(new GridLayout(2, false));
 				
 				for(Method setter : c.getMethods()) {
 					String fieldName = setter.getName();
@@ -46,15 +49,35 @@ public class ObjectInitializer {
 					
 					fieldName = fieldName.substring(3, fieldName.length());
 					
+					Method getter = null;
+					if(copyFrom != null)
+						try {
+							getter = c.getMethod("get" + fieldName);
+						} catch (NoSuchMethodException e) {
+							// OK
+						}
+					
 					Label label = new Label(shell, SWT.READ_ONLY);
 					label.setText(fieldName);
 					label.setLayoutData(new GridData(SWT.NONE, SWT.NONE, false, false));
 					
-					Parameter param = setter.getParameters()[0];
+					Class<?> paramType = setter.getParameters()[0].getType();
 					
-					if(param.getType().isAssignableFrom(int.class)) {
+					if(paramType.isAssignableFrom(int.class)) {
 						Text text = new Text(shell, SWT.SINGLE | SWT.BORDER);
 						text.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false));
+						if(getter != null)
+							try {
+								text.setText(""+(int)getter.invoke(copyFrom));
+							} catch (IllegalAccessException e) {
+								// shouldn't happen (the getter is public)
+								e.printStackTrace();
+								// continue
+							} catch (InvocationTargetException e) {
+								// getter threw an exception
+								e.printStackTrace();
+								// continue
+							}
 						text.addVerifyListener(new VerifyListener() {
 							@Override
 							public void verifyText(VerifyEvent event) {

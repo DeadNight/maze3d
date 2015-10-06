@@ -19,6 +19,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import algorithms.demo.Maze3dSearchable;
 import algorithms.mazeGenerators.Maze3d;
 import algorithms.mazeGenerators.Maze3dGenerator;
 import algorithms.mazeGenerators.Position;
@@ -31,11 +32,11 @@ public abstract class CommonModel extends Observable implements Model {
 	Maze3dGenerator mazeGenerator;
 	Searcher<Position> mazeSearchAlgorithm;
 	HashMap<String, Maze3d> mazeCache;
-	HashMap<Maze3d, Solution<Position>> solutionCache;
+	HashMap<Maze3dSearchable, Solution<Position>> solutionCache;
 	
 	public CommonModel() {
 		mazeCache = new HashMap<String, Maze3d>();
-		solutionCache = new HashMap<Maze3d, Solution<Position>>();
+		solutionCache = new HashMap<Maze3dSearchable, Solution<Position>>();
 	}
 
 	@Override
