@@ -11,7 +11,9 @@ package algorithms.mazeGenerators;
 public class SimpleMaze3dGenerator extends CommonMaze3dGenerator {
 
 	@Override
-	public Maze3d generate(Volume volume) {
+	public Maze3d generate(Volume interiorVolume) {
+		Volume volume = new Volume(interiorVolume.getWidth()+2
+				, interiorVolume.getHeight()+2, interiorVolume.getDepth()+2);
 		Maze3d maze = new Maze3d(volume);
 		
 		// randomly distribute walls & empty spaces inside the maze

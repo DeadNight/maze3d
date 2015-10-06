@@ -8,31 +8,31 @@ package algorithms.mazeGenerators;
 public interface Maze3dGenerator {
 	
 	/**
-	 * Generate a 3d maze with specific width, height &amp; depth
-	 * @param width The width
-	 * @param height The height
-	 * @param depth The depth
+	 * Generate a 3d maze with specific interior width, height &amp; depth
+	 * @param width The interior width
+	 * @param height The interior height
+	 * @param depth The interior depth
 	 * @return Maze3d The generated maze
 	 */
 	Maze3d generate(int width, int height, int depth);
 	/**
-	 * Generate a 3d maze with a specific volume
+	 * Generate a 3d maze with a specific interior volume
 	 * @param volume The volume
 	 * @return Maze3d The generated maze
 	 */
-	Maze3d generate(Volume volume);
+	Maze3d generate(Volume interiorVolume);
 	
 	/**
-	 * Measure the time taken to create a 3d maze with specific width, height &amp; depth
-	 * @param width The width
-	 * @param height The height
-	 * @param depth The depth
+	 * Measure the time taken to create a 3d maze with specific interior width, height &amp; depth
+	 * @param width The interior width
+	 * @param height The interior height
+	 * @param depth The interior depth
 	 * @return String Formatted time taken
 	 */
 	String measureAlgorithmTime(int width, int height, int depth);
 	/**
-	 * Measure the time taken to create a 3d maze with a specific volume
-	 * @param volume The volume
+	 * Measure the time taken to create a 3d maze with a specific interior volume
+	 * @param volume The interior volume
 	 * @return String Formatted time taken
 	 */
 	String measureAlgorithmTime(Volume volume);

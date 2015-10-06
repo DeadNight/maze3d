@@ -13,7 +13,9 @@ import java.util.ArrayList;
 public class MyMaze3dGenerator extends CommonMaze3dGenerator {
 
 	@Override
-	public Maze3d generate(Volume volume) {
+	public Maze3d generate(Volume interiorVolume) {
+		Volume volume = new Volume(interiorVolume.getWidth()+2
+				, interiorVolume.getHeight()+2, interiorVolume.getDepth()+2);
 		Maze3d maze = new Maze3d(volume);
 		ArrayList<Position> walls = new ArrayList<Position>();
 		
