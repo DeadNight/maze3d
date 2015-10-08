@@ -22,13 +22,15 @@ import algorithms.search.State;
 public class GUI extends CommonView {
 	Maze3d maze;
 	Position characterPosition;
+	String viewPlane;
 	MazeWindow mazeWindow;
 	ObjectInitializer objectInitializer;
 	Thread solutionDisplayerThread;
 	
 	public GUI() {
-		mazeWindow = new MazeWindow("Maze game", 600, 300);
 		objectInitializer = new ObjectInitializer();
+		mazeWindow = new MazeWindow("Maze game", 600, 300);
+		viewPlane = mazeWindow.getSelectedViewPlane();
 		
 		mazeWindow.addNewGameSelectionListener(new SelectionListener() {
 			@Override
@@ -57,19 +59,21 @@ public class GUI extends CommonView {
 		mazeWindow.addViewPlaneSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) throws IllegalArgumentException {
-				switch(mazeWindow.getSelectedViewPlane()) {
+				viewPlane = mazeWindow.getSelectedViewPlane();
+				switch(viewPlane) {
 				case "XZ":
 					mazeWindow.setCrossSectionAxis('Y');
-					return;
+					break;
 				case "XY":
 					mazeWindow.setCrossSectionAxis('Z');
-					return;
+					break;
 				case "ZY":
 					mazeWindow.setCrossSectionAxis('X');
-					return;
+					break;
 				default:
 					throw new IllegalArgumentException();
 				}
+				
 			}
 			
 			@Override
@@ -212,24 +216,78 @@ public class GUI extends CommonView {
 				if(characterPosition != null)
 					switch(e.keyCode) {
 					case SWT.ARROW_UP:
-						moveForward();
+						switch(viewPlane) {
+						case "XZ":
+							moveForward();
+							break;
+						case "XY":
+						case "ZY":
+							moveUp();
+							break;
+						}
 						break;
 					case SWT.ARROW_DOWN:
-						moveBack();
+						switch(viewPlane) {
+						case "XZ":
+							moveBack();
+							break;
+						case "XY":
+						case "ZY":
+							moveDown();
+							break;
+						}
 						break;
 					case SWT.ARROW_LEFT:
-						moveLeft();
+						switch(viewPlane) {
+						case "XZ":
+						case "XY":
+							moveLeft();
+							break;
+						case "ZY":
+							moveBack();
+							break;
+						}
 						break;
 					case SWT.ARROW_RIGHT:
-						moveRight();
+						switch(viewPlane) {
+						case "XZ":
+						case "XY":
+							moveRight();
+							break;
+						case "ZY":
+							moveForward();
+							break;
+						}
 						break;
 					case SWT.PAGE_UP:
-						moveUp();
+						if(viewPlane.equals("XZ"))
+							moveUp();
 						break;
 					case SWT.PAGE_DOWN:
-						moveDown();
+						if(viewPlane.equals("XZ"))
+							moveDown();
 						break;
-					}	
+					case SWT.HOME:
+						switch(viewPlane) {
+						case "XY":
+							moveBack();
+							break;
+						case "ZY":
+							moveLeft();
+							break;
+						}
+						break;
+					case SWT.END:
+						switch(viewPlane) {
+						case "XY":
+							moveForward();
+							break;
+						case "ZY":
+							moveRight();
+							break;
+						}
+						break;
+					}
 			}
 		});
 	}

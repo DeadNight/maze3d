@@ -11,6 +11,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Text;
 
 import algorithms.mazeGenerators.Maze3d;
 import algorithms.mazeGenerators.Position;
@@ -19,6 +20,7 @@ public class MazeWindow extends BasicWindow {
 	Button newGameButton;
 	MazeDisplayer mazeDisplayer;
 	Combo viewPlaneCombo;
+	Text positionText;
 	Button solveButton;
 	Button exitButton;
 	MenuItem newGameMenuItem;
@@ -44,7 +46,7 @@ public class MazeWindow extends BasicWindow {
 		newGameButton.setLayoutData(new GridData(SWT.FILL, SWT.NONE, false, false, 2, 1));
 		
 		mazeDisplayer = new Maze2dDisplayer(shell, SWT.BORDER);
-		mazeDisplayer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 4));
+		mazeDisplayer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 5));
 		
 		Label viewPlaneLabel = new Label(shell, SWT.NONE);
 		viewPlaneLabel.setLayoutData(new GridData(SWT.NONE, SWT.CENTER, false, false));
@@ -54,6 +56,13 @@ public class MazeWindow extends BasicWindow {
 		viewPlaneCombo.setLayoutData(new GridData(SWT.NONE, SWT.NONE, false, false));
 		viewPlaneCombo.setItems(new String[] { "XZ", "XY", "ZY" });
 		viewPlaneCombo.select(0);
+		
+		Label positionLabel = new Label(shell, SWT.NONE);
+		viewPlaneLabel.setLayoutData(new GridData(SWT.NONE, SWT.CENTER, false, false));
+		positionLabel.setText("Position:");
+		
+		positionText = new Text(shell, SWT.BORDER | SWT.READ_ONLY);
+		positionText.setLayoutData(new GridData(SWT.FILL, SWT.NONE, false, false));
 		
 		solveButton = new Button(shell, SWT.PUSH);
 		solveButton.setText("Solve");
@@ -153,6 +162,7 @@ public class MazeWindow extends BasicWindow {
 			public void run() {
 				solveButton.setEnabled(maze != null);
 				mazeDisplayer.setMaze(maze, characterPosition);
+				positionText.setText(characterPosition.toString());
 			}
 		});
 	}
@@ -162,6 +172,7 @@ public class MazeWindow extends BasicWindow {
 			@Override
 			public void run() {
 				mazeDisplayer.setCharacterPosition(position);
+				positionText.setText(position.toString());
 			}
 		});
 	}
