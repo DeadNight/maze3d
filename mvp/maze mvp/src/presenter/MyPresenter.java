@@ -1,15 +1,17 @@
 package presenter;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.function.Function;
 
 import model.Model;
+import view.View;
 import algorithms.mazeGenerators.Position;
 import algorithms.search.Solution;
 
 public class MyPresenter extends CommonPresenter {
-	public MyPresenter(Model model) throws FileNotFoundException, IOException {
-		super(model);
+	public MyPresenter(Model model, Function<ViewTypes, View> createView) throws IOException, URISyntaxException {
+		super(model, createView);
 	}
 	
 	@Override
@@ -256,13 +258,81 @@ public class MyPresenter extends CommonPresenter {
 		viewCommands.put("get properties", new Command() {
 			@Override
 			public void doCommand(String[] args) {
-				view.displayProperties(properties);
+				try {
+					model.loadProperties(propertiesFileName);
+				} catch (IOException | URISyntaxException e) {
+					// ignore - will be handled by modelCommands
+				}
+			}
+		});
+		
+		viewCommands.put("load properties", new Command() {
+			@Override
+			public String getTemplate() {
+				return "<fileName>";
+			}
+			
+			@Override
+			public void doCommand(String[] args) {
+				String fileName = args[0];
+				try {
+					model.loadProperties(fileName);
+				} catch (IOException | URISyntaxException e) {
+					// ignore - will be handled by modelCommands
+				}
+			}
+		});
+		
+		viewCommands.put("edit properties", new Command() {
+			@Override
+			public String getTemplate() {
+				return "<poolSize> <mazeGenerator> <mazeSearcher> <viewType>";
+			}
+			
+			@Override
+			public boolean verifyParams(String[] args) {
+				try {
+					Integer.parseInt(args[0]);
+					MazeGeneratorTypes.valueOf(args[1]);
+					MazeSearcherTypes.valueOf(args[2]);
+					ViewTypes.valueOf(args[3]);
+				} catch (IllegalArgumentException e) {
+					return false;
+				}
+				return true;
+			}
+			
+			@Override
+			public void doCommand(String[] args) {
+				int poolSize = Integer.parseInt(args[0]);
+				MazeGeneratorTypes generator = MazeGeneratorTypes.valueOf(args[1]);
+				MazeSearcherTypes searcher = MazeSearcherTypes.valueOf(args[2]);
+				ViewTypes viewType = ViewTypes.valueOf(args[3]);
+				model.saveProperties(propertiesFileName, poolSize, generator, searcher, viewType);
+			}
+		});
+		
+		viewCommands.put("save properties", new Command() {
+			@Override
+			public String getTemplate() {
+				return "<fileName>";
+			}
+			
+			@Override
+			public void doCommand(String[] args) {
+				String fileName = args[0];
+				Properties properties = model.getProperties();
+				model.saveProperties(fileName, properties.getPoolSize()
+						, properties.getMazeGeneratorType(), properties.getMazeSearcherType()
+						, properties.getViewType());
 			}
 		});
 	}
 
 	@Override
 	void initModelCommands() {
+		super.initModelCommands();
+		
 		modelCommands.put("maze generated", new Command() {
 			@Override
 			public void doCommand(String[] args) {
@@ -286,6 +356,11 @@ public class MyPresenter extends CommonPresenter {
 		});
 		
 		modelCommands.put("maze saved", new Command() {
+			@Override
+			public String getTemplate() {
+				return "<fileName>";
+			}
+			
 			@Override
 			public void doCommand(String[] args) {
 				view.displayMazeSaved();
@@ -406,6 +481,23 @@ public class MyPresenter extends CommonPresenter {
 			@Override
 			public void doCommand(String[] args) {
 				view.displayMazeSolutionNotFound();
+			}
+		});
+		
+		modelCommands.put("properties loaded", new Command() {
+			@Override
+			public void doCommand(String[] args) {
+				view.displayProperties(model.getProperties());
+			}
+		});
+		
+		modelCommands.put("properties saved", new Command() {
+			@Override
+			public void doCommand(String[] args) {
+				Properties properties = model.getProperties();
+				model.setMazeGenerator(getMazeGenerator(properties.getMazeGeneratorType()));
+				model.setMazeSearchAlgorithm(getMazeSearcher(properties.getMazeSearcherType()));
+				view.displayPropertiesSaved();
 			}
 		});
 	}

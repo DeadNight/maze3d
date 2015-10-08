@@ -1,14 +1,20 @@
 package model;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
+import presenter.MazeGeneratorTypes;
+import presenter.MazeSearcherTypes;
+import presenter.Properties;
+import presenter.ViewTypes;
 import algorithms.mazeGenerators.Maze3dGenerator;
 import algorithms.mazeGenerators.Position;
 import algorithms.search.Searcher;
 import algorithms.search.Solution;
 
 public interface Model {
-	byte[] getPropertiesData() throws IOException;
+	void loadProperties(String fileName) throws IOException, URISyntaxException;
+	Properties getProperties();
 	
 	void setMazeGenerator(Maze3dGenerator mazeGenerator);
 	void setMazeSearchAlgorithm(Searcher<Position> mazeSearchAlgorithm);
@@ -42,4 +48,7 @@ public interface Model {
 	Solution<Position> getMazeSolution(String name);
 	Solution<Position> getMazeSolution(String name, int fromX, int fromY, int fromZ);
 	Solution<Position> getMazeSolution(String name, Position from);
+	
+	void saveProperties(String fileName, int poolSize,
+			MazeGeneratorTypes generator, MazeSearcherTypes searcher, ViewTypes viewType);
 }

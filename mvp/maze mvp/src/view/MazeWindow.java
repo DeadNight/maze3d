@@ -49,6 +49,7 @@ public class MazeWindow extends BasicWindow {
 		solveButton = new Button(shell, SWT.PUSH);
 		solveButton.setText("Solve");
 		solveButton.setLayoutData(new GridData(SWT.FILL, SWT.NONE, false, false));
+		solveButton.setEnabled(false);
 		
 		exitButton = new Button(shell, SWT.PUSH);
 		exitButton.setText("Exit");
@@ -137,6 +138,7 @@ public class MazeWindow extends BasicWindow {
 		display.syncExec(new Runnable() {
 			@Override
 			public void run() {
+				solveButton.setEnabled(maze != null);
 				mazeDisplayer.setMaze(maze);
 			}
 		});

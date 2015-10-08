@@ -61,4 +61,6 @@ public interface View {
 	void displayFileNameError();
 
 	void displayProperties(Properties properties);
+
+	void displayPropertiesSaved();
 }

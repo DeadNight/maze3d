@@ -139,6 +139,46 @@ public class GUI extends CommonView {
 			public void widgetDefaultSelected(SelectionEvent e) { }
 		});
 		
+		mazeWindow.addImportPropertiesListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				String fileName = mazeWindow.displayFileDialog(SWT.OPEN, "Open properties"
+						, new String[] { "*.xml" });
+				if(fileName != null) {
+					StringJoiner stringJoiner = new StringJoiner(" ");
+					stringJoiner
+						.add("load properties")
+						.add(new File(fileName).toURI().toString());
+					userCommand = stringJoiner.toString();
+					setChanged();
+					notifyObservers();
+				}
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) { }
+		});
+		
+		mazeWindow.addExportPropertiesListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				String fileName = mazeWindow.displayFileDialog(SWT.SAVE, "Save properties"
+						, new String[] { "*.xml" });
+				if(fileName != null) {
+					StringJoiner stringJoiner = new StringJoiner(" ");
+					stringJoiner
+						.add("save properties")
+						.add(new File(fileName).toURI().toString());
+					userCommand = stringJoiner.toString();
+					setChanged();
+					notifyObservers();
+				}
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) { }
+		});
+		
 		mazeWindow.addKeyListener(new KeyListener() {
 			@Override
 			public void keyReleased(KeyEvent e) { }
@@ -344,10 +384,11 @@ public class GUI extends CommonView {
 	@Override
 	public void displayProperties(Properties properties) {
 		Properties newProperties = (Properties) objectInitializer.initialize(Properties.class, properties);
-		if(newProperties != null && !newProperties.equals(properties)) {
-			if(properties.getViewType() != newProperties.getViewType())
-				mazeWindow.displayInfo("Edit info"
-						, "View type change will take only effect after restarting the game");
+		if(newProperties != null) {
+			if(properties.getViewType() != newProperties.getViewType()
+					|| properties.getPoolSize() != newProperties.getPoolSize())
+				mazeWindow.displayInfo("Changes will take effect later"
+						, "View type and pool size change will take only effect after restarting the game");
 			StringJoiner stringJoiner = new StringJoiner(" ");
 			stringJoiner
 				.add("edit properties")
@@ -359,5 +400,10 @@ public class GUI extends CommonView {
 			setChanged();
 			notifyObservers();
 		}
+	}
+
+	@Override
+	public void displayPropertiesSaved() {
+		mazeWindow.displayInfo("Properties saved", "Properties saved successfully");
 	}
 }

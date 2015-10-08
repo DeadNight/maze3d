@@ -1,13 +1,13 @@
 package presenter;
 
-import java.beans.XMLDecoder;
-import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Observable;
+import java.util.function.Function;
 
 import model.Model;
 import view.View;
@@ -22,23 +22,27 @@ import algorithms.search.MazeManhattanDistance;
 import algorithms.search.Searcher;
 
 public abstract class CommonPresenter implements Presenter {
+	final String propertiesFileName = "properties.xml";
 	Model model;
 	View view;
-	Properties properties;
 	HashMap<String, Command> modelCommands;
 	LinkedHashMap<String, Command> viewCommands;
 	
-	public CommonPresenter(Model model) throws FileNotFoundException, IOException {
+	public CommonPresenter(Model model, Function<ViewTypes, View> createView) throws IOException, URISyntaxException {
 		this.model = model;
 		
-		byte[] propertiesData = model.getPropertiesData();
-		XMLDecoder xmlDecoder = new XMLDecoder(new ByteArrayInputStream(propertiesData));
-		
 		try {
-			properties = (Properties) xmlDecoder.readObject();
-		} finally {
-			xmlDecoder.close();
+			model.loadProperties(propertiesFileName);
+		} catch(FileNotFoundException | URISyntaxException e) {
+			System.err.println("properties.xml not found");
+			throw e;
+		} catch (IOException e) {
+			System.err.println("error loading properties.xml");
+			throw e;
 		}
+		
+		Properties properties = model.getProperties();
+		view = createView.apply(properties.getViewType());
 		
 		model.setMazeGenerator(getMazeGenerator(properties.getMazeGeneratorType()));
 		model.setMazeSearchAlgorithm(getMazeSearcher(properties.getMazeSearcherType()));
@@ -57,16 +61,16 @@ public abstract class CommonPresenter implements Presenter {
 
 	@Override
 	public void start() {
-		model.start(properties.threadPoolSize);
+		model.start(model.getProperties().threadPoolSize);
 		view.start();
 	}
 	
 	@Override
 	public ViewTypes getViewType() {
-		return properties.getViewType();
+		return model.getProperties().getViewType();
 	}
 
-	private Maze3dGenerator getMazeGenerator(MazeGeneratorTypes mazeGenerator) {
+	Maze3dGenerator getMazeGenerator(MazeGeneratorTypes mazeGenerator) {
 		switch(mazeGenerator) {
 		case MY:
 			return new MyMaze3dGenerator();
@@ -76,7 +80,7 @@ public abstract class CommonPresenter implements Presenter {
 		return null;
 	}
 	
-	private Searcher<Position> getMazeSearcher(MazeSearcherTypes mazeSearcher) {
+	Searcher<Position> getMazeSearcher(MazeSearcherTypes mazeSearcher) {
 		switch(mazeSearcher) {
 		case A_STAR_AIR:
 			return new AStarSearcher<Position>(new MazeAirDistance());
@@ -98,7 +102,15 @@ public abstract class CommonPresenter implements Presenter {
 		});
 	}
 	
-	abstract void initModelCommands();
+	void initModelCommands() {
+		modelCommands.put("properties not found", new Command() {
+			@Override
+			public void doCommand(String[] args) {
+				if(view != null)
+					view.displayFileNotFound();
+			}
+		});
+	}
 	
 	@Override
 	public void update(Observable o, Object arg) {

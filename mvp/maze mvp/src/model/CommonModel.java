@@ -3,12 +3,18 @@ package model;
 import io.MyCompressorOutputStream;
 import io.MyDecompressorInputStream;
 
+import java.beans.XMLDecoder;
+import java.beans.XMLEncoder;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Observable;
 import java.util.concurrent.Callable;
@@ -19,6 +25,10 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import presenter.MazeGeneratorTypes;
+import presenter.MazeSearcherTypes;
+import presenter.Properties;
+import presenter.ViewTypes;
 import algorithms.demo.Maze3dSearchable;
 import algorithms.mazeGenerators.Maze3d;
 import algorithms.mazeGenerators.Maze3dGenerator;
@@ -27,7 +37,7 @@ import algorithms.search.Searcher;
 import algorithms.search.Solution;
 
 public abstract class CommonModel extends Observable implements Model {
-	byte[] propertiesData;
+	Properties properties;
 	ExecutorService threadPool;
 	Maze3dGenerator mazeGenerator;
 	Searcher<Position> mazeSearchAlgorithm;
@@ -66,27 +76,70 @@ public abstract class CommonModel extends Observable implements Model {
 			}
 	}
 	
-	@Override
-	public byte[] getPropertiesData() throws IOException {
-		FileInputStream settingsIn;
-		settingsIn = new FileInputStream("properties.xml");
-		
-		BufferedInputStream in = new BufferedInputStream(settingsIn);
-		
-		ByteArrayOutputStream byteArrayOut = new ByteArrayOutputStream();
-		BufferedOutputStream out = new BufferedOutputStream(byteArrayOut);
-		
-		int b;
+	public void loadProperties(String fileName) throws FileNotFoundException, IOException, URISyntaxException {
 		try {
-			while((b = in.read()) != -1)
-				out.write(b);
-			out.flush();
-		} finally {
-			in.close();
-			out.close();
+			fileName = new URI(fileName).getPath();
+		} catch (URISyntaxException e) {
+			notifyObservers(new String[] { "properties not found" });
+			throw e;
+		}
+		XMLDecoder xmlDecoder;
+		try {
+			xmlDecoder = new XMLDecoder(new FileInputStream(fileName));
+		} catch(FileNotFoundException e) {
+			setChanged();
+			notifyObservers(new String[] { "properties not found" });
+			throw e;
 		}
 		
-		return byteArrayOut.toByteArray();
+		try {
+			properties = (Properties) xmlDecoder.readObject();
+			setChanged();
+			notifyObservers(new String[] { "properties loaded" });
+		} catch(ArrayIndexOutOfBoundsException e) {
+			setChanged();
+			notifyObservers(new String[] { "bad file format" });
+			throw e;
+		} finally {
+			xmlDecoder.close();
+		}
+	}
+	
+	@Override
+	public Properties getProperties() {
+		return properties;
+	}
+	
+	@Override
+	public void saveProperties(String fileName, int poolSize,
+			MazeGeneratorTypes generator, MazeSearcherTypes searcher,
+			ViewTypes viewType) {
+		try {
+			fileName = new URI(fileName).getPath();
+		} catch (URISyntaxException e) {
+			notifyObservers(new String[] { "properties not found" });
+		}
+		
+		properties = new Properties();
+		properties.setPoolSize(poolSize);
+		properties.setMazeGeneratorType(generator);
+		properties.setMazeSearcherType(searcher);
+		properties.setViewType(viewType);
+		
+		XMLEncoder xmlEncoder;
+		try {
+			xmlEncoder = new XMLEncoder(new FileOutputStream(fileName));
+		} catch(FileNotFoundException e) {
+			setChanged();
+			notifyObservers(new String[] { "properties not found" });
+			return;
+		}
+		
+		xmlEncoder.writeObject(properties);
+		xmlEncoder.close();
+		
+		setChanged();
+		notifyObservers(new String[] { "properties saved" });
 	}
 	
 	<T> void runTaskInBackground(Task<T> task) {

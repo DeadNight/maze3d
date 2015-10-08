@@ -255,4 +255,9 @@ public class CLI extends CommonView {
 	public void displayProperties(Properties properties) {
 		throw new UnsupportedOperationException();
 	}
+
+	@Override
+	public void displayPropertiesSaved() {
+		out.println("properties saved successfully");
+	}
 }
