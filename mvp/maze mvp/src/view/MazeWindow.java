@@ -6,18 +6,19 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
 import algorithms.mazeGenerators.Maze3d;
 import algorithms.mazeGenerators.Position;
-import algorithms.search.Solution;
-import algorithms.search.State;
 
 public class MazeWindow extends BasicWindow {
 	Button newGameButton;
 	MazeDisplayer mazeDisplayer;
+	Combo viewPlaneCombo;
 	Button solveButton;
 	Button exitButton;
 	MenuItem newGameMenuItem;
@@ -27,7 +28,6 @@ public class MazeWindow extends BasicWindow {
 	MenuItem importPropertiesMenuItem;
 	MenuItem exportPropertiesMenuItem;
 	MenuItem exitMenuItem;
-	Thread solutionDisplayer;
 	
 	public MazeWindow(String title, int width, int height) {
 		super(title, width, height);
@@ -37,23 +37,32 @@ public class MazeWindow extends BasicWindow {
 	void initWidgets() {
 		initMenu();
 		
-		shell.setLayout(new GridLayout(2, false));
+		shell.setLayout(new GridLayout(3, false));
 		
 		newGameButton = new Button(shell, SWT.PUSH);
 		newGameButton.setText("Start new game");
-		newGameButton.setLayoutData(new GridData(SWT.FILL, SWT.NONE, false, false));
+		newGameButton.setLayoutData(new GridData(SWT.FILL, SWT.NONE, false, false, 2, 1));
 		
 		mazeDisplayer = new Maze2dDisplayer(shell, SWT.BORDER);
-		mazeDisplayer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 3));
+		mazeDisplayer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 4));
+		
+		Label viewPlaneLabel = new Label(shell, SWT.NONE);
+		viewPlaneLabel.setLayoutData(new GridData(SWT.NONE, SWT.CENTER, false, false));
+		viewPlaneLabel.setText("View Plane");
+		
+		viewPlaneCombo = new Combo(shell, SWT.READ_ONLY);
+		viewPlaneCombo.setLayoutData(new GridData(SWT.NONE, SWT.NONE, false, false));
+		viewPlaneCombo.setItems(new String[] { "XZ", "XY", "ZY" });
+		viewPlaneCombo.select(0);
 		
 		solveButton = new Button(shell, SWT.PUSH);
 		solveButton.setText("Solve");
-		solveButton.setLayoutData(new GridData(SWT.FILL, SWT.NONE, false, false));
+		solveButton.setLayoutData(new GridData(SWT.FILL, SWT.NONE, false, false, 2, 1));
 		solveButton.setEnabled(false);
 		
 		exitButton = new Button(shell, SWT.PUSH);
 		exitButton.setText("Exit");
-		exitButton.setLayoutData(new GridData(SWT.FILL, SWT.NONE, false, false));
+		exitButton.setLayoutData(new GridData(SWT.FILL, SWT.NONE, false, false, 2, 1));
 	}
 	
 	private void initMenu() {
@@ -100,6 +109,10 @@ public class MazeWindow extends BasicWindow {
 		newGameMenuItem.addSelectionListener(listener);
 	}
 	
+	public void addViewPlaneSelectionListener(SelectionListener listener) {
+		viewPlaneCombo.addSelectionListener(listener);
+	}
+	
 	public void addSolveListener(SelectionListener listener) {
 		solveButton.addSelectionListener(listener);
 	}
@@ -134,82 +147,30 @@ public class MazeWindow extends BasicWindow {
 		mazeDisplayer.addKeyListener(listener);
 	}
 
-	public void displayMaze(Maze3d maze) {
+	public void setMaze(Maze3d maze, Position characterPosition) {
 		display.syncExec(new Runnable() {
 			@Override
 			public void run() {
 				solveButton.setEnabled(maze != null);
-				mazeDisplayer.setMaze(maze);
+				mazeDisplayer.setMaze(maze, characterPosition);
 			}
 		});
 	}
 
-	public void moveForward() {
-		if(solutionDisplayer != null)
-			solutionDisplayer.interrupt();
-		mazeDisplayer.moveForward();
-	}
-
-	public void moveBack() {
-		if(solutionDisplayer != null)
-			solutionDisplayer.interrupt();
-		mazeDisplayer.moveBack();
-	}
-	
-	public void moveLeft() {
-		if(solutionDisplayer != null)
-			solutionDisplayer.interrupt();
-		mazeDisplayer.moveLeft();
-	}
-	
-	public void moveRight() {
-		if(solutionDisplayer != null)
-			solutionDisplayer.interrupt();
-		mazeDisplayer.moveRight();
-	}
-
-	public void moveUp() {
-		if(solutionDisplayer != null)
-			solutionDisplayer.interrupt();
-		mazeDisplayer.moveUp();
-	}
-
-	public void moveDown() {
-		if(solutionDisplayer != null)
-			solutionDisplayer.interrupt();
-		mazeDisplayer.moveDown();
-	}
-	
-	public Position getCharacterPosition() {
-		return mazeDisplayer.getCaracterPosition();
-	}
-
-	public void displaySolution(Solution<Position> solution) {
-		if(solutionDisplayer != null)
-			return;
-		solutionDisplayer = new Thread(new Runnable() {
+	public void setCharacterPosition(Position position) {
+		display.syncExec(new Runnable() {
 			@Override
 			public void run() {
-				for(State<Position> s : solution.getSequence()) {
-					// enable thread interruption
-					if(Thread.interrupted())
-						break;
-					display.syncExec(new Runnable() {
-						@Override
-						public void run() {
-							mazeDisplayer.setCharacterPosition(new Position(s.getState()));
-						}
-					});
-					try {
-						Thread.sleep(500);
-					} catch (InterruptedException e) {
-						// enable thread interruption
-						break;
-					}
-				}
-				solutionDisplayer = null;
+				mazeDisplayer.setCharacterPosition(position);
 			}
 		});
-		solutionDisplayer.start();
+	}
+
+	public void setCrossSectionAxis(char c) {
+		mazeDisplayer.setCrossSectionAxis(c);
+	}
+
+	public String getSelectedViewPlane() {
+		return viewPlaneCombo.getText();
 	}
 }

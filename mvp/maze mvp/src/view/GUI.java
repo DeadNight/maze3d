@@ -17,10 +17,14 @@ import algorithms.mazeGenerators.Maze3d;
 import algorithms.mazeGenerators.Position;
 import algorithms.mazeGenerators.Volume;
 import algorithms.search.Solution;
+import algorithms.search.State;
 
 public class GUI extends CommonView {
+	Maze3d maze;
+	Position characterPosition;
 	MazeWindow mazeWindow;
 	ObjectInitializer objectInitializer;
+	Thread solutionDisplayerThread;
 	
 	public GUI() {
 		mazeWindow = new MazeWindow("Maze game", 600, 300);
@@ -50,11 +54,31 @@ public class GUI extends CommonView {
 			}
 		});
 		
+		mazeWindow.addViewPlaneSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) throws IllegalArgumentException {
+				switch(mazeWindow.getSelectedViewPlane()) {
+				case "XZ":
+					mazeWindow.setCrossSectionAxis('Y');
+					return;
+				case "XY":
+					mazeWindow.setCrossSectionAxis('Z');
+					return;
+				case "ZY":
+					mazeWindow.setCrossSectionAxis('X');
+					return;
+				default:
+					throw new IllegalArgumentException();
+				}
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) { }
+		});
+		
 		mazeWindow.addSolveListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				Position characterPosition = mazeWindow.getCharacterPosition();
-				
 				StringJoiner stringJoiner = new StringJoiner(" ");
 				stringJoiner
 					.add("solve from")
@@ -185,26 +209,27 @@ public class GUI extends CommonView {
 			
 			@Override
 			public void keyPressed(KeyEvent e) {
-				switch(e.keyCode) {
-				case SWT.ARROW_UP:
-					mazeWindow.moveForward();
-					break;
-				case SWT.ARROW_DOWN:
-					mazeWindow.moveBack();
-					break;
-				case SWT.ARROW_LEFT:
-					mazeWindow.moveLeft();
-					break;
-				case SWT.ARROW_RIGHT:
-					mazeWindow.moveRight();
-					break;
-				case SWT.PAGE_UP:
-					mazeWindow.moveUp();
-					break;
-				case SWT.PAGE_DOWN:
-					mazeWindow.moveDown();
-					break;
-				}	
+				if(characterPosition != null)
+					switch(e.keyCode) {
+					case SWT.ARROW_UP:
+						moveForward();
+						break;
+					case SWT.ARROW_DOWN:
+						moveBack();
+						break;
+					case SWT.ARROW_LEFT:
+						moveLeft();
+						break;
+					case SWT.ARROW_RIGHT:
+						moveRight();
+						break;
+					case SWT.PAGE_UP:
+						moveUp();
+						break;
+					case SWT.PAGE_DOWN:
+						moveDown();
+						break;
+					}	
 			}
 		});
 	}
@@ -216,6 +241,8 @@ public class GUI extends CommonView {
 	
 	@Override
 	public void stop() {
+		if(solutionDisplayerThread != null)
+			solutionDisplayerThread.interrupt();
 		mazeWindow.close();
 	}
 
@@ -230,7 +257,6 @@ public class GUI extends CommonView {
 			return;
 		}
 		
-		Maze3d maze;
 		try {
 			maze = new Maze3d(mazeData);
 		} catch (IOException e) {
@@ -239,7 +265,8 @@ public class GUI extends CommonView {
 			return;
 		}
 		
-		mazeWindow.displayMaze(maze);
+		characterPosition = maze.getStartPosition();
+		mazeWindow.setMaze(maze, characterPosition);
 	}
 
 	@Override
@@ -249,7 +276,6 @@ public class GUI extends CommonView {
 
 	@Override
 	public void displayMazeSolved(String name) {
-		Position characterPosition = mazeWindow.getCharacterPosition();
 		StringJoiner stringJoiner = new StringJoiner(" ");
 		stringJoiner
 			.add("display solution from")
@@ -265,7 +291,29 @@ public class GUI extends CommonView {
 
 	@Override
 	public void displayMazeSolution(Solution<Position> solution) {
-		mazeWindow.displaySolution(solution);
+		if(solutionDisplayerThread != null)
+			return;
+		solutionDisplayerThread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				for(State<Position> s : solution.getSequence()) {
+					// enable thread interruption
+					if(Thread.interrupted())
+						break;
+					
+					characterPosition = new Position(s.getState());
+					mazeWindow.setCharacterPosition(characterPosition);
+					try {
+						Thread.sleep(500);
+					} catch (InterruptedException e) {
+						// enable thread interruption
+						break;
+					}
+				}
+				solutionDisplayerThread = null;
+			}
+		});
+		solutionDisplayerThread.start();
 	}
 
 	@Override
@@ -405,5 +453,38 @@ public class GUI extends CommonView {
 	@Override
 	public void displayPropertiesSaved() {
 		mazeWindow.displayInfo("Properties saved", "Properties saved successfully");
+	}
+
+	private void moveForward() {
+		moveCharacter(new Position(characterPosition).moveForward());
+	}
+
+	private void moveBack() {
+		moveCharacter(new Position(characterPosition).moveBack());
+	}
+
+	private void moveLeft() {
+		moveCharacter(new Position(characterPosition).moveLeft());
+	}
+
+	private void moveRight() {
+		moveCharacter(new Position(characterPosition).moveRight());
+	}
+
+	private void moveUp() {
+		moveCharacter(new Position(characterPosition).moveUp());
+	}
+	
+	private void moveDown() {
+		moveCharacter(new Position(characterPosition).moveDown());
+	}
+	
+	private void moveCharacter(Position target) {
+		if(solutionDisplayerThread != null)
+			solutionDisplayerThread.interrupt();
+		if(maze.inBounds(target) && maze.isPath(target)) {
+			characterPosition = target;
+			mazeWindow.setCharacterPosition(target);
+		}
 	}
 }

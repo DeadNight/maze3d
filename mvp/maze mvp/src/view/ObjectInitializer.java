@@ -12,7 +12,9 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
@@ -66,8 +68,19 @@ public class ObjectInitializer {
 					Class<?> paramType = setter.getParameters()[0].getType();
 					
 					if(paramType.isAssignableFrom(int.class)) {
-						Spinner spinner = new Spinner(shell, SWT.READ_ONLY);
+						Spinner spinner = new Spinner(shell, SWT.NONE);
 						spinner.setLayoutData(new GridData(SWT.NONE, SWT.NONE, false, false));
+						spinner.addListener(SWT.Verify, new Listener() {
+							@Override
+							public void handleEvent(Event event) {
+								if(event.text != null && !event.text.equals(""))
+									try {
+										Integer.parseInt(event.text);
+									} catch (NumberFormatException e) {
+										event.doit = false;
+									}
+							}
+						});
 						spinner.addModifyListener(new ModifyListener() {
 							@Override
 							public void modifyText(ModifyEvent event) {

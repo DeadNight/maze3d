@@ -4,6 +4,7 @@ import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 
 import algorithms.mazeGenerators.Position;
 
@@ -11,10 +12,12 @@ public class Maze2dDisplayer extends MazeDisplayer {
 	public Maze2dDisplayer(Composite parent, int style) {
 		super(parent, style);
 		
-		Color black = new Color(getDisplay(), 0, 0, 0);
-		Color white = new Color(getDisplay(), 255, 255, 255);
-		Color red = new Color(getDisplay(), 200, 50, 50);
-		Color green = new Color(getDisplay(), 50, 200, 50);
+		Display display = getDisplay();
+		Color black = new Color(display, 0, 0, 0);
+		Color white = new Color(display, 255, 255, 255);
+		Color red = new Color(display, 200, 50, 50);
+		Color green = new Color(display, 50, 200, 50);
+		Color gray = new Color(display, 200, 200, 200);
 		
 		setBackground(white);
 		
@@ -50,7 +53,7 @@ public class Maze2dDisplayer extends MazeDisplayer {
 							e.gc.drawPolygon(new int[] { (int)backX, (int)backY, (int)frontX, (int)frontY
 									, (int)(frontX + frontWidth), (int)frontY, (int)(backX + backWidth), (int)backY });
 							
-							e.gc.setBackground(new Color(getDisplay(), 200, 200, 200));
+							e.gc.setBackground(gray);
 							// wall left
 							if(x-1 > 0 && maze.isPath(x-1, y, z))
 								e.gc.fillPolygon(new int[] { (int)backX, (int)backY, (int)backX, (int)(backY - height/2)
