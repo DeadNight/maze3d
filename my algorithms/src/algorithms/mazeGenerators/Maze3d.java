@@ -123,22 +123,44 @@ public class Maze3d {
 	}
 	
 	/**
+	 * Test whether a given position is in the maze
+	 * @param pos The position
+	 * @return boolean Whether the position is in the maze
+	 */
+	public boolean inBounds(Position pos) {
+		return inBounds(pos.getX(), pos.getY(), pos.getZ());
+	}
+	
+	/**
+	 * Test whether a given x,y,z coordinates are in the maze
+	 * @param pos The position
+	 * @return boolean Whether the coordinates are in the maze
+	 */
+	public boolean inBounds(int x, int y, int z) {
+		return x >= 0 && x < getWidth() && y >= 0 && y < getHeight() && z >= 0 && z < getDepth();
+	}
+	
+	/**
 	 * Get the value at a given position in the maze
 	 * @param pos The position
 	 * @return int The value
+	 * @throws IndexOutOfBoundsException When the position is outside of the maze
 	 */
-	public int getCell(Position pos) {
+	public int getCell(Position pos) throws IndexOutOfBoundsException {
 		return getCell(pos.getX(), pos.getY(), pos.getZ());
 	}
 	
 	/**
-	 * Get the value at a given x,y,z coordinate in the maze
+	 * Get the value at a given x,y,z coordinates in the maze
 	 * @param x The x coordinate
 	 * @param y The y coordinate
 	 * @param z The z coordinate
 	 * @return int The value
+	 * @throws IndexOutOfBoundsException When the coordinates are outside of the maze
 	 */
-	public int getCell(int x, int y, int z) {
+	public int getCell(int x, int y, int z) throws IndexOutOfBoundsException {
+		if(!inBounds(x, y, z))
+			throw new IndexOutOfBoundsException();
 		return maze[y][z][x];
 	}
 	
