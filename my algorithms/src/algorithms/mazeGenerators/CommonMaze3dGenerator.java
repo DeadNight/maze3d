@@ -43,27 +43,54 @@ public abstract class CommonMaze3dGenerator implements Maze3dGenerator {
 	 * @return Position The position
 	 */
 	protected Position getRandomEntrance(Volume volume) {
-		int entranceX = -1;
-		int entranceY = -1;
-		int entranceZ = -1;
+		int entranceX;
+		int entranceY;
+		int entranceZ;
 		
 		int outerWallAxis = rand.nextInt(3);
 		switch(outerWallAxis) {
 		case 0:
 			entranceX = rand.nextInt(2) * (volume.getWidth() - 1);
-			entranceY = 1 + rand.nextInt(volume.getHeight() - 3);
-			entranceZ = 1 + rand.nextInt(volume.getDepth() - 3);
+			
+			if(volume.getHeight() == 3)
+				entranceY = 1;
+			else
+				entranceY = 1 + rand.nextInt(volume.getHeight() - 3);
+			
+			if(volume.getDepth() == 3)
+				entranceZ = 1;
+			else
+				entranceZ = 1 + rand.nextInt(volume.getDepth() - 3);
 			break;
 		case 1:
-			entranceX = 1 + rand.nextInt(volume.getWidth() - 3);
+			if(volume.getWidth() == 3)
+				entranceX = 1;
+			else
+				entranceX = 1 + rand.nextInt(volume.getWidth() - 3);
+			
 			entranceY = rand.nextInt(2) * (volume.getHeight() - 1);
-			entranceZ = 1 + rand.nextInt(volume.getDepth() - 3);
+			
+			if(volume.getDepth() == 3)
+				entranceZ = 1;
+			else
+				entranceZ = 1 + rand.nextInt(volume.getDepth() - 3);
 			break;
 		case 2:
-			entranceX = 1 + rand.nextInt(volume.getWidth() - 3);
-			entranceY = 1 + rand.nextInt(volume.getHeight() - 3);
+			if(volume.getWidth() == 3)
+				entranceX = 1;
+			else
+				entranceX = 1 + rand.nextInt(volume.getWidth() - 3);
+			
+			if(volume.getHeight() == 3)
+				entranceY = 1;
+			else
+				entranceY = 1 + rand.nextInt(volume.getHeight() - 3);
+			
 			entranceZ = rand.nextInt(2) * (volume.getDepth() - 1);
 			break;
+		default:
+			// this shouldn't happen, outerWallAxis must be 0, 1 or 2
+			return null;
 		}
 		
 		return new Position(entranceX, entranceY, entranceZ);
