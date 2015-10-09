@@ -178,11 +178,26 @@ public class MazeWindow extends BasicWindow {
 	}
 
 	public void setViewPlane(String viewPlane) {
-		viewPlaneCombo.select(viewPlaneCombo.indexOf(viewPlane));
-		mazeDisplayer.setViewPlane(viewPlane);
+		display.syncExec(new Runnable() {
+			@Override
+			public void run() {
+				viewPlaneCombo.select(viewPlaneCombo.indexOf(viewPlane));
+				mazeDisplayer.setViewPlane(viewPlane);
+			}
+		});
 	}
 
 	public String getSelectedViewPlane() {
 		return viewPlaneCombo.getText();
+	}
+
+	public void setSolved(boolean solved) {
+		display.syncExec(new Runnable() {
+			@Override
+			public void run() {
+				solveButton.setEnabled(!solved);
+				mazeDisplayer.setSolved(solved);
+			}
+		});
 	}
 }

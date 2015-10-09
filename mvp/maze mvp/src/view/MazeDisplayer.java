@@ -10,6 +10,7 @@ public abstract class MazeDisplayer extends Canvas {
 	Maze3d maze;
 	Position characterPosition;
 	String viewPlane;
+	boolean solved;
 	
 	public MazeDisplayer(Composite parent, int style) {
 		super(parent, style);
@@ -28,6 +29,11 @@ public abstract class MazeDisplayer extends Canvas {
 
 	public void setViewPlane(String plane) {
 		viewPlane = plane;
+		redraw();
+	}
+
+	public void setSolved(boolean solved) {
+		this.solved = solved;
 		redraw();
 	}
 }

@@ -26,6 +26,7 @@ public class GUI extends CommonView {
 	MazeWindow mazeWindow;
 	ObjectInitializer objectInitializer;
 	Thread solutionDisplayerThread;
+	boolean solved;
 	
 	public GUI() {
 		objectInitializer = new ObjectInitializer();
@@ -202,7 +203,7 @@ public class GUI extends CommonView {
 			
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if(characterPosition != null)
+				if(characterPosition != null && !solved)
 					switch(e.keyCode) {
 					case SWT.ARROW_UP:
 						switch(viewPlane) {
@@ -314,6 +315,7 @@ public class GUI extends CommonView {
 		
 		characterPosition = maze.getStartPosition();
 		mazeWindow.setMaze(maze, characterPosition);
+		mazeWindow.setSolved(solved = false);
 	}
 
 	@Override
@@ -350,6 +352,8 @@ public class GUI extends CommonView {
 					
 					characterPosition = new Position(s.getState());
 					mazeWindow.setCharacterPosition(characterPosition);
+					if(maze.getGoalPosition().equals(characterPosition))
+						mazeWindow.setSolved(solved = true);
 					try {
 						Thread.sleep(500);
 					} catch (InterruptedException e) {
@@ -532,6 +536,8 @@ public class GUI extends CommonView {
 		if(maze.inBounds(target) && maze.isPath(target)) {
 			characterPosition = target;
 			mazeWindow.setCharacterPosition(target);
+			if(maze.getGoalPosition().equals(target))
+				mazeWindow.setSolved(solved = true);
 		}
 	}
 }

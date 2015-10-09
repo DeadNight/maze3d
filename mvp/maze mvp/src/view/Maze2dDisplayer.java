@@ -3,6 +3,7 @@ package view;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
@@ -14,6 +15,7 @@ public class Maze2dDisplayer extends MazeDisplayer {
 	private final Color red;
 	private final Color green;
 	private final Color gray;
+	private final Image winImage;
 	
 	public Maze2dDisplayer(Composite parent, int style) {
 		super(parent, style);
@@ -24,6 +26,7 @@ public class Maze2dDisplayer extends MazeDisplayer {
 		red = new Color(display, 200, 50, 50);
 		green = new Color(display, 50, 200, 50);
 		gray = new Color(display, 200, 200, 200);
+		winImage = new Image(display, "./resources/win.jpg");
 		
 		setBackground(white);
 		
@@ -44,6 +47,22 @@ public class Maze2dDisplayer extends MazeDisplayer {
 					drawXCrossSection(e);
 					break;
 				}
+				
+				double imageRatio = (double)winImage.getBounds().width / winImage.getBounds().height;
+				double targetRatio = (double)getSize().x / getSize().y;
+				int targetWidth;
+				int targetHeight;
+				if(imageRatio > targetRatio) {
+					targetWidth = (int)(getSize().x*.5);
+					targetHeight = (int)(targetWidth * imageRatio);
+				} else {
+					targetHeight = (int)(getSize().y*.5);
+					targetWidth = (int)(targetHeight / imageRatio);
+				}
+				
+				if(solved)
+					e.gc.drawImage(winImage, 0, 0, winImage.getBounds().width, winImage.getBounds().height
+							, (getSize().x - targetWidth)/2, (getSize().y - targetHeight)/2, targetWidth, targetHeight);
 			}
 		});
 	}
