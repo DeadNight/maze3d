@@ -52,7 +52,7 @@ public class MyMaze3dGenerator extends CommonMaze3dGenerator {
 		// choose a different random exit, and make sure it's connected to a path
 		do {
 			pos = getRandomEntrance(volume);
-		} while(pos.equals(maze.getStartPosition()) || maze.getPossibleMoves(pos).size() == 0);
+		} while(pos.equals(maze.getStartPosition()) || maze.getPossibleMoves(pos).size() != 1);
 		
 		maze.setGoalPosition(pos);
 		
