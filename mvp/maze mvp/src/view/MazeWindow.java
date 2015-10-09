@@ -177,8 +177,9 @@ public class MazeWindow extends BasicWindow {
 		});
 	}
 
-	public void setCrossSectionAxis(char c) {
-		mazeDisplayer.setCrossSectionAxis(c);
+	public void setViewPlane(String viewPlane) {
+		viewPlaneCombo.select(viewPlaneCombo.indexOf(viewPlane));
+		mazeDisplayer.setViewPlane(viewPlane);
 	}
 
 	public String getSelectedViewPlane() {

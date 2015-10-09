@@ -29,7 +29,7 @@ public class GUI extends CommonView {
 	
 	public GUI() {
 		objectInitializer = new ObjectInitializer();
-		mazeWindow = new MazeWindow("Maze game", 600, 300);
+		mazeWindow = new MazeWindow("Maze game", 600, 600);
 		viewPlane = mazeWindow.getSelectedViewPlane();
 		
 		mazeWindow.addNewGameSelectionListener(new SelectionListener() {
@@ -58,22 +58,11 @@ public class GUI extends CommonView {
 		
 		mazeWindow.addViewPlaneSelectionListener(new SelectionListener() {
 			@Override
-			public void widgetSelected(SelectionEvent e) throws IllegalArgumentException {
-				viewPlane = mazeWindow.getSelectedViewPlane();
-				switch(viewPlane) {
-				case "XZ":
-					mazeWindow.setCrossSectionAxis('Y');
-					break;
-				case "XY":
-					mazeWindow.setCrossSectionAxis('Z');
-					break;
-				case "ZY":
-					mazeWindow.setCrossSectionAxis('X');
-					break;
-				default:
-					throw new IllegalArgumentException();
+			public void widgetSelected(SelectionEvent e) {
+				if(viewPlane != mazeWindow.getSelectedViewPlane()) {
+					viewPlane = mazeWindow.getSelectedViewPlane();
+					mazeWindow.setViewPlane(viewPlane);
 				}
-				
 			}
 			
 			@Override

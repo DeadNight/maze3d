@@ -9,11 +9,11 @@ import algorithms.mazeGenerators.Position;
 public abstract class MazeDisplayer extends Canvas {
 	Maze3d maze;
 	Position characterPosition;
-	char crossSectionAxis;
+	String viewPlane;
 	
 	public MazeDisplayer(Composite parent, int style) {
 		super(parent, style);
-		crossSectionAxis = 'Y';
+		viewPlane = "XZ";
 	}
 
 	public void setMaze(Maze3d maze, Position characterPosition) {
@@ -26,10 +26,8 @@ public abstract class MazeDisplayer extends Canvas {
 		redraw();
 	}
 
-	public void setCrossSectionAxis(char c) throws IllegalArgumentException {
-		if(!(c == 'X' || c == 'Y' || c == 'Z'))
-			throw new IllegalArgumentException();
-		crossSectionAxis = c;
+	public void setViewPlane(String plane) {
+		viewPlane = plane;
 		redraw();
 	}
 }

@@ -33,23 +33,19 @@ public class Maze2dDisplayer extends MazeDisplayer {
 				if(maze == null)
 					return;
 				
-				switch(crossSectionAxis) {
-				case 'X':
-					drawXCrossSection(e);
-					break;
-				case 'Y':
+				switch(viewPlane) {
+				case "XZ":
 					drawYCrossSection(e);
 					break;
-				case 'Z':
+				case "XY":
 					drawZCrossSection(e);
+					break;
+				case "ZY":
+					drawXCrossSection(e);
 					break;
 				}
 			}
 		});
-	}
-	
-	private void drawXCrossSection(PaintEvent e) {
-		
 	}
 	
 	private void drawYCrossSection(PaintEvent e) {
@@ -159,19 +155,26 @@ public class Maze2dDisplayer extends MazeDisplayer {
 				double rightY = getSize().y - (getSize().y * rightPerspective*.15 + y*rightHeight);
 			
 				if(maze.isWall(x, y, z)) {
-					e.gc.setBackground(black);
+					e.gc.setBackground(gray);
 					// wall front
 					e.gc.drawPolygon(new int[] { (int)leftX, (int)leftY, (int)rightX, (int)rightY
 							, (int)rightX, (int)(rightY - rightHeight), (int)leftX, (int)(leftY - leftHeight) });
 					
 					// wall top
-					e.gc.drawPolygon(new int[] { (int)leftX, (int)leftY, (int)rightX, (int)rightY
-							, (int)(rightX - width/2), (int)rightY, (int)(leftX - width/2), (int)leftY });
+					if(y < maze.getHeight() - 1 && maze.isPath(x, y+1, z))
+						e.gc.fillPolygon(new int[] { (int)leftX, (int)(leftY - leftHeight), (int)rightX, (int)(rightY - rightHeight)
+								, (int)(rightX - width/2), (int)(rightY - rightHeight), (int)(leftX - width/2), (int)(leftY - leftHeight) });
 					
 					// wall bottom
-					e.gc.drawPolygon(new int[] { (int)leftX, (int)(leftY - leftHeight), (int)rightX, (int)(rightY - rightHeight)
-							, (int)(rightX - width/2), (int)(rightY - rightHeight), (int)(leftX - width/2), (int)(leftY - leftHeight) });
+					if(y > 0 && maze.isPath(x, y-1, z))
+						e.gc.fillPolygon(new int[] { (int)leftX, (int)leftY, (int)rightX, (int)rightY
+								, (int)(rightX - width/2), (int)rightY, (int)(leftX - width/2), (int)leftY });
 					
+					// wall right
+					e.gc.fillPolygon(new int[] { (int)rightX, (int)rightY, (int)rightX, (int)(rightY - rightHeight)
+							, (int)(rightX - width/2), (int)(rightY - rightHeight), (int)(rightX - width/2), (int)rightY });
+					
+					e.gc.setBackground(black);
 					// wall back
 					e.gc.fillPolygon(new int[] { (int)(leftX - width/2), (int)leftY, (int)(rightX - width/2), (int)rightY
 							, (int)(rightX - width/2), (int)(rightY - rightHeight), (int)(leftX - width/2), (int)(leftY - leftHeight) });
@@ -202,24 +205,100 @@ public class Maze2dDisplayer extends MazeDisplayer {
 									, (int)(leftX - width/4 + width/3), (int)(leftY - leftHeight/4 - (leftY - rightY)/3));
 							e.gc.drawLine((int)(leftX - width/4), (int)(leftY - leftHeight/2)
 									, (int)(leftX - width/4 + width/3), (int)(leftY - 3*leftHeight/4 - (leftY - rightY)/3));
-							
-//							e.gc.drawLine((int)(backX + backWidth/2), (int)(backY - height/4)
-//									, (int)(backX + backWidth/4 + (frontX-backX)/3), (int)(backY - height/4 + height/3));
-//							e.gc.drawLine((int)(backX + backWidth/2), (int)(backY - height/4)
-//									, (int)(backX + 3*backWidth/4 + (frontX-backX)/3), (int)(backY - height/4 + height/3));
 						}
 						
 						if(z > 0 && maze.isPath(x, y, z-1)) {
-							// down arrowhead
+							// right arrowhead
 							e.gc.drawLine((int)(rightX - width/2), (int)(rightY - rightHeight/2)
 									, (int)(rightX - width/2 - width/3), (int)(leftY - leftHeight/4 - (leftY - rightY)/3));
 							e.gc.drawLine((int)(rightX - width/2), (int)(rightY - rightHeight/2)
 									, (int)(rightX - width/2 - width/3), (int)(leftY - 3*leftHeight/4 - (leftY - rightY)/3));
-							
-//							e.gc.drawLine((int)(frontX + frontWidth/2), (int)(frontY - height/2)
-//									, (int)(frontX + frontWidth/4 + (backX-frontX)/3), (int)(frontY - height/2 - height/3));
-//							e.gc.drawLine((int)(frontX + frontWidth/2), (int)(frontY - height/2)
-//									, (int)(frontX + 3*frontWidth/4 + (backX-frontX)/3), (int)(frontY - height/2 - height/3));
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	private void drawXCrossSection(PaintEvent e) {
+		e.gc.setForeground(black);
+		
+		double width = (double)getSize().x / maze.getDepth();
+		
+		int x = characterPosition.getX();
+		for(int z = 0; z < maze.getDepth() ; ++z) {
+			double rightPerspective = 1 - (double)z/maze.getDepth();
+			double leftPerspective = 1 - (double)(z+1)/maze.getDepth();
+			
+			double leftHeight = (getSize().y - (getSize().y * leftPerspective*.3)) / maze.getHeight();
+			double rightHeight = (getSize().y - (getSize().y * rightPerspective*.3)) / maze.getHeight();
+			
+			for(int y = 0; y < maze.getHeight() ; ++y) {
+				double rightX = getSize().x - z * width;
+				double rightY = getSize().y - (getSize().y * rightPerspective*.15 + y*rightHeight);
+				
+				double leftX = rightX - width;
+				double leftY = getSize().y - (getSize().y * leftPerspective*.15 + y*leftHeight);
+			
+				if(maze.isWall(x, y, z)) {
+					e.gc.setBackground(gray);
+					// wall front
+					e.gc.drawPolygon(new int[] { (int)leftX, (int)leftY, (int)rightX, (int)rightY
+							, (int)rightX, (int)(rightY - rightHeight), (int)leftX, (int)(leftY - leftHeight) });
+					
+					// wall top
+					if(y < maze.getHeight() - 1 && maze.isPath(x, y+1, z))
+					e.gc.fillPolygon(new int[] { (int)leftX, (int)(leftY - leftHeight), (int)rightX, (int)(rightY - rightHeight)
+							, (int)(rightX + width/2), (int)(rightY - rightHeight), (int)(leftX + width/2), (int)(leftY - leftHeight) });
+					
+					// wall bottom
+					if(y > 0 && maze.isPath(x, y-1, z))
+					e.gc.fillPolygon(new int[] { (int)leftX, (int)leftY, (int)rightX, (int)rightY
+							, (int)(rightX + width/2), (int)rightY, (int)(leftX + width/2), (int)leftY });
+					
+					// wall left
+					e.gc.fillPolygon(new int[] { (int)leftX, (int)leftY, (int)leftX, (int)(leftY - leftHeight)
+							, (int)(leftX + width/2), (int)(leftY - leftHeight), (int)(leftX + width/2), (int)leftY });
+					
+					e.gc.setBackground(black);
+					// wall back
+					e.gc.fillPolygon(new int[] { (int)(leftX + width/2), (int)leftY, (int)(rightX + width/2), (int)rightY
+							, (int)(rightX + width/2), (int)(rightY - rightHeight), (int)(leftX + width/2), (int)(leftY - leftHeight) });
+				} else {
+					if(new Position(x, y, z).equals(maze.getGoalPosition())) {
+						// goal
+						e.gc.setBackground(green);
+						e.gc.fillPolygon(new int[] { (int)leftX, (int)leftY, (int)rightX, (int)rightY
+								, (int)rightX, (int)(rightY - rightHeight), (int)leftX, (int)(leftY - leftHeight) });
+					}
+					
+					if(new Position(x, y, z).equals(characterPosition)) {
+						// character
+						e.gc.setBackground(red);
+						e.gc.fillOval((int)(leftX + width*.1), (int)(rightY - rightHeight*.9)
+								, (int)(width*1.5 - width*.2), (int)(rightHeight*.8));
+					}
+					
+					if((x < maze.getWidth() - 1 && maze.isPath(x+1, y, z))
+							|| (x > 0 && maze.isPath(x-1, y, z))) {
+						// arrow line
+						e.gc.drawLine((int)(leftX + width/2), (int)(leftY - leftHeight/2)
+								, (int)(rightX + width/4), (int)(rightY - rightHeight/2));
+						
+						if(x < maze.getWidth() - 1 && maze.isPath(x+1, y, z)) {
+							// right arrowhead
+							e.gc.drawLine((int)(rightX + width/4), (int)(rightY - rightHeight/2)
+									, (int)(rightX + width/4 - width/3), (int)(leftY - leftHeight/4 - (leftY - rightY)/3));
+							e.gc.drawLine((int)(rightX + width/4), (int)(rightY - rightHeight/2)
+									, (int)(rightX + width/4 - width/3), (int)(leftY - 3*leftHeight/4 - (leftY - rightY)/3));
+						}
+						
+						if(x > 0 && maze.isPath(x-1, y, z)) {
+							// left arrowhead
+							e.gc.drawLine((int)(leftX + width/2), (int)(leftY - leftHeight/2)
+									, (int)(leftX + width/2 + width/3), (int)(leftY - leftHeight/4 - (leftY - rightY)/3));
+							e.gc.drawLine((int)(leftX + width/2), (int)(leftY - leftHeight/2)
+									, (int)(leftX + width/2 + width/3), (int)(leftY - 3*leftHeight/4 - (leftY - rightY)/3));
 						}
 					}
 				}
