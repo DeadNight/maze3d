@@ -10,7 +10,15 @@ import presenter.MazeSearcherTypes;
 import presenter.Properties;
 import presenter.ViewTypes;
 
+/**
+ * @author Nir Leibovitch
+ * <h1>Setup application properties</h1>
+ */
 public class Setup {
+	/**
+	 * Create / edit properties.xml with default settings
+	 * @param args Startup arguments
+	 */
 	public static void main(String[] args) {
 		XMLEncoder xmlEncoder;
 		try {

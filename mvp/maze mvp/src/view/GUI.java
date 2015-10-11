@@ -19,6 +19,10 @@ import algorithms.mazeGenerators.Volume;
 import algorithms.search.Solution;
 import algorithms.search.State;
 
+/**
+ * @author Nir Leibovitch
+ * <h1>Graphical User Interface implementation of the View Façade</h1>
+ */
 public class GUI extends CommonView {
 	Maze3d maze;
 	Position characterPosition;
@@ -28,10 +32,14 @@ public class GUI extends CommonView {
 	Thread solutionDisplayerThread;
 	boolean solved;
 	
+	/**
+	 * Initiate the GUI View Façade instance
+	 */
 	public GUI() {
 		objectInitializer = new ObjectInitializer();
+		viewPlane = "XZ";
 		mazeWindow = new MazeWindow("Maze game", 600, 600);
-		viewPlane = mazeWindow.getSelectedViewPlane();
+		mazeWindow.setViewPlane(viewPlane);
 		
 		mazeWindow.addNewGameSelectionListener(new SelectionListener() {
 			@Override
@@ -468,12 +476,6 @@ public class GUI extends CommonView {
 	public void displayMazeSolutionNotFound() {
 		mazeWindow.displayError("Error", "Solution not found");
 	}
-	
-	private void displayMaze(String name) {
-		userCommand = "display " + name;
-		setChanged();
-		notifyObservers();
-	}
 
 	@Override
 	public void displayFileNameError() {
@@ -504,6 +506,12 @@ public class GUI extends CommonView {
 	@Override
 	public void displayPropertiesSaved() {
 		mazeWindow.displayInfo("Properties saved", "Properties saved successfully");
+	}
+	
+	private void displayMaze(String name) {
+		userCommand = "display " + name;
+		setChanged();
+		notifyObservers();
 	}
 
 	private void moveForward() {

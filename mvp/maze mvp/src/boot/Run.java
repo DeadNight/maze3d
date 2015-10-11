@@ -17,15 +17,23 @@ import view.CommonView;
 import view.GUI;
 import view.View;
 
+/**
+ * @author Nir Leibovitch
+ * <h1>Start maze application</h1>
+ */
 public class Run {
+	// declare the view as a static class member for use inside Function#apply()
+	static private CommonView view;
+	
+	/**
+	 * Wire up MVP, define available views &amp; start the presenter
+	 * @param args Startup arguments
+	 */
 	public static void main(String[] args) {
 		CommonModel model = new MyModel();
-		CommonView[] viewContainer = new CommonView[1];
-		
 		Function<ViewTypes, View> createView = new Function<ViewTypes, View>() {
 			@Override
 			public View apply(ViewTypes t) {
-				CommonView view;
 				switch(t) {
 				case CLI:
 					BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
@@ -41,7 +49,6 @@ public class Run {
 					return null;
 				}
 				
-				viewContainer[0] = view;
 				return view;
 			}
 		};
@@ -55,7 +62,7 @@ public class Run {
 		}
 		
 		model.addObserver(presenter);
-		viewContainer[0].addObserver(presenter);
+		view.addObserver(presenter);
 		
 		presenter.start();
 	}

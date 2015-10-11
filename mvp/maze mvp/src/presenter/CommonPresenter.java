@@ -21,6 +21,10 @@ import algorithms.search.MazeAirDistance;
 import algorithms.search.MazeManhattanDistance;
 import algorithms.search.Searcher;
 
+/**
+ * @author Nir Leibovitch
+ * <h1>Common implementation of the Presenter Façade</h1>
+ */
 public abstract class CommonPresenter implements Presenter {
 	final String propertiesFileName = "properties.xml";
 	Model model;
@@ -28,12 +32,22 @@ public abstract class CommonPresenter implements Presenter {
 	HashMap<String, Command> modelCommands;
 	LinkedHashMap<String, Command> viewCommands;
 	
-	public CommonPresenter(Model model, Function<ViewTypes, View> createView) throws IOException, URISyntaxException {
+	/**
+	 * Initiate the Presenter Façade instance, load properties, create the View Façade instance to be used by the
+	 * application, set the Model Façade instance properties &amp; initialize command maps
+	 * @param model Model Façade instance
+	 * @param createView Function to create the view to be used by the application according to
+	 * properties file
+	 * @throws URISyntaxException When the properties file path can't be parsed
+	 * @throws FileNotFoundException When the properties file can't be opened for reading
+	 * @throws IOException When an error occurs while reading the properties file
+	 */
+	public CommonPresenter(Model model, Function<ViewTypes, View> createView) throws URISyntaxException, FileNotFoundException, IOException {
 		this.model = model;
 		
 		try {
 			model.loadProperties(propertiesFileName);
-		} catch(FileNotFoundException | URISyntaxException e) {
+		} catch(URISyntaxException | FileNotFoundException e) {
 			System.err.println("properties.xml not found");
 			throw e;
 		} catch (IOException e) {
@@ -64,12 +78,13 @@ public abstract class CommonPresenter implements Presenter {
 		model.start(model.getProperties().threadPoolSize);
 		view.start();
 	}
-	
-	@Override
-	public ViewTypes getViewType() {
-		return model.getProperties().getViewType();
-	}
 
+	/**
+	 * Utility method to create an appropriate maze generator of the given type
+	 * @param mazeGenerator Type of maze generator
+	 * @return Maze3dGenerator Maze generator instance
+	 * @see MazeGeneratorTypes
+	 */
 	Maze3dGenerator getMazeGenerator(MazeGeneratorTypes mazeGenerator) {
 		switch(mazeGenerator) {
 		case MY:
@@ -80,6 +95,12 @@ public abstract class CommonPresenter implements Presenter {
 		return null;
 	}
 	
+	/**
+	 * Utility method to create an appropriate maze Searcher of the given type
+	 * @param mazeSearcher Type of maze searcher
+	 * @return Searcher<Position> Maze searcher instance
+	 * @see MazeSearcherTypes
+	 */
 	Searcher<Position> getMazeSearcher(MazeSearcherTypes mazeSearcher) {
 		switch(mazeSearcher) {
 		case A_STAR_AIR:
@@ -92,6 +113,11 @@ public abstract class CommonPresenter implements Presenter {
 		return null;
 	}
 
+	/**
+	 * Populate view commands map. Define the "exit" command by default.
+	 * <br>Override to populate the view commands map.
+	 * @see Command
+	 */
 	void initViewCommands() {
 		viewCommands.put("exit", new Command() {
 			@Override
@@ -102,15 +128,11 @@ public abstract class CommonPresenter implements Presenter {
 		});
 	}
 	
-	void initModelCommands() {
-		modelCommands.put("properties not found", new Command() {
-			@Override
-			public void doCommand(String[] args) {
-				if(view != null)
-					view.displayFileNotFound();
-			}
-		});
-	}
+	/**
+	 * Populate model commands map.
+	 * @see Command
+	 */
+	abstract void initModelCommands();
 	
 	@Override
 	public void update(Observable o, Object arg) {

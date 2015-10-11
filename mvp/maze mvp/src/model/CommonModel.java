@@ -36,6 +36,10 @@ import algorithms.mazeGenerators.Position;
 import algorithms.search.Searcher;
 import algorithms.search.Solution;
 
+/**
+ * @author Nir Leibovitch
+ * <h1>Common implementation of the Model Façade</h1>
+ */
 public abstract class CommonModel extends Observable implements Model {
 	Properties properties;
 	ExecutorService threadPool;
@@ -44,6 +48,9 @@ public abstract class CommonModel extends Observable implements Model {
 	HashMap<String, Maze3d> mazeCache;
 	HashMap<Maze3dSearchable, Solution<Position>> solutionCache;
 	
+	/**
+	 * Initiate the Model Façade instance
+	 */
 	public CommonModel() {
 		mazeCache = new HashMap<String, Maze3d>();
 		solutionCache = new HashMap<Maze3dSearchable, Solution<Position>>();
@@ -76,7 +83,8 @@ public abstract class CommonModel extends Observable implements Model {
 			}
 	}
 	
-	public void loadProperties(String fileName) throws FileNotFoundException, IOException, URISyntaxException {
+	@Override
+	public void loadProperties(String fileName) throws URISyntaxException, FileNotFoundException, IOException {
 		try {
 			fileName = new URI(fileName).getPath();
 		} catch (URISyntaxException e) {
@@ -142,6 +150,12 @@ public abstract class CommonModel extends Observable implements Model {
 		notifyObservers(new String[] { "properties saved" });
 	}
 	
+	/**
+	 * Utility to run tasks in the background, handle cancelation by cancel or interrupt &amp;
+	 * handle exceptions
+	 * @param task Task to run
+	 * @see Task
+	 */
 	<T> void runTaskInBackground(Task<T> task) {
 		Future<T> future = threadPool.submit(new Callable<T>() {
 			@Override
@@ -172,6 +186,13 @@ public abstract class CommonModel extends Observable implements Model {
 		});
 	}
 	
+	/**
+	 * Utility to compress byte array data
+	 * @param data Data to compress
+	 * @return byte[] Compressed data
+	 * @throws IOException When an error occurs while compressing the data
+	 * @see CommonModel#decompressData(byte[])
+	 */
 	byte[] compressData(byte[] data) throws IOException {
 		ByteArrayOutputStream compressedDataOut = new ByteArrayOutputStream();
 		MyCompressorOutputStream compressor = new MyCompressorOutputStream(new BufferedOutputStream(compressedDataOut));
@@ -189,6 +210,13 @@ public abstract class CommonModel extends Observable implements Model {
 		return compressedDataOut.toByteArray();
 	}
 	
+	/**
+	 * Utility to decompress byte array data
+	 * @param compressedData Compressed data to decompress
+	 * @return Decompressed data
+	 * @throws IOException When an error occurs while decompressing the data
+	 * @see CommonModel#compressData(byte[])
+	 */
 	byte[] decompressData(byte[] compressedData) throws IOException {
 		MyDecompressorInputStream decompressor = new MyDecompressorInputStream(new BufferedInputStream(new ByteArrayInputStream(compressedData)));
 		ByteArrayOutputStream dataOut = new ByteArrayOutputStream();

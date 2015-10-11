@@ -1,5 +1,6 @@
 package presenter;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.function.Function;
@@ -9,8 +10,22 @@ import view.View;
 import algorithms.mazeGenerators.Position;
 import algorithms.search.Solution;
 
+/**
+ * @author Nir Leibovitch
+ * <h1>My implementation of the Presenter Façade</h1>
+ */
 public class MyPresenter extends CommonPresenter {
-	public MyPresenter(Model model, Function<ViewTypes, View> createView) throws IOException, URISyntaxException {
+	/**
+	 * Initiate the Presenter Façade instance, load properties, create the View Façade instance to be used by the
+	 * application, set the Model Façade instance properties &amp; initialize command maps
+	 * @param model Model Façade instance
+	 * @param createView Function to create the view to be used by the application according to
+	 * properties file
+	 * @throws URISyntaxException When the properties file path can't be parsed
+	 * @throws FileNotFoundException When the properties file can't be opened for reading
+	 * @throws IOException When an error occurs while reading the properties file
+	 */
+	public MyPresenter(Model model, Function<ViewTypes, View> createView) throws URISyntaxException, FileNotFoundException, IOException {
 		super(model, createView);
 	}
 	
@@ -39,6 +54,7 @@ public class MyPresenter extends CommonPresenter {
 			
 			@Override
 			public boolean verifyParams(String[] args) {
+				if(!super.verifyParams(args)) return false;
 				try {
 					Integer.parseInt(args[1]);
 					Integer.parseInt(args[2]);
@@ -67,8 +83,7 @@ public class MyPresenter extends CommonPresenter {
 			
 			@Override
 			public boolean verifyParams(String[] args) {
-				if(!super.verifyParams(args))
-					return false;
+				if(!super.verifyParams(args)) return false;
 				
 				if(!(args[0].equals("X") || args[0].equals("Y") || args[0].equals("Z")))
 					return false;
@@ -87,7 +102,7 @@ public class MyPresenter extends CommonPresenter {
 				String axis = args[0];
 				Integer index = Integer.parseInt(args[1]);
 				String name = args[3];
-				model.generateCrossSection(name, axis, index);
+				model.calculateCrossSection(name, axis, index);
 			}
 		});
 		
@@ -99,6 +114,7 @@ public class MyPresenter extends CommonPresenter {
 			
 			@Override
 			public boolean verifyParams(String[] args) {
+				if(!super.verifyParams(args)) return false;
 				try {
 					Integer.parseInt(args[1]);
 					Integer.parseInt(args[2]);
@@ -222,6 +238,7 @@ public class MyPresenter extends CommonPresenter {
 			
 			@Override
 			public boolean verifyParams(String[] args) {
+				if(!super.verifyParams(args)) return false;
 				try {
 					Integer.parseInt(args[1]);
 					Integer.parseInt(args[2]);
@@ -291,6 +308,7 @@ public class MyPresenter extends CommonPresenter {
 			
 			@Override
 			public boolean verifyParams(String[] args) {
+				if(!super.verifyParams(args)) return false;
 				try {
 					Integer.parseInt(args[0]);
 					MazeGeneratorTypes.valueOf(args[1]);
@@ -331,7 +349,13 @@ public class MyPresenter extends CommonPresenter {
 
 	@Override
 	void initModelCommands() {
-		super.initModelCommands();
+		modelCommands.put("properties not found", new Command() {
+			@Override
+			public void doCommand(String[] args) {
+				if(view != null)
+					view.displayFileNotFound();
+			}
+		});
 		
 		modelCommands.put("maze generated", new Command() {
 			@Override

@@ -18,6 +18,10 @@ import algorithms.mazeGenerators.Position;
 import algorithms.search.Solution;
 import algorithms.search.State;
 
+/**
+ * @author nirleibo
+ * <h1>My implementation of the Model Façade</h1>
+ */
 public class MyModel extends CommonModel {
 	String[] filesList;
 	int[][] crossSection;
@@ -83,7 +87,7 @@ public class MyModel extends CommonModel {
 	}
 
 	@Override
-	public void generateCrossSection(String name, String axis, int index) {
+	public void calculateCrossSection(String name, String axis, int index) {
 		Maze3d maze = mazeCache.get(name);
 		if(maze == null) {
 			setChanged();

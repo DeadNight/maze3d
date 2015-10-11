@@ -10,11 +10,19 @@ import algorithms.mazeGenerators.Position;
 import algorithms.search.Solution;
 import algorithms.search.State;
 
+/**
+ * @author Nir Leibovitch
+ * <h1>Command Line Interface implementation of the View Façade</h1>
+ */
 public class CLI extends CommonView {
 	boolean running;
 	BufferedReader in;
 	PrintWriter out;
 	
+	/** Initiate the CLI View Façade instance
+	 * @param in User input
+	 * @param out User output
+	 */
 	public CLI(BufferedReader in, PrintWriter out) {
 		this.in = in;
 		this.out = out;
@@ -65,10 +73,6 @@ public class CLI extends CommonView {
 	@Override
 	public void displayUnknownCommand() {
 		displayError("unknown command");
-	}
-	
-	private void displayError(String message) {
-		System.err.println(message);
 	}
 
 	@Override
@@ -213,29 +217,6 @@ public class CLI extends CommonView {
 		out.println("maze wasn't solved");
 		out.flush();
 	}
-	
-	private void printMaze(Maze3d maze) {
-		for(int y = maze.getHeight() - 1; y >= 0 ; --y) {
-			System.out.println("Floor " + y + ":");
-			for(int z = maze.getDepth() - 1; z >= 0; --z) {
-				for(int x = 0; x < maze.getWidth(); ++x) {
-					if(maze.isWall(x, y, z))
-						System.out.print((char)0x2593);
-					else if(y > 0 && y < maze.getHeight() - 1 &&
-						maze.isPath(x, y - 1, z) && maze.isPath(x, y + 1, z))
-						System.out.print('x');
-					else if(y > 0 && maze.isPath(x, y - 1, z))
-						System.out.print('\\');
-					else if(y < maze.getHeight() - 1 && maze.isPath(x, y + 1, z))
-						System.out.print('/');
-					else
-						System.out.print(' ');
-				}
-				System.out.println();
-			}
-			System.out.println();
-		}
-	}
 
 	@Override
 	public void displayMazeSolution(Solution<Position> solution) {
@@ -259,5 +240,32 @@ public class CLI extends CommonView {
 	@Override
 	public void displayPropertiesSaved() {
 		out.println("properties saved successfully");
+	}
+	
+	private void displayError(String message) {
+		System.err.println(message);
+	}
+	
+	private void printMaze(Maze3d maze) {
+		for(int y = maze.getHeight() - 1; y >= 0 ; --y) {
+			System.out.println("Floor " + y + ":");
+			for(int z = maze.getDepth() - 1; z >= 0; --z) {
+				for(int x = 0; x < maze.getWidth(); ++x) {
+					if(maze.isWall(x, y, z))
+						System.out.print((char)0x2593);
+					else if(y > 0 && y < maze.getHeight() - 1 &&
+						maze.isPath(x, y - 1, z) && maze.isPath(x, y + 1, z))
+						System.out.print('x');
+					else if(y > 0 && maze.isPath(x, y - 1, z))
+						System.out.print('\\');
+					else if(y < maze.getHeight() - 1 && maze.isPath(x, y + 1, z))
+						System.out.print('/');
+					else
+						System.out.print(' ');
+				}
+				System.out.println();
+			}
+			System.out.println();
+		}
 	}
 }

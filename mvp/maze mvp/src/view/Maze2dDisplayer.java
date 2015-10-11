@@ -9,6 +9,10 @@ import org.eclipse.swt.widgets.Display;
 
 import algorithms.mazeGenerators.Position;
 
+/**
+ * @author Nir Leibovitch
+ * <h1>Widget for displaying a maze, one 2D view plane at a time, in 2.5D</h1>
+ */
 public class Maze2dDisplayer extends MazeDisplayer {
 	private final Color black;
 	private final Color white;
@@ -17,6 +21,11 @@ public class Maze2dDisplayer extends MazeDisplayer {
 	private final Color gray;
 	private final Image winImage;
 	
+	/**
+	 * Initialize the 2D maze displayer
+	 * @param parent Parent of the widget
+	 * @param style Style for the widget
+	 */
 	public Maze2dDisplayer(Composite parent, int style) {
 		super(parent, style);
 		

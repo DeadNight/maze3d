@@ -18,14 +18,32 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
+/**
+ * @author Nir Leibovitch
+ * <h1>Object initializer utility</h1>
+ * Create an object from user input through an interactive window
+ */
 public class ObjectInitializer {
 	// declare the instance as a data member to enable access from the event listeners
 	Object instance;
 	
+	/**
+	 * Create an object of type c &amp; display the user a window through which they can
+	 * set its values
+	 * @param c Class of the object to be created
+	 * @return Object The instance created
+	 */
 	public Object initialize(Class<?> c) {
 		return initialize(c, null);
 	}
 	
+	/**
+	 * Create an object of type c &amp; display the user a window with default values taken
+	 * from copyFrom through which they can set its values
+	 * @param c Class of the object to be created
+	 * @param copyFrom Instance to copy default values from
+	 * @return Object The instance created
+	 */
 	public Object initialize(Class<?> c, Object copyFrom) {
 		String className = c.getName().replaceAll(".*\\.", "");
 		// clear the instance to enable multiple uses of the same ObjectInitializer instance
