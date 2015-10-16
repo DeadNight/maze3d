@@ -133,7 +133,9 @@ public class Maze3d {
 	
 	/**
 	 * Test whether a given x,y,z coordinates are in the maze
-	 * @param pos The position
+	 * @param x The x coordinate
+	 * @param y The y coordinate
+	 * @param z The z coordinate
 	 * @return boolean Whether the coordinates are in the maze
 	 */
 	public boolean inBounds(int x, int y, int z) {

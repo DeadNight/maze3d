@@ -17,7 +17,7 @@ public interface Maze3dGenerator {
 	Maze3d generate(int width, int height, int depth);
 	/**
 	 * Generate a 3d maze with a specific interior volume
-	 * @param volume The volume
+	 * @param interiorVolume Interior volume
 	 * @return Maze3d The generated maze
 	 */
 	Maze3d generate(Volume interiorVolume);

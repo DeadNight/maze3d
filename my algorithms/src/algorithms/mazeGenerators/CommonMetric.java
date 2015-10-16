@@ -17,7 +17,7 @@ public class CommonMetric implements Metric {
 	
 	/**
 	 * Initialize a metric of size dimensions with 0's
-	 * @param metrics An array with n numbers, 1 for each dimension
+	 * @param size dimension of the metric
 	 */
 	public CommonMetric(int size) {
 		metrics = new int[size];
