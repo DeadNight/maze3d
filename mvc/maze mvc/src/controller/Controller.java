@@ -6,7 +6,7 @@ import model.Model;
 import view.View;
 
 /**
- * @author nirleibo
+ * @author Nir Leibovitch
  * <h1>Controller layer Façade</h1>
  */
 public interface Controller {

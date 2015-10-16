@@ -5,7 +5,7 @@ import java.util.HashSet;
 import controller.Controller;
 
 /**
- * @author nirleibo
+ * @author Nir Leibovitch
  * <h1>Common implementation of the View Façade</h1>
  */
 public abstract class CommonView implements View {

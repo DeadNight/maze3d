@@ -4,7 +4,7 @@ import algorithms.mazeGenerators.Position;
 import algorithms.search.Solution;
 
 /**
- * @author nirleibo
+ * @author Nir Leibovitch
  * <h1>My implementation of the Controller Façade</h1>
  */
 public class MyController extends CommonController {

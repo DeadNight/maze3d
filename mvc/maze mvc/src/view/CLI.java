@@ -8,7 +8,7 @@ import java.util.HashSet;
 import controller.Controller;
 
 /**
- * @author nirleibo
+ * @author Nir Leibovitch
  * <h1>Command Line Interface</h1>
  * Get commands from the user and display results using the command line
  * The command "exit" will stop the application

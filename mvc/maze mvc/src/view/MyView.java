@@ -21,7 +21,7 @@ import controller.Command;
 import controller.Controller;
 
 /**
- * @author nirleibo
+ * @author Nir Leibovitch
  * <h1>My implementation of the View Façade</h1>
  * Using a CLI as a user interface
  */

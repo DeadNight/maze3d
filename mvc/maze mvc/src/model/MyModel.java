@@ -26,7 +26,7 @@ import algorithms.search.Solution;
 import controller.Controller;
 
 /**
- * @author nirleibo
+ * @author Nir Leibovitch
  * <h1>My implementation of the Model Façade</h1>
  */
 public class MyModel extends CommonModel {

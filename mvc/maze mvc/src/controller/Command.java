@@ -1,7 +1,7 @@
 package controller;
 
 /**
- * @author nirleibo
+ * @author Nir Leibovitch
  * <h1>General Command</h1>
  * Represents a command to be invoked when appropriate
  */

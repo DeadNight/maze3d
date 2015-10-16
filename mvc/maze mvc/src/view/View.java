@@ -6,7 +6,7 @@ import algorithms.mazeGenerators.Position;
 import algorithms.search.Solution;
 
 /**
- * @author nirleibo
+ * @author Nir Leibovitch
  * <h1>View layer Façade</h1>
  */
 public interface View {

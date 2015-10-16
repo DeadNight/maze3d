@@ -7,7 +7,7 @@ import model.Model;
 import view.View;
 
 /**
- * @author nirleibo
+ * @author Nir Leibovitch
  * <h1>Common implementation of the Controller Façade</h1>
  */
 public abstract class CommonController implements Controller {

@@ -11,7 +11,7 @@ import java.util.concurrent.Executors;
 import controller.Controller;
 
 /**
- * @author nirleibo
+ * @author Nir Leibovitch
  * <h1>Common implementation of the Model Façade</h1>
  */
 public abstract class CommonModel implements Model {

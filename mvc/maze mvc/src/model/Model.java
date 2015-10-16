@@ -1,7 +1,7 @@
 package model;
 
 /**
- * @author nirleibo
+ * @author Nir Leibovitch
  * <h1>Model layer Façade</h1>
  */
 public interface Model {
