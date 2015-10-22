@@ -26,7 +26,7 @@ import algorithms.search.Searcher;
  * <h1>Common implementation of the Presenter Façade</h1>
  */
 public abstract class CommonPresenter implements Presenter {
-	final String propertiesFileName = "properties.xml";
+	final static String PROPERTIES_FILE_NAME = "properties.xml";
 	Model model;
 	View view;
 	HashMap<String, Command> modelCommands;
@@ -46,7 +46,7 @@ public abstract class CommonPresenter implements Presenter {
 		this.model = model;
 		
 		try {
-			model.loadProperties(propertiesFileName);
+			model.loadProperties(PROPERTIES_FILE_NAME);
 		} catch(URISyntaxException | FileNotFoundException e) {
 			System.err.println("properties.xml not found");
 			throw e;

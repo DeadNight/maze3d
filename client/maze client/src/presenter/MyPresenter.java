@@ -276,7 +276,7 @@ public class MyPresenter extends CommonPresenter {
 			@Override
 			public void doCommand(String[] args) {
 				try {
-					model.loadProperties(propertiesFileName);
+					model.loadProperties(PROPERTIES_FILE_NAME);
 				} catch (IOException | URISyntaxException e) {
 					// ignore - will be handled by modelCommands
 				}
@@ -326,7 +326,7 @@ public class MyPresenter extends CommonPresenter {
 				MazeGeneratorTypes generator = MazeGeneratorTypes.valueOf(args[1]);
 				MazeSearcherTypes searcher = MazeSearcherTypes.valueOf(args[2]);
 				ViewTypes viewType = ViewTypes.valueOf(args[3]);
-				model.saveProperties(propertiesFileName, poolSize, generator, searcher, viewType);
+				model.saveProperties(PROPERTIES_FILE_NAME, poolSize, generator, searcher, viewType);
 			}
 		});
 		

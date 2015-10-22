@@ -8,25 +8,73 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import algorithms.demo.Maze3dSearchable;
 import algorithms.mazeGenerators.Maze3d;
 import algorithms.mazeGenerators.Position;
 import algorithms.search.Solution;
-import algorithms.search.State;
 
 /**
- * @author nirleibo
+ * @author Nir Leibovitch
  * <h1>My implementation of the Model Façade</h1>
  */
 public class MyModel extends CommonModel {
+	private final static String SOLUTIONS_FILE_NAME = "solutions.gzip";
 	String[] filesList;
 	int[][] crossSection;
 	int mazeSize;
 	int fileSize;
+	
+	@SuppressWarnings("unchecked")
+	public MyModel() {
+		try {
+			ObjectInputStream solutionsIn = new ObjectInputStream(new GZIPInputStream(new BufferedInputStream(new FileInputStream(SOLUTIONS_FILE_NAME))));
+			try {
+				solutionCache = (HashMap<Maze3dSearchable, Solution<Position>>) solutionsIn.readObject();
+			} catch (ClassNotFoundException | ClassCastException e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					solutionsIn.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		} catch (IOException e) {
+			/*
+			 * FileNotFoundException - File couldn't be opened for reading
+			 * ZipException - Bad format
+			 */
+			e.printStackTrace();
+		}
+	}
+	
+	@Override
+	public void stop() {
+		super.stop();
+		
+		try {
+			ObjectOutputStream solutionsOut = new ObjectOutputStream(new GZIPOutputStream(new BufferedOutputStream(new FileOutputStream(SOLUTIONS_FILE_NAME))));
+			
+			try {
+				solutionsOut.writeObject(solutionCache);
+				solutionsOut.flush();
+			} finally {
+				solutionsOut.close();
+			}
+		} catch (IOException e) {
+			// FileNotFoundException - File couldn't be opened for writing
+			e.printStackTrace();
+		}
+	};
 
 	@Override
 	public void listFiles(String path) {
@@ -304,14 +352,7 @@ public class MyModel extends CommonModel {
 		
 		if(from == null)
 			from = maze.getStartPosition();
-		State<Position> fromState = new State<Position>(from);
-		
-		Maze3dSearchable mazeSearchable = new Maze3dSearchable(maze) {
-			@Override
-			public State<Position> getInitialState() {
-				return fromState;
-			}
-		};
+		Maze3dSearchable mazeSearchable = new Maze3dSearchable(maze, from);
 		
 		if(solutionCache.containsKey(mazeSearchable)) {
 			setChanged();
@@ -366,13 +407,7 @@ public class MyModel extends CommonModel {
 		
 		if(from == null)
 			from = maze.getStartPosition();
-		State<Position> fromState = new State<Position>(from); 
-		Maze3dSearchable mazeSearchable = new Maze3dSearchable(maze) {
-			@Override
-			public State<Position> getInitialState() {
-				return fromState;
-			}
-		};
+		Maze3dSearchable mazeSearchable = new Maze3dSearchable(maze, from);
 		
 		Solution<Position> solution = solutionCache.get(mazeSearchable);
 		if(solution == null) {
