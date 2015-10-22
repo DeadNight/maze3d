@@ -7,6 +7,7 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
 /**
+ * @author Eliahu Khalastchi
  * @author Nir Leibovitch
  * <h1>Basic SWT Window</h1>
  * Create a window and open it by calling {@link BasicWindow#run()}
