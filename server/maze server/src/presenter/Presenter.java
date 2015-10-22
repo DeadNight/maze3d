@@ -1,5 +1,7 @@
 package presenter;
 
-public interface Presenter {
+import java.util.Observer;
 
+public interface Presenter extends Observer {
+	void start();
 }
