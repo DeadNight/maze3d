@@ -101,6 +101,11 @@ public class MyView extends CommonView {
 				cli.displayLine();
 			}
 		} catch (IOException e) {
+			try {
+				mazeIn.close();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
 			e.printStackTrace();
 		}
 	}
