@@ -1,12 +1,15 @@
 package algorithms.search;
 
+import java.io.Serializable;
+
 /**
  * @author Nir Leibovitch
  * <h1>Generic state of a search problem</h1>
  * Represents a single state of a search problem
  * @param <T> The type of the internal representation of state
  */
-public class State<T> {
+public class State<T> implements Serializable {
+	private static final long serialVersionUID = -1794804290781590469L;
 	private T state;
 	private double cost;
 	private State<T> cameFrom;
@@ -18,13 +21,21 @@ public class State<T> {
 	public State(T state) {
 		this.state = state;
 	}
-	
+
 	/**
 	 * Get the internal representation of state
 	 * @return T The internal representation of state
 	 */
 	public T getState() {
 		return state;
+	}
+	
+	/**
+	 * Get the internal representation of state (used for deserialization)
+	 * @param state The internal representation of state
+	 */
+	public void setState(T state) {
+		this.state = state;
 	}
 	
 	/**

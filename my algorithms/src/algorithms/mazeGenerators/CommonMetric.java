@@ -12,7 +12,8 @@ import java.util.Arrays;
  * <h1>n-dimensional metric</h1>
  * Represents a n-dimensional metric 
  */
-public class CommonMetric implements Metric {
+public abstract class CommonMetric implements Metric {
+	private static final long serialVersionUID = -2281169035692259666L;
 	int[] metrics;
 	
 	/**
@@ -56,6 +57,22 @@ public class CommonMetric implements Metric {
 		} finally {
 			in.close();
 		}
+	}
+
+	/**
+	 * Get the internal metrics (used for serialization)
+	 * @return int[] metrics
+	 */
+	public int[] getMetrics() {
+		return metrics;
+	}
+
+	/**
+	 * Set the internal metrics (used for deserialization)
+	 * @param metrics metrics
+	 */
+	public void setMetrics(int[] metrics) {
+		this.metrics = metrics;
 	}
 
 	public byte[] toByteArray() {

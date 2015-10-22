@@ -1,5 +1,6 @@
 package algorithms.search;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -9,9 +10,10 @@ import java.util.Collections;
  * Represents the sequence of states that make a solution for a search problem
  * @param <T> The type of the internal representation of state
  */
-public class Solution<T> {
+public class Solution<T> implements Serializable {
+	private static final long serialVersionUID = -2303094326215189554L;
 	ArrayList<State<T>> sequence;
-	
+
 	/**
 	 * Initialize a Solution with the given linked list of states
 	 * @param to The goal state
@@ -26,6 +28,14 @@ public class Solution<T> {
 			sequence.add(state);
 		}
 		Collections.reverse(sequence);
+	}
+	
+	/**
+	 * Set the sequence of states
+	 * @param sequence The sequence
+	 */
+	public void setSequence(ArrayList<State<T>> sequence) {
+		this.sequence = sequence;
 	}
 	
 	/**

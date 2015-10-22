@@ -1,5 +1,6 @@
 package algorithms.search;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -8,7 +9,7 @@ import java.util.ArrayList;
  * Represents a problem that can be solved using {@linkplain Searcher}
  * @param <T> The type of the internal representation of a state of the searchable
  */
-public interface Searchable<T> {
+public interface Searchable<T> extends Serializable {
 	/**
 	 * Get the initial state of the problem
 	 * @return State&lt;T&gt; The initial state

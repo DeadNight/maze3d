@@ -8,7 +8,8 @@ import java.io.IOException;
  * Represents a 3d position in x,y,z coordinates
  */
 public class Position extends CommonMetric {
-	
+	private static final long serialVersionUID = -5243079192905840990L;
+
 	/**
 	 * Initialize a new Position with 0 x, y &amp; z coordinates
 	 */

@@ -15,14 +15,41 @@ import algorithms.search.State;
  * Wraps a Maze3d instance to be used as a Searchable
  */
 public class Maze3dSearchable implements Searchable<Position> {
-	
+	private static final long serialVersionUID = 5636583976010404614L;
 	private Maze3d maze;
-	
+	private State<Position> initialState;
+
 	/**
-	 * Wrap a maze to be used as a Searchable
-	 * @param maze The maze to be used as a Searchable.
+	 * Wrap a maze to be used as a Searchable, and use the maze start position as the initial state
+	 * @param maze The maze to be used as a Searchable
 	 */
 	public Maze3dSearchable(Maze3d maze) {
+		this(maze, maze.getStartPosition());
+	}
+	
+	/**
+	 * Wrap a maze to be used as a Searchable, and use the given initial state
+	 * @param maze The maze to be used as a Searchable
+	 * @param initialState The initial state
+	 */
+	public Maze3dSearchable(Maze3d maze, Position initialPosition) {
+		this.maze = maze;
+		initialState = new State<Position>(initialPosition);
+	}
+	
+	/**
+	 * Get internal state maze (used for serialization)
+	 * @return Maze3d maze
+	 */
+	public Maze3d getMaze() {
+		return maze;
+	}
+	
+	/**
+	 * Set internal state maze (used for deserialization)
+	 * @param maze maze
+	 */
+	public void setMaze(Maze3d maze) {
 		this.maze = maze;
 	}
 
@@ -30,10 +57,15 @@ public class Maze3dSearchable implements Searchable<Position> {
 	public State<Position> getInitialState() {
 		if(maze == null)
 			return null;
-		Position startPosition = maze.getStartPosition();
-		if(startPosition == null)
-			return null;
-		return new State<Position>(startPosition);
+		return initialState;
+	}
+	
+	/**
+	 * Set initial state (used for deserialization)
+	 * @param initialState Initial state
+	 */
+	public void setInitialState(State<Position> initialState) {
+		this.initialState = initialState;
 	}
 
 	@Override

@@ -4,6 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -15,7 +16,9 @@ import java.util.Arrays;
  * Provides helper methods for generating mazes (either manually or using generators) and
  * for printing sections of or all the maze to the console 
  */
-public class Maze3d {
+public class Maze3d implements Serializable {
+	private static final long serialVersionUID = 7524123061259607761L;
+	
 	private byte[][][] maze;
 	private Position startPosition;
 	private Position goalPosition;
@@ -76,6 +79,12 @@ public class Maze3d {
 	 */
 	public void setMaze(byte[][][] maze) {
 		this.maze = maze;
+		if(this.startPosition != null) {
+			if(startPosition != null)
+				setCell(this.startPosition, (byte) 1);
+			if(goalPosition != null)
+				setCell(this.goalPosition, (byte) 1);
+		}
 	}
 
 	/**
@@ -94,10 +103,11 @@ public class Maze3d {
 	 * @param startPosition The new entrance
 	 */
 	public void setStartPosition(Position startPosition) {
-		if(this.startPosition != null)
+		if(maze != null && this.startPosition != null)
 			setCell(this.startPosition, (byte) 1);
 		this.startPosition = startPosition;
-		setCell(startPosition, (byte) 0);
+		if(maze != null)
+			setCell(startPosition, (byte) 0);
 	}
 
 	/**
@@ -116,10 +126,11 @@ public class Maze3d {
 	 * @param goalPosition The new exit
 	 */
 	public void setGoalPosition(Position goalPosition) {
-		if(this.goalPosition != null)
+		if(maze != null && this.goalPosition != null)
 			setCell(this.goalPosition, (byte) 1);
 		this.goalPosition = goalPosition;
-		setCell(goalPosition, (byte) 0);
+		if(maze != null)
+			setCell(goalPosition, (byte) 0);
 	}
 	
 	/**

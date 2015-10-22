@@ -6,7 +6,8 @@ package algorithms.mazeGenerators;
  * Represents 3d volume by width, height &amp; depth
  */
 public class Volume extends CommonMetric {
-	
+	private static final long serialVersionUID = -955881987743059451L;
+
 	/**
 	 * Initialize a new Volume with 0 width, height &amp; depth
 	 */
