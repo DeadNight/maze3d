@@ -1,7 +1,109 @@
 package model;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.Observable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
+
+import algorithms.mazeGenerators.Position;
+import algorithms.search.Searcher;
+import common.Client;
 
 public abstract class CommonModel extends Observable implements Model {
-
+	ExecutorService threadPool;
+	boolean running;
+	MyServer server;
+	int nextClientId;
+	HashMap<Integer, Client> clients;
+	HashMap<String, Function<Client, Void>> clientCommands;
+	Searcher<Position> mazeSearchAlgorithm;
+	
+	public CommonModel() {
+		clients = new HashMap<Integer, Client>();
+		clientCommands = new HashMap<String, Function<Client, Void>>();
+		initClientCommands();
+	}
+	
+	protected abstract void initClientCommands();
+	
+	@Override
+	public boolean start(int port, int numOfClients, int socketTimeout, int poolSize) {
+		threadPool = Executors.newFixedThreadPool(poolSize);
+		nextClientId = 1;
+		if(running)
+			return true;
+		server = new MyServer(port, new ClientHandler() {
+			@Override
+			public void handleClient(InputStream inFromClient, OutputStream outToClient) {
+				Client client = new Client(nextClientId++, inFromClient, outToClient);
+				clients.put(client.getId(), client);
+				setChanged();
+				notifyObservers(new Object[] { "client connected", client.getId() });
+				
+				BufferedReader clientReader = new BufferedReader(new InputStreamReader(inFromClient)); 
+				PrintWriter clientWriter = new PrintWriter(outToClient);
+				
+				String line;
+				try {
+					while(!(line = clientReader.readLine()).equals("exit")) {
+						client.setLastCommand(line);
+						setChanged();
+						notifyObservers(new Object[] { "client command", client.getId() });
+						
+						if(!(running && client.getRunning()) {
+							clientWriter.println("disconnect");
+							clientWriter.flush();
+						} else if(clientCommands.get(line) == null) {
+							clientWriter.println("unsupported command");
+							clientWriter.flush();
+						} else {
+							clientCommands.get(line).apply(client);
+						}
+					}
+					clientWriter.println("good bye");
+					clientWriter.flush();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				
+				clients.remove(client.getId());
+				setChanged();
+				notifyObservers(new Object[] { "client disconnected", client.getId() });
+			}
+		}, numOfClients, socketTimeout);
+		return (running = server.start());
+	}
+	
+	@Override
+	public void stop() {
+		running = false;
+		server.close();
+		
+		threadPool.shutdownNow();
+		boolean terminated = false;
+		while(!terminated)
+			try {
+				terminated = threadPool.awaitTermination(10, TimeUnit.SECONDS);
+			} catch (InterruptedException e) {
+				// OK, keep waiting
+			}
+	}
+	
+	@Override
+	public Client getClient(int id) {
+		return clients.get(id);
+	}
+	
+	@Override
+	public void setMazeSearchAlgorithm(Searcher<Position> mazeSearchAlgorithm) {
+		this.mazeSearchAlgorithm = mazeSearchAlgorithm;
+	}
 }

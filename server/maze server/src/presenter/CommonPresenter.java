@@ -53,7 +53,8 @@ public abstract class CommonPresenter implements Presenter {
 	
 	@Override
 	public void start() {
-		model.start(5400, 10, 20*1000);
+		//TODO: take from properties
+		model.start(5400, 10, 20*1000, 10);
 		view.start();
 	}
 	
