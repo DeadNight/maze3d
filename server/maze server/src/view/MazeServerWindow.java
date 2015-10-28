@@ -53,14 +53,14 @@ public class MazeServerWindow extends BasicWindow {
 		for(TableColumn column : clientsTable.getColumns())
 			column.pack();
 		
-		Group statsGroup = new Group(shell, SWT.V_SCROLL | SWT.H_SCROLL);
+		Group statsGroup = new Group(shell, SWT.NONE);
 		statsGroup.setText("Stats");
 		statsGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
 		statsGroup.setLayout(new GridLayout(2, false));
 		
 		new Label(statsGroup, SWT.NONE).setText("Status: ");
 		statusText = new Text(statsGroup, SWT.READ_ONLY);
-		statusText.setText("Connected");
+		statusText.setText("Running");
 		
 		new Label(statsGroup, SWT.NONE).setText("Connected clients: ");
 		connectedClientsText = new Text(statsGroup, SWT.READ_ONLY);
@@ -150,7 +150,12 @@ public class MazeServerWindow extends BasicWindow {
 	}
 
 	public void displayShuttingDown() {
-		statusText.setText("Shutting Down...");
+		display.syncExec(new Runnable() {
+			@Override
+			public void run() {
+				statusText.setText("Shutting Down...");
+			}
+		});
 	}
 
 	public void updateServerStats(ServerStats serverStats) {
