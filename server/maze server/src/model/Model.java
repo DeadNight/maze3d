@@ -1,8 +1,14 @@
 package model;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URISyntaxException;
+
 import algorithms.mazeGenerators.Position;
 import algorithms.search.Searcher;
 import common.Client;
+import common.MazeSearcherTypes;
+import common.Properties;
 import common.ServerStats;
 
 public interface Model {
@@ -15,4 +21,8 @@ public interface Model {
 	 */
 	void setMazeSearchAlgorithm(Searcher<Position> mazeSearcher);
 	ServerStats getServerStats();
+	
+	void loadProperties(String fileName) throws URISyntaxException, FileNotFoundException, IOException;
+	Properties getProperties();
+	void saveProperties(String fileName, int poolSize, MazeSearcherTypes searcher);
 }

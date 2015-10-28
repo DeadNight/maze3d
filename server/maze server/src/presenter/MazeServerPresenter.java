@@ -1,12 +1,15 @@
 package presenter;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.function.Function;
 
 import model.CommonModel;
 import view.CommonView;
 
 public class MazeServerPresenter extends CommonPresenter {
-	public MazeServerPresenter(CommonModel model, CommonView view) {
+	public MazeServerPresenter(CommonModel model, CommonView view) throws URISyntaxException, FileNotFoundException, IOException {
 		super(model, view);
 	}
 
@@ -21,6 +24,16 @@ public class MazeServerPresenter extends CommonPresenter {
 			@Override
 			public Void apply(Object[] args) {
 				view.updateServerStats(model.getServerStats());
+				return null;
+			}
+		};
+		
+		Function<Object[], Void> updateClient = new Function<Object[], Void>() {
+			@Override
+			public Void apply(Object[] args) {
+				int clientId = (int)args[0];
+				view.updateClient(model.getClient(clientId));
+				updateServerStats.apply(null);
 				return null;
 			}
 		};
@@ -45,10 +58,17 @@ public class MazeServerPresenter extends CommonPresenter {
 			}
 		});
 		
-		modelCommands.put("solve request", noOp);
-		modelCommands.put("read searchable error", noOp);
-		modelCommands.put("solving", updateServerStats);
-		modelCommands.put("no solution", updateServerStats);
-		modelCommands.put("solved", updateServerStats);
+		modelCommands.put("solve request", updateClient);
+		modelCommands.put("recieve searchable error", noOp);
+		modelCommands.put("solving", updateClient);
+		modelCommands.put("no solution", updateClient);
+		modelCommands.put("solved", updateClient);
+		modelCommands.put("send solution error", noOp);
+	}
+	
+	@Override
+	public void start() {
+		view.updateServerStats(model.getServerStats());
+		super.start();
 	}
 }

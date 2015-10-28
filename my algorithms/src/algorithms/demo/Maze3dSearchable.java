@@ -24,7 +24,7 @@ public class Maze3dSearchable implements Searchable<Position> {
 	 * @param maze The maze to be used as a Searchable
 	 */
 	public Maze3dSearchable(Maze3d maze) {
-		this(maze, maze.getStartPosition());
+		this(maze, maze == null ? null : maze.getStartPosition());
 	}
 	
 	/**
@@ -103,7 +103,7 @@ public class Maze3dSearchable implements Searchable<Position> {
 	
 	@Override
 	public int hashCode() {
-		String str = ""+maze.hashCode() + getInitialState().hashCode()+getGoalState().hashCode();
+		String str = ""+maze.hashCode() + getInitialState().hashCode() + getGoalState().hashCode();
 		return str.hashCode();
 	}
 }

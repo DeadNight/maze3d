@@ -15,4 +15,5 @@ public interface View {
 	void displayClientDisconnected(int clientId);
 	void displayClientUpdated(Client client);
 	void updateServerStats(ServerStats serverStats);
+	void updateClient(Client client);
 }

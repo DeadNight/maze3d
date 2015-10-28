@@ -557,4 +557,9 @@ public class Maze3d implements Serializable {
 		Maze3d other = (Maze3d) obj;
 		return Arrays.deepEquals(maze, other.maze);
 	}
+	
+	@Override
+	public int hashCode() {
+		return Arrays.deepHashCode(maze);
+	}
 }

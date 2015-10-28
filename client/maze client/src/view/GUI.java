@@ -321,6 +321,8 @@ public class GUI extends CommonView {
 			return;
 		}
 		
+		if(solutionDisplayerThread != null)
+			solutionDisplayerThread.interrupt();
 		characterPosition = maze.getStartPosition();
 		mazeWindow.setMaze(maze, characterPosition);
 		mazeWindow.setSolved(solved = false);

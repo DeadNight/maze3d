@@ -67,4 +67,9 @@ public class GUI extends CommonView {
 	public void updateServerStats(ServerStats serverStats) {
 		window.updateServerStats(serverStats);
 	}
+
+	@Override
+	public void updateClient(Client client) {
+		window.updateClient(client);
+	}
 }

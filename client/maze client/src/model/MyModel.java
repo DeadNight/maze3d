@@ -36,7 +36,6 @@ public class MyModel extends CommonModel {
 	boolean running;
 	InputStream serverIn;
 	OutputStream serverOut;
-	private final static String SOLUTIONS_FILE_NAME = "solutions.gzip";
 	String[] filesList;
 	int[][] crossSection;
 	int mazeSize;
@@ -84,20 +83,6 @@ public class MyModel extends CommonModel {
 	public void stop() {
 		super.stop();
 		running = false;
-		
-		try {
-			ObjectOutputStream solutionsOut = new ObjectOutputStream(new GZIPOutputStream(new BufferedOutputStream(new FileOutputStream(SOLUTIONS_FILE_NAME))));
-			
-			try {
-				solutionsOut.writeObject(solutionCache);
-				solutionsOut.flush();
-			} finally {
-				solutionsOut.close();
-			}
-		} catch (IOException e) {
-			// FileNotFoundException - File couldn't be opened for writing
-			e.printStackTrace();
-		}
 	};
 
 	@Override
@@ -393,9 +378,7 @@ public class MyModel extends CommonModel {
 				serverWriter.println("solve");
 				serverWriter.flush();
 				if(!serverReader.readLine().equals("ok, send searchable")) {
-					serverWriter.println("invalid protocol");
-					serverWriter.flush();
-					
+					// invalid protocol
 					return null;
 				}
 				
@@ -409,13 +392,17 @@ public class MyModel extends CommonModel {
 					line = serverReader.readLine();
 				
 				switch(line) {
-				case "exception occured":
+				case "solve error":
 				case "no solution":
 					return null;
 				case "solved":
 					ObjectInputStream clientObjectIn = new ObjectInputStream(new MyDecompressorInputStream(new BufferedInputStream(serverIn)));
 					@SuppressWarnings("unchecked")
 					Solution<Position> solution = (Solution<Position>) clientObjectIn.readObject();
+					if(!serverReader.readLine().equals("done")) {
+						// invalid protocol
+						return null;
+					}
 					return solution;
 				}
 				return null;

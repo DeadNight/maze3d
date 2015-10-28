@@ -22,8 +22,10 @@ import algorithms.mazeGenerators.Position;
 import algorithms.search.Searcher;
 import algorithms.search.Solution;
 import common.Client;
+import common.Properties;
 
 public abstract class CommonModel extends Observable implements Model {
+	Properties properties;
 	ExecutorService threadPool;
 	boolean running;
 	MyServer server;

@@ -61,30 +61,37 @@ public class MazeServerWindow extends BasicWindow {
 		
 		new Label(statsGroup, SWT.NONE).setText("Status: ");
 		statusText = new Text(statsGroup, SWT.READ_ONLY);
+		statusText.setLayoutData(new GridData(SWT.FILL, SWT.NONE, false, false));
 		statusText.setText("Running");
 		
 		new Label(statsGroup, SWT.NONE).setText("Connected clients: ");
 		connectedClientsText = new Text(statsGroup, SWT.READ_ONLY);
+		connectedClientsText.setLayoutData(new GridData(SWT.FILL, SWT.NONE, false, false));
 		connectedClientsText.setText("0");
 		
-		new Label(statsGroup, SWT.NONE).setText("Pending requests: ");
+		new Label(statsGroup, SWT.NONE).setText("Pending searchables: ");
 		pendingRequestsText = new Text(statsGroup, SWT.READ_ONLY);
+		pendingRequestsText.setLayoutData(new GridData(SWT.FILL, SWT.NONE, false, false));
 		pendingRequestsText.setText("0");
 		
 		new Label(statsGroup, SWT.NONE).setText("Solving: ");
 		solvingText = new Text(statsGroup, SWT.READ_ONLY);
+		solvingText.setLayoutData(new GridData(SWT.FILL, SWT.NONE, false, false));
 		solvingText.setText("0");
 		
 		new Label(statsGroup, SWT.NONE).setText("No solution: ");
 		NoSolutionText = new Text(statsGroup, SWT.READ_ONLY);
+		NoSolutionText.setLayoutData(new GridData(SWT.FILL, SWT.NONE, false, false));
 		NoSolutionText.setText("0");
 		
 		new Label(statsGroup, SWT.NONE).setText("Solved: ");
 		solvedText = new Text(statsGroup, SWT.READ_ONLY);
+		solvedText.setLayoutData(new GridData(SWT.FILL, SWT.NONE, false, false));
 		solvedText.setText("0");
 		
 		new Label(statsGroup, SWT.NONE).setText("Cached Solutions: ");
 		cachedText = new Text(statsGroup, SWT.READ_ONLY);
+		cachedText.setLayoutData(new GridData(SWT.FILL, SWT.NONE, false, false));
 		cachedText.setText("0");
 	}
 	

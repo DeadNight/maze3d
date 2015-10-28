@@ -35,25 +35,26 @@ public class MyModel extends CommonModel {
 	
 	@SuppressWarnings("unchecked")
 	public MyModel() {
-		try {
-			ObjectInputStream solutionsIn = new ObjectInputStream(new GZIPInputStream(new BufferedInputStream(new FileInputStream(SOLUTIONS_FILE_NAME))));
+		if(new File(SOLUTIONS_FILE_NAME).exists())
 			try {
-				solutionCache = (HashMap<Maze3dSearchable, Solution<Position>>) solutionsIn.readObject();
-			} catch (ClassNotFoundException | ClassCastException e) {
-				e.printStackTrace();
-			} finally {
+				ObjectInputStream solutionsIn = new ObjectInputStream(new GZIPInputStream(new BufferedInputStream(new FileInputStream(SOLUTIONS_FILE_NAME))));
 				try {
-					solutionsIn.close();
-				} catch (IOException e) {
+					solutionCache = (HashMap<Maze3dSearchable, Solution<Position>>) solutionsIn.readObject();
+				} catch (ClassNotFoundException | ClassCastException e) {
 					e.printStackTrace();
+				} finally {
+					try {
+						solutionsIn.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 				}
-			}
-		} catch (IOException e) {
-			/*
-			 * FileNotFoundException - File couldn't be opened for reading
-			 * ZipException - Bad format
-			 */
-			e.printStackTrace();
+			} catch (IOException e) {
+				/*
+				 * FileNotFoundException - File couldn't be opened for reading
+				 * ZipException - Bad format
+				 */
+				e.printStackTrace();
 		}
 	}
 	

@@ -1,16 +1,20 @@
 package model;
 
+import java.beans.XMLDecoder;
+import java.beans.XMLEncoder;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
-import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -19,6 +23,8 @@ import algorithms.demo.Maze3dSearchable;
 import algorithms.mazeGenerators.Position;
 import algorithms.search.Solution;
 import common.Client;
+import common.MazeSearcherTypes;
+import common.Properties;
 import common.ServerStats;
 import io.MyCompressorOutputStream;
 import io.MyDecompressorInputStream;
@@ -55,6 +61,69 @@ public class MazeServerModel extends CommonModel {
 	}
 	
 	@Override
+	public void loadProperties(String fileName) throws URISyntaxException, FileNotFoundException, IOException {
+		try {
+			fileName = new URI(fileName).getPath();
+		} catch (URISyntaxException e) {
+			notifyObservers(new Object[] { "properties not found" });
+			throw e;
+		}
+		XMLDecoder xmlDecoder;
+		try {
+			xmlDecoder = new XMLDecoder(new FileInputStream(fileName));
+		} catch(FileNotFoundException e) {
+			setChanged();
+			notifyObservers(new Object[] { "properties not found" });
+			throw e;
+		}
+		
+		try {
+			properties = (Properties) xmlDecoder.readObject();
+			setChanged();
+			notifyObservers(new Object[] { "properties loaded" });
+		} catch(ArrayIndexOutOfBoundsException e) {
+			setChanged();
+			notifyObservers(new Object[] { "bad file format" });
+			throw e;
+		} finally {
+			xmlDecoder.close();
+		}
+	}
+	
+	@Override
+	public Properties getProperties() {
+		return properties;
+	}
+	
+	@Override
+	public void saveProperties(String fileName, int poolSize, MazeSearcherTypes searcher) {
+		try {
+			fileName = new URI(fileName).getPath();
+		} catch (URISyntaxException e) {
+			notifyObservers(new Object[] { "properties not found" });
+		}
+		
+		properties = new Properties();
+		properties.setPoolSize(poolSize);
+		properties.setMazeSearcherType(searcher);
+		
+		XMLEncoder xmlEncoder;
+		try {
+			xmlEncoder = new XMLEncoder(new FileOutputStream(fileName));
+		} catch(FileNotFoundException e) {
+			setChanged();
+			notifyObservers(new Object[] { "properties not found" });
+			return;
+		}
+		
+		xmlEncoder.writeObject(properties);
+		xmlEncoder.close();
+		
+		setChanged();
+		notifyObservers(new Object[] { "properties saved" });
+	}
+	
+	@Override
 	protected void initClientCommands() {
 		clientCommands.put("solve", new Function<Client, Void>() {
 			@Override
@@ -80,7 +149,7 @@ public class MazeServerModel extends CommonModel {
 					clientWriter.flush();
 					
 					setChanged();
-					notifyObservers(new Object[] { "read searchable error", client.getId() });
+					notifyObservers(new Object[] { "recieve searchable error", client.getId() });
 					return null;
 				}
 				
@@ -108,43 +177,43 @@ public class MazeServerModel extends CommonModel {
 				stats.incrementPending();
 				
 				setChanged();
-				notifyObservers(new Object[] { "solving", ""+client.getId() });
+				notifyObservers(new Object[] { "solving", client.getId() });
 				
-				runTaskInBackground(new Task<Solution<Position>>() {
-					@Override
-					public Solution<Position> doTask() throws Exception {
-						client.incrementSolving();
-						stats.incrementSolving();
-						return mazeSearchAlgorithm.search(mazeSearchable);
-					}
+				client.incrementSolving();
+				stats.incrementSolving();
+				
+				Solution<Position> solution = mazeSearchAlgorithm.search(mazeSearchable);
+				
+				if(solution == null) {
+					client.incrementNoSolution();
+					stats.incrementNoSolution();
+					clientWriter.println("no solution");
+					clientWriter.flush();
+					setChanged();
+					notifyObservers(new Object[] { "no solution", client.getId() } );
+					return null;
+				}
+					
+				solutionCache.remove(mazeSearchable);
+				solutionCache.put(mazeSearchable, solution);
 
-					@Override
-					public void handleResult(Solution<Position> result) {
-						if(result == null) {
-							client.incrementNoSolution();
-							stats.incrementNoSolution();
-							clientWriter.println("no solution");
-							clientWriter.flush();
-							setChanged();
-							notifyObservers(new String[] { "no solution", ""+client.getId() } );
-						}
-							
-						solutionCache.remove(mazeSearchable);
-						solutionCache.put(mazeSearchable, result);
-						
-						client.incrementSolved();
-						setChanged();
-						notifyObservers(new String[] { "solved", ""+client.getId() } );
-						
-						
-					}
-
-					@Override
-					public void handleExecutionException(ExecutionException e) {
-						client.incrementNoSolution();
-						notifyObservers(new String[] { "no solution", ""+client.getId() } );
-					}
-				});
+				client.incrementSolved();
+				stats.incrementSolved();
+				clientWriter.println("solved");
+				clientWriter.flush();
+				setChanged();
+				notifyObservers(new Object[] { "solved", client.getId() } );
+				
+				try {
+					sendSolution(client, solution);
+					clientWriter.println("done");
+					clientWriter.flush();
+				} catch (IOException e) {
+					e.printStackTrace();
+					setChanged();
+					notifyObservers(new Object[] { "send solution error", client.getId() });
+				}
+				
 				return null;
 			}
 		});
