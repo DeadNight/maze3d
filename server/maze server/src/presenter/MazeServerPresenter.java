@@ -17,6 +17,7 @@ public class MazeServerPresenter extends CommonPresenter {
 			public Void apply(Object[] args) {
 				int clientId = (int)args[0];
 				view.displayClientConnected(model.getClient(clientId));
+				view.updateServerStats(model.getServerStats());
 				return null;
 			}
 		});
@@ -26,15 +27,7 @@ public class MazeServerPresenter extends CommonPresenter {
 			public Void apply(Object[] args) {
 				int clientId = (int)args[0];
 				view.displayClientDisconnected(clientId);
-				return null;
-			}
-		});
-
-		modelCommands.put("client command", new Function<Object[], Void>() {
-			@Override
-			public Void apply(Object[] args) {
-				int clientId = (int)args[0];
-				view.displayClientUpdated(model.getClient(clientId));
+				view.updateServerStats(model.getServerStats());
 				return null;
 			}
 		});

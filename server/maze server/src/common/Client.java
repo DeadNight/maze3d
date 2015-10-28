@@ -5,14 +5,19 @@ import java.io.OutputStream;
 
 public class Client {
 	private int id;
-	private String lastCommand;
-	
-	InputStream in;
-	OutputStream out;
+	private boolean running;
+	private InputStream in;
+	private OutputStream out;
+	private int solved;
+	private int pending;
+	private int solving;
+	private int noSolution;
 	
 	public Client(int id, InputStream in, OutputStream out) {
 		this.id = id;
-		lastCommand = "";
+		this.in = in;
+		this.out = out;
+		running = true;
 	}
 	
 	public int getId() {
@@ -26,11 +31,44 @@ public class Client {
 	public OutputStream getOut() {
 		return out;
 	}
-	
-	public String getLastCommand() {
-		return lastCommand;
+
+	public boolean getRunning() {
+		return running;
 	}
-	public void setLastCommand(String lastCommand) {
-		this.lastCommand = lastCommand;
+	public void setRunning(boolean running) {
+		this.running = running;
+	}
+
+	public int getPending() {
+		return pending;
+	}
+	public void incrementPending() {
+		++pending;
+	}
+
+	public int getSolving() {
+		return solving;
+	}
+	public void incrementSolving() {
+		--pending;
+		++solving;
+	}
+
+	public int getSolved() {
+		return solved;
+	}
+	public void incrementSolved() {
+		--solving;
+		++solved;
+	}
+
+	public int getNoSolution() {
+		return noSolution;
+	}
+	public void incrementNoSolution() {
+		--solving;
+		++noSolution;
+		// TODO Auto-generated method stub
+		
 	}
 }

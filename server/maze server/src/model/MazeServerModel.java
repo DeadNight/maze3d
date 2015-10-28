@@ -6,16 +6,24 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
+import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 
 import algorithms.demo.Maze3dSearchable;
 import algorithms.mazeGenerators.Position;
 import algorithms.search.Solution;
 import common.Client;
+import common.ServerStats;
 import io.MyCompressorOutputStream;
 import io.MyDecompressorInputStream;
 
 public class MazeServerModel extends CommonModel {
+	ServerStats stats;
+	
+	public MazeServerModel() {
+		stats = new ServerStats();
+	}
+	
 	@Override
 	protected void initClientCommands() {
 		clientCommands.put("solve", new Function<Client, Void>() {
@@ -47,41 +55,61 @@ public class MazeServerModel extends CommonModel {
 				clientWriter.println("solving");
 				clientWriter.flush();
 				
+				client.incrementPending();
+				stats.incrementPending();
+				
 				setChanged();
 				notifyObservers(new String[] { "solving", ""+client.getId() });
 				
-				//TODO: submit callable to threadpool
-				new Thread(new Runnable() {
+				runTaskInBackground(new Task<Solution<Position>>() {
 					@Override
-					public void run() {
-						Solution<Position> solution = mazeSearchAlgorithm.search(mazeSearchable);
-						
-						if(solution == null) {
+					public Solution<Position> doTask() throws Exception {
+						client.incrementSolving();
+						stats.incrementSolving();
+						return mazeSearchAlgorithm.search(mazeSearchable);
+					}
+
+					@Override
+					public void handleResult(Solution<Position> result) {
+						if(result == null) {
+							client.incrementNoSolution();
+							stats.incrementNoSolution();
 							clientWriter.println("no solution");
 							clientWriter.flush();
-							
-							
 							setChanged();
-							notifyObservers(new String[] { "no solution", ""+client.getId() });
-							return;
+							notifyObservers(new String[] { "no solution", ""+client.getId() } );
 						}
+							
+						solutionCache.remove(mazeSearchable);
+						solutionCache.put(mazeSearchable, result);
+						
+						client.incrementSolved();
+						setChanged();
+						notifyObservers(new String[] { "solved", ""+client.getId() } );
 						
 						try {
 							@SuppressWarnings("resource") // do not close the client stream
 							ObjectOutputStream clientObjectOut = new ObjectOutputStream(new MyCompressorOutputStream(new BufferedOutputStream(client.getOut())));
-							clientObjectOut.writeObject(solution);
+							clientObjectOut.writeObject(result);
 							clientObjectOut.flush();
 						} catch (IOException e) {
 							e.printStackTrace();
 						}
-						
-						
-						setChanged();
-						notifyObservers(new String[] { "solved", ""+client.getId() });
 					}
-				}).start();
+
+					@Override
+					public void handleExecutionException(ExecutionException e) {
+						client.incrementNoSolution();
+						notifyObservers(new String[] { "no solution", ""+client.getId() } );
+					}
+				});
 				return null;
 			}
 		});
+	}
+
+	@Override
+	public ServerStats getServerStats() {
+		return stats;
 	}
 }

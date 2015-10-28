@@ -5,6 +5,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
 import common.Client;
+import common.ServerStats;
 
 public class GUI extends CommonView {
 	MazeServerWindow window;
@@ -44,7 +45,7 @@ public class GUI extends CommonView {
 
 	@Override
 	public void displayShuttingDown() {
-		//TODO: disable window controls & let user know we're waiting
+		window.displayShuttingDown();
 	}
 
 	@Override
@@ -60,5 +61,10 @@ public class GUI extends CommonView {
 	@Override
 	public void displayClientUpdated(Client client) {
 		window.updateClient(client);
+	}
+
+	@Override
+	public void updateServerStats(ServerStats serverStats) {
+		window.updateServerStats(serverStats);
 	}
 }

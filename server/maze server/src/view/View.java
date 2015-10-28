@@ -1,6 +1,7 @@
 package view;
 
 import common.Client;
+import common.ServerStats;
 
 public interface View {
 	void start();
@@ -13,4 +14,5 @@ public interface View {
 	void displayClientConnected(Client client);
 	void displayClientDisconnected(int clientId);
 	void displayClientUpdated(Client client);
+	void updateServerStats(ServerStats serverStats);
 }

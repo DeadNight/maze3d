@@ -53,7 +53,7 @@ public class MyServer {
 			public void run() {
 				while(!stop) {
 					try {
-						System.out.println("waiting for client...");
+						// System.out.println("waiting for client...");
 						Socket client = server.accept();
 						if(client != null) {
 							System.out.println("client connected");

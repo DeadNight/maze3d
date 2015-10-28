@@ -8,13 +8,19 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Observable;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
 
+import algorithms.demo.Maze3dSearchable;
 import algorithms.mazeGenerators.Position;
 import algorithms.search.Searcher;
+import algorithms.search.Solution;
 import common.Client;
 
 public abstract class CommonModel extends Observable implements Model {
@@ -25,8 +31,10 @@ public abstract class CommonModel extends Observable implements Model {
 	HashMap<Integer, Client> clients;
 	HashMap<String, Function<Client, Void>> clientCommands;
 	Searcher<Position> mazeSearchAlgorithm;
+	HashMap<Maze3dSearchable, Solution<Position>> solutionCache;
 	
 	public CommonModel() {
+		solutionCache = new HashMap<Maze3dSearchable, Solution<Position>>();
 		clients = new HashMap<Integer, Client>();
 		clientCommands = new HashMap<String, Function<Client, Void>>();
 		initClientCommands();
@@ -54,11 +62,10 @@ public abstract class CommonModel extends Observable implements Model {
 				String line;
 				try {
 					while(!(line = clientReader.readLine()).equals("exit")) {
-						client.setLastCommand(line);
 						setChanged();
 						notifyObservers(new Object[] { "client command", client.getId() });
 						
-						if(!(running && client.getRunning()) {
+						if(!(running && client.getRunning())) {
 							clientWriter.println("disconnect");
 							clientWriter.flush();
 						} else if(clientCommands.get(line) == null) {
@@ -105,5 +112,41 @@ public abstract class CommonModel extends Observable implements Model {
 	@Override
 	public void setMazeSearchAlgorithm(Searcher<Position> mazeSearchAlgorithm) {
 		this.mazeSearchAlgorithm = mazeSearchAlgorithm;
+	}
+	
+	/**
+	 * Utility to run tasks in the background, handle cancelation by cancel or interrupt &amp;
+	 * handle exceptions
+	 * @param task Task to run
+	 * @see Task
+	 */
+	<T> void runTaskInBackground(Task<T> task) {
+		Future<T> future = threadPool.submit(new Callable<T>() {
+			@Override
+			public T call() throws Exception {
+				return task.doTask();
+			}
+		});
+		
+		threadPool.execute(new Runnable() {
+			@Override
+			public void run() {
+				boolean waiting = true;
+				while(waiting)
+					try {
+						T result = future.get(10, TimeUnit.SECONDS);
+						waiting = false;
+						task.handleResult(result);
+					} catch (ExecutionException e) {
+						waiting = false;
+						task.handleExecutionException(e);
+					} catch (InterruptedException e) {
+						waiting = false;
+						future.cancel(true);
+					} catch (TimeoutException e) {
+						// OK, keep waiting
+					}
+			}
+		});
 	}
 }
