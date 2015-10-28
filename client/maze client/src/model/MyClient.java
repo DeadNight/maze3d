@@ -16,7 +16,7 @@ public class MyClient {
 		this.sessionHandler = sessionHandler;
 	}
 	
-	public void start() { // use try/catch here instead!
+	public boolean start() { // use try/catch here instead!
 		System.out.print("connecting to server... ");
 		Socket server;
 		try {
@@ -26,14 +26,26 @@ public class MyClient {
 			InputStream serverIn = server.getInputStream();
 			OutputStream serverOut = server.getOutputStream();
 			
-			sessionHandler.handleServer(serverIn, serverOut);
-			
-			// release resources
-			serverIn.close();
-			serverOut.close();
-			server.close();
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					sessionHandler.handleServer(serverIn, serverOut);
+					
+					// release resources
+					try {
+						serverIn.close();
+						serverOut.close();
+						server.close();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}).start();
 		} catch (IOException e) {
 			e.printStackTrace();
+			return false;
 		}
+		return true;
 	}
 }

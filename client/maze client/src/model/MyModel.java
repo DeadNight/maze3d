@@ -43,11 +43,10 @@ public class MyModel extends CommonModel {
 	int fileSize;
 	
 	@Override
-	public void start(int poolSize) {
-		if(running) return;
+	public boolean start(int poolSize) {
+		if(running) return true;
 		super.start(poolSize);
-		running = true;
-		new MyClient("localhost", 5400, new ServerHandler() {
+		client = new MyClient("localhost", 5400, new ServerHandler() {
 			@Override
 			public void handleServer(InputStream inFromServer, OutputStream outToServer) {
 				serverIn = inFromServer;
@@ -77,7 +76,8 @@ public class MyModel extends CommonModel {
 				serverWriter.println("exit");
 				serverWriter.flush();
 			}
-		}).start();
+		});
+		return (running = client.start());
 	};
 	
 	@Override

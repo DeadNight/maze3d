@@ -60,26 +60,27 @@ public class MazeServerModel extends CommonModel {
 			@Override
 			public Void apply(Client client) {
 				PrintWriter clientWriter = new PrintWriter(client.getOut());
+				
+				clientWriter.println("ok, send searchable");
+				clientWriter.flush();
+				
 				Maze3dSearchable mazeSearchable;
 				try {
 					@SuppressWarnings("resource") // do not close the client stream
 					ObjectInputStream clientObjectIn = new ObjectInputStream(new MyDecompressorInputStream(new BufferedInputStream(client.getIn())));
 					
-					clientWriter.println("ok, send searchable");
-					clientWriter.flush();
-					
 					setChanged();
-					notifyObservers(new String[] { "solve request", ""+client.getId() });
+					notifyObservers(new Object[] { "solve request", client.getId() });
 					
 					mazeSearchable = (Maze3dSearchable)clientObjectIn.readObject();
 				} catch (IOException | ClassNotFoundException e) {
 					e.printStackTrace();
 					
-					clientWriter.println("exception occured");
+					clientWriter.println("solve error");
 					clientWriter.flush();
 					
 					setChanged();
-					notifyObservers(new String[] { "read searchable exception", ""+client.getId() });
+					notifyObservers(new Object[] { "read searchable error", client.getId() });
 					return null;
 				}
 				
@@ -107,7 +108,7 @@ public class MazeServerModel extends CommonModel {
 				stats.incrementPending();
 				
 				setChanged();
-				notifyObservers(new String[] { "solving", ""+client.getId() });
+				notifyObservers(new Object[] { "solving", ""+client.getId() });
 				
 				runTaskInBackground(new Task<Solution<Position>>() {
 					@Override

@@ -65,9 +65,6 @@ public abstract class CommonModel extends Observable implements Model {
 				String line;
 				try {
 					while(!(line = clientReader.readLine()).equals("exit")) {
-						setChanged();
-						notifyObservers(new Object[] { "client command", client.getId() });
-						
 						if(!(running && client.getRunning())) {
 							clientWriter.println("disconnect");
 							clientWriter.flush();

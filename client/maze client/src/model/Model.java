@@ -42,9 +42,10 @@ public interface Model {
 	/**
 	 * Start the model Façade instance and create a thread pool of the given size 
 	 * @param poolSize Size of the thread pool
+	 * @return boolean Whether the model started successfully 
 	 * @see Model#stop()
 	 */
-	void start(int poolSize);
+	boolean start(int poolSize);
 	/**
 	 * Stop the model Façade instance, cancel any pending threads &amp; abort any running
 	 * threads

@@ -12,12 +12,25 @@ public class MazeServerPresenter extends CommonPresenter {
 
 	@Override
 	void initModelCommands() {
+		Function<Object[], Void> noOp = new Function<Object[], Void>() {
+			@Override
+			public Void apply(Object[] args) { return null; }
+		};
+		
+		Function<Object[], Void> updateServerStats = new Function<Object[], Void>() {
+			@Override
+			public Void apply(Object[] args) {
+				view.updateServerStats(model.getServerStats());
+				return null;
+			}
+		};
+		
 		modelCommands.put("client connected", new Function<Object[], Void>() {
 			@Override
 			public Void apply(Object[] args) {
 				int clientId = (int)args[0];
 				view.displayClientConnected(model.getClient(clientId));
-				view.updateServerStats(model.getServerStats());
+				updateServerStats.apply(null);
 				return null;
 			}
 		});
@@ -27,9 +40,15 @@ public class MazeServerPresenter extends CommonPresenter {
 			public Void apply(Object[] args) {
 				int clientId = (int)args[0];
 				view.displayClientDisconnected(clientId);
-				view.updateServerStats(model.getServerStats());
+				updateServerStats.apply(null);
 				return null;
 			}
 		});
+		
+		modelCommands.put("solve request", noOp);
+		modelCommands.put("read searchable error", noOp);
+		modelCommands.put("solving", updateServerStats);
+		modelCommands.put("no solution", updateServerStats);
+		modelCommands.put("solved", updateServerStats);
 	}
 }

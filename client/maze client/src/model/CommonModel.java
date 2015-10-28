@@ -59,8 +59,9 @@ public abstract class CommonModel extends Observable implements Model {
 	}
 	
 	@Override
-	public void start(int poolSize) {
+	public boolean start(int poolSize) {
 		threadPool = Executors.newFixedThreadPool(poolSize);
+		return true;
 	}
 	
 	@Override
