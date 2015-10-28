@@ -1,8 +1,8 @@
 package view;
 
-import presenter.Properties;
 import algorithms.mazeGenerators.Position;
 import algorithms.search.Solution;
+import common.Properties;
 
 /**
  * @author Nir Leibovitch

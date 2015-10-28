@@ -5,10 +5,9 @@ import java.io.BufferedOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
-import presenter.MazeGeneratorTypes;
-import presenter.MazeSearcherTypes;
-import presenter.Properties;
-import presenter.ViewTypes;
+import common.MazeGeneratorTypes;
+import common.Properties;
+import common.ViewTypes;
 
 /**
  * @author Nir Leibovitch
@@ -31,7 +30,6 @@ public class Setup {
 		Properties props = new Properties();
 		props.setPoolSize(10);
 		props.setMazeGeneratorType(MazeGeneratorTypes.MY);
-		props.setMazeSearcherType(MazeSearcherTypes.A_STAR_MANHATTER);
 		props.setViewType(ViewTypes.GUI);
 		
 		xmlEncoder.writeObject(props);

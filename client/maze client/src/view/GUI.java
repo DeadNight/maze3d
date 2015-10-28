@@ -12,12 +12,12 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
-import presenter.Properties;
 import algorithms.mazeGenerators.Maze3d;
 import algorithms.mazeGenerators.Position;
 import algorithms.mazeGenerators.Volume;
 import algorithms.search.Solution;
 import algorithms.search.State;
+import common.Properties;
 
 /**
  * @author Nir Leibovitch
@@ -497,7 +497,6 @@ public class GUI extends CommonView {
 				.add("edit properties")
 				.add(""+newProperties.getPoolSize())
 				.add(""+newProperties.getMazeGeneratorType())
-				.add(""+newProperties.getMazeSearcherType())
 				.add(""+newProperties.getViewType());
 			userCommand = stringJoiner.toString();
 			setChanged();

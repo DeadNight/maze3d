@@ -18,7 +18,6 @@ import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.concurrent.ExecutionException;
-import java.util.zip.GZIPOutputStream;
 
 import algorithms.demo.Maze3dSearchable;
 import algorithms.mazeGenerators.Maze3d;
@@ -31,7 +30,7 @@ import io.MyDecompressorInputStream;
  * @author Nir Leibovitch
  * <h1>My implementation of the Model Façade</h1>
  */
-public class MyModel extends CommonModel {
+public class MazeClientModel extends CommonModel {
 	MyClient client;
 	boolean running;
 	InputStream serverIn;

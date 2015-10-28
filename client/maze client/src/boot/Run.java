@@ -7,11 +7,11 @@ import java.io.PrintWriter;
 import java.net.URISyntaxException;
 import java.util.function.Function;
 
+import common.ViewTypes;
 import model.CommonModel;
-import model.MyModel;
+import model.MazeClientModel;
 import presenter.MyPresenter;
 import presenter.Presenter;
-import presenter.ViewTypes;
 import view.CLI;
 import view.CommonView;
 import view.GUI;
@@ -30,7 +30,7 @@ public class Run {
 	 * @param args Startup arguments
 	 */
 	public static void main(String[] args) {
-		CommonModel model = new MyModel();
+		CommonModel model = new MazeClientModel();
 		Function<ViewTypes, View> createView = new Function<ViewTypes, View>() {
 			@Override
 			public View apply(ViewTypes t) {

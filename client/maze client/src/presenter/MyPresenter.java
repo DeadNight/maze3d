@@ -9,6 +9,9 @@ import model.Model;
 import view.View;
 import algorithms.mazeGenerators.Position;
 import algorithms.search.Solution;
+import common.MazeGeneratorTypes;
+import common.Properties;
+import common.ViewTypes;
 
 /**
  * @author Nir Leibovitch
@@ -312,7 +315,6 @@ public class MyPresenter extends CommonPresenter {
 				try {
 					Integer.parseInt(args[0]);
 					MazeGeneratorTypes.valueOf(args[1]);
-					MazeSearcherTypes.valueOf(args[2]);
 					ViewTypes.valueOf(args[3]);
 				} catch (IllegalArgumentException e) {
 					return false;
@@ -324,9 +326,8 @@ public class MyPresenter extends CommonPresenter {
 			public void doCommand(String[] args) {
 				int poolSize = Integer.parseInt(args[0]);
 				MazeGeneratorTypes generator = MazeGeneratorTypes.valueOf(args[1]);
-				MazeSearcherTypes searcher = MazeSearcherTypes.valueOf(args[2]);
 				ViewTypes viewType = ViewTypes.valueOf(args[3]);
-				model.saveProperties(PROPERTIES_FILE_NAME, poolSize, generator, searcher, viewType);
+				model.saveProperties(PROPERTIES_FILE_NAME, poolSize, generator, viewType);
 			}
 		});
 		
@@ -341,8 +342,7 @@ public class MyPresenter extends CommonPresenter {
 				String fileName = args[0];
 				Properties properties = model.getProperties();
 				model.saveProperties(fileName, properties.getPoolSize()
-						, properties.getMazeGeneratorType(), properties.getMazeSearcherType()
-						, properties.getViewType());
+						, properties.getMazeGeneratorType(), properties.getViewType());
 			}
 		});
 	}

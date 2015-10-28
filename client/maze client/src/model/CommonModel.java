@@ -27,12 +27,11 @@ import algorithms.mazeGenerators.Maze3d;
 import algorithms.mazeGenerators.Maze3dGenerator;
 import algorithms.mazeGenerators.Position;
 import algorithms.search.Solution;
+import common.MazeGeneratorTypes;
+import common.Properties;
+import common.ViewTypes;
 import io.MyCompressorOutputStream;
 import io.MyDecompressorInputStream;
-import presenter.MazeGeneratorTypes;
-import presenter.MazeSearcherTypes;
-import presenter.Properties;
-import presenter.ViewTypes;
 
 /**
  * @author Nir Leibovitch
@@ -112,9 +111,8 @@ public abstract class CommonModel extends Observable implements Model {
 	}
 	
 	@Override
-	public void saveProperties(String fileName, int poolSize,
-			MazeGeneratorTypes generator, MazeSearcherTypes searcher,
-			ViewTypes viewType) {
+	public void saveProperties(String fileName, int poolSize, MazeGeneratorTypes generator
+			, ViewTypes viewType) {
 		try {
 			fileName = new URI(fileName).getPath();
 		} catch (URISyntaxException e) {
@@ -124,7 +122,6 @@ public abstract class CommonModel extends Observable implements Model {
 		properties = new Properties();
 		properties.setPoolSize(poolSize);
 		properties.setMazeGeneratorType(generator);
-		properties.setMazeSearcherType(searcher);
 		properties.setViewType(viewType);
 		
 		XMLEncoder xmlEncoder;

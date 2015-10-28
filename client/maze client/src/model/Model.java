@@ -7,10 +7,9 @@ import java.net.URISyntaxException;
 import algorithms.mazeGenerators.Maze3dGenerator;
 import algorithms.mazeGenerators.Position;
 import algorithms.search.Solution;
-import presenter.MazeGeneratorTypes;
-import presenter.MazeSearcherTypes;
-import presenter.Properties;
-import presenter.ViewTypes;
+import common.MazeGeneratorTypes;
+import common.Properties;
+import common.ViewTypes;
 
 /**
  * @author Nir Leibovitch
@@ -256,9 +255,7 @@ public interface Model {
 	 * @param fileName File path
 	 * @param poolSize Size of the thread pool
 	 * @param generator Type of maze generator to use
-	 * @param searcher Type of maze searcher to use
 	 * @param viewType Type of view to show
 	 */
-	void saveProperties(String fileName, int poolSize,
-			MazeGeneratorTypes generator, MazeSearcherTypes searcher, ViewTypes viewType);
+	void saveProperties(String fileName, int poolSize, MazeGeneratorTypes generator, ViewTypes viewType);
 }

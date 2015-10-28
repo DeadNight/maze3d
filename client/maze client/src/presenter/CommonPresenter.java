@@ -9,17 +9,14 @@ import java.util.LinkedHashMap;
 import java.util.Observable;
 import java.util.function.Function;
 
-import model.Model;
-import view.View;
 import algorithms.mazeGenerators.Maze3dGenerator;
 import algorithms.mazeGenerators.MyMaze3dGenerator;
-import algorithms.mazeGenerators.Position;
 import algorithms.mazeGenerators.SimpleMaze3dGenerator;
-import algorithms.search.AStarSearcher;
-import algorithms.search.BFSearcher;
-import algorithms.search.MazeAirDistance;
-import algorithms.search.MazeManhattanDistance;
-import algorithms.search.Searcher;
+import common.MazeGeneratorTypes;
+import common.Properties;
+import common.ViewTypes;
+import model.Model;
+import view.View;
 
 /**
  * @author Nir Leibovitch
@@ -74,7 +71,7 @@ public abstract class CommonPresenter implements Presenter {
 
 	@Override
 	public void start() {
-		model.start(model.getProperties().threadPoolSize);
+		model.start(model.getProperties().getPoolSize());
 		view.start();
 	}
 
@@ -90,24 +87,6 @@ public abstract class CommonPresenter implements Presenter {
 			return new MyMaze3dGenerator();
 		case SIMPLE:
 			return new SimpleMaze3dGenerator();
-		}
-		return null;
-	}
-	
-	/**
-	 * Utility method to create an appropriate maze Searcher of the given type
-	 * @param mazeSearcher Type of maze searcher
-	 * @return Searcher<Position> Maze searcher instance
-	 * @see MazeSearcherTypes
-	 */
-	Searcher<Position> getMazeSearcher(MazeSearcherTypes mazeSearcher) {
-		switch(mazeSearcher) {
-		case A_STAR_AIR:
-			return new AStarSearcher<Position>(new MazeAirDistance());
-		case A_STAR_MANHATTER:
-			return new AStarSearcher<Position>(new MazeManhattanDistance());
-		case BFS:
-			return new BFSearcher<Position>();
 		}
 		return null;
 	}

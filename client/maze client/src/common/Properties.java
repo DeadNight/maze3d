@@ -1,4 +1,4 @@
-package presenter;
+package common;
 
 import java.io.Serializable;
 
@@ -11,7 +11,6 @@ public class Properties implements Serializable {
 	private static final long serialVersionUID = -3069362332373746033L;
 	int threadPoolSize;
 	MazeGeneratorTypes mazeGeneratorType;
-	MazeSearcherTypes mazeSearcherType;
 	ViewTypes viewType;
 
 	/**
@@ -28,22 +27,6 @@ public class Properties implements Serializable {
 	 */
 	public void setPoolSize(int threadPoolSize) {
 		this.threadPoolSize = threadPoolSize;
-	}
-	
-	/**
-	 * Get the configured maze searcher type
-	 * @return MazeSearcherTypes Maze searcher type
-	 */
-	public MazeSearcherTypes getMazeSearcherType() {
-		return mazeSearcherType;
-	}
-	
-	/**
-	 * Set the configured maze searcher type
-	 * @param mazeSearcherType Maze searcher type
-	 */
-	public void setMazeSearcherType(MazeSearcherTypes mazeSearcherType) {
-		this.mazeSearcherType = mazeSearcherType;
 	}
 	
 	/**
@@ -85,7 +68,6 @@ public class Properties implements Serializable {
 		Properties other = (Properties) obj;
 		if(other.threadPoolSize != threadPoolSize) return false;
 		if(other.mazeGeneratorType != mazeGeneratorType) return false;
-		if(other.mazeSearcherType != mazeSearcherType) return false;
 		if(other.viewType != viewType) return false;
 		return true;
 	};
