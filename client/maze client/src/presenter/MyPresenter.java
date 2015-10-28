@@ -520,7 +520,6 @@ public class MyPresenter extends CommonPresenter {
 			public void doCommand(String[] args) {
 				Properties properties = model.getProperties();
 				model.setMazeGenerator(getMazeGenerator(properties.getMazeGeneratorType()));
-				model.setMazeSearchAlgorithm(getMazeSearcher(properties.getMazeSearcherType()));
 				view.displayPropertiesSaved();
 			}
 		});

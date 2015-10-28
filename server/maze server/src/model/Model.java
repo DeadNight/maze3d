@@ -9,6 +9,10 @@ public interface Model {
 	boolean start(int port, int numOfClients, int socketTimeout, int poolSize);
 	void stop();
 	Client getClient(int id);
-	void setMazeSearchAlgorithm(Searcher<Position> mazeSearchAlgorithm);
+	/**
+	 * Set the maze searcher algorithm to be used by the model Façade instance
+	 * @param mazeSearcher Maze searcher
+	 */
+	void setMazeSearchAlgorithm(Searcher<Position> mazeSearcher);
 	ServerStats getServerStats();
 }

@@ -1,8 +1,5 @@
 package model;
 
-import io.MyCompressorOutputStream;
-import io.MyDecompressorInputStream;
-
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
 import java.io.BufferedInputStream;
@@ -25,16 +22,17 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import presenter.MazeGeneratorTypes;
-import presenter.MazeSearcherTypes;
-import presenter.Properties;
-import presenter.ViewTypes;
 import algorithms.demo.Maze3dSearchable;
 import algorithms.mazeGenerators.Maze3d;
 import algorithms.mazeGenerators.Maze3dGenerator;
 import algorithms.mazeGenerators.Position;
-import algorithms.search.Searcher;
 import algorithms.search.Solution;
+import io.MyCompressorOutputStream;
+import io.MyDecompressorInputStream;
+import presenter.MazeGeneratorTypes;
+import presenter.MazeSearcherTypes;
+import presenter.Properties;
+import presenter.ViewTypes;
 
 /**
  * @author Nir Leibovitch
@@ -44,7 +42,6 @@ public abstract class CommonModel extends Observable implements Model {
 	Properties properties;
 	ExecutorService threadPool;
 	Maze3dGenerator mazeGenerator;
-	Searcher<Position> mazeSearchAlgorithm;
 	HashMap<String, Maze3d> mazeCache;
 	HashMap<Maze3dSearchable, Solution<Position>> solutionCache;
 	
@@ -59,11 +56,6 @@ public abstract class CommonModel extends Observable implements Model {
 	@Override
 	public void setMazeGenerator(Maze3dGenerator mazeGenerator) {
 		this.mazeGenerator = mazeGenerator;
-	}
-
-	@Override
-	public void setMazeSearchAlgorithm(Searcher<Position> mazeSearchAlgorithm) {
-		this.mazeSearchAlgorithm = mazeSearchAlgorithm;
 	}
 	
 	@Override

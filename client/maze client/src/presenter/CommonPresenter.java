@@ -59,7 +59,6 @@ public abstract class CommonPresenter implements Presenter {
 		view = createView.apply(properties.getViewType());
 		
 		model.setMazeGenerator(getMazeGenerator(properties.getMazeGeneratorType()));
-		model.setMazeSearchAlgorithm(getMazeSearcher(properties.getMazeSearcherType()));
 		
 		viewCommands = new LinkedHashMap<String, Command>();
 		modelCommands = new HashMap<String, Command>();

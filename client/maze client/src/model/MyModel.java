@@ -2,64 +2,88 @@ package model;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
-import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import algorithms.demo.Maze3dSearchable;
 import algorithms.mazeGenerators.Maze3d;
 import algorithms.mazeGenerators.Position;
 import algorithms.search.Solution;
+import io.MyCompressorOutputStream;
+import io.MyDecompressorInputStream;
 
 /**
  * @author Nir Leibovitch
  * <h1>My implementation of the Model Façade</h1>
  */
 public class MyModel extends CommonModel {
+	MyClient client;
+	boolean running;
+	InputStream serverIn;
+	OutputStream serverOut;
 	private final static String SOLUTIONS_FILE_NAME = "solutions.gzip";
 	String[] filesList;
 	int[][] crossSection;
 	int mazeSize;
 	int fileSize;
 	
-	@SuppressWarnings("unchecked")
-	public MyModel() {
-		try {
-			ObjectInputStream solutionsIn = new ObjectInputStream(new GZIPInputStream(new BufferedInputStream(new FileInputStream(SOLUTIONS_FILE_NAME))));
-			try {
-				solutionCache = (HashMap<Maze3dSearchable, Solution<Position>>) solutionsIn.readObject();
-			} catch (ClassNotFoundException | ClassCastException e) {
-				e.printStackTrace();
-			} finally {
+	@Override
+	public void start(int poolSize) {
+		if(running) return;
+		super.start(poolSize);
+		running = true;
+		new MyClient("localhost", 5400, new ServerHandler() {
+			@Override
+			public void handleServer(InputStream inFromServer, OutputStream outToServer) {
+				serverIn = inFromServer;
+				serverOut = outToServer;
+				
+				BufferedReader serverReader = new BufferedReader(new InputStreamReader(inFromServer));
+				PrintWriter serverWriter = new PrintWriter(outToServer);
+				
 				try {
-					solutionsIn.close();
+					if(!serverReader.readLine().equals("hello")) {
+						serverWriter.println("invalid protocol");
+						serverWriter.flush();
+						running = false;
+					}
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
+				
+				while(running) {
+					// keep connection alive
+					try {
+						Thread.sleep(2 * 1000);
+					} catch (InterruptedException e) {
+						running = false;
+					}
+				}
+				serverWriter.println("exit");
+				serverWriter.flush();
 			}
-		} catch (IOException e) {
-			/*
-			 * FileNotFoundException - File couldn't be opened for reading
-			 * ZipException - Bad format
-			 */
-			e.printStackTrace();
-		}
-	}
+		}).start();
+	};
 	
 	@Override
 	public void stop() {
 		super.stop();
+		running = false;
 		
 		try {
 			ObjectOutputStream solutionsOut = new ObjectOutputStream(new GZIPOutputStream(new BufferedOutputStream(new FileOutputStream(SOLUTIONS_FILE_NAME))));
@@ -363,7 +387,38 @@ public class MyModel extends CommonModel {
 		runTaskInBackground(new Task<Solution<Position>>() {
 			@Override
 			public Solution<Position> doTask() throws Exception {
-				return mazeSearchAlgorithm.search(mazeSearchable);
+				BufferedReader serverReader = new BufferedReader(new InputStreamReader(serverIn));
+				PrintWriter serverWriter = new PrintWriter(serverOut);
+				
+				serverWriter.println("solve");
+				serverWriter.flush();
+				if(!serverReader.readLine().equals("ok, send searchable")) {
+					serverWriter.println("invalid protocol");
+					serverWriter.flush();
+					
+					return null;
+				}
+				
+				@SuppressWarnings("resource") // do not close the server stream
+				ObjectOutputStream serverObjectOut = new ObjectOutputStream(new MyCompressorOutputStream(new BufferedOutputStream(serverOut)));
+				serverObjectOut.writeObject(mazeSearchable);
+				serverObjectOut.flush();
+				
+				String line = serverReader.readLine();
+				if(line.equals("solving"))
+					line = serverReader.readLine();
+				
+				switch(line) {
+				case "exception occured":
+				case "no solution":
+					return null;
+				case "solved":
+					ObjectInputStream clientObjectIn = new ObjectInputStream(new MyDecompressorInputStream(new BufferedInputStream(serverIn)));
+					@SuppressWarnings("unchecked")
+					Solution<Position> solution = (Solution<Position>) clientObjectIn.readObject();
+					return solution;
+				}
+				return null;
 			}
 
 			@Override

@@ -59,6 +59,9 @@ public abstract class CommonModel extends Observable implements Model {
 				BufferedReader clientReader = new BufferedReader(new InputStreamReader(inFromClient)); 
 				PrintWriter clientWriter = new PrintWriter(outToClient);
 				
+				clientWriter.println("hello");
+				clientWriter.flush();
+				
 				String line;
 				try {
 					while(!(line = clientReader.readLine()).equals("exit")) {
@@ -108,7 +111,7 @@ public abstract class CommonModel extends Observable implements Model {
 	public Client getClient(int id) {
 		return clients.get(id);
 	}
-	
+
 	@Override
 	public void setMazeSearchAlgorithm(Searcher<Position> mazeSearchAlgorithm) {
 		this.mazeSearchAlgorithm = mazeSearchAlgorithm;

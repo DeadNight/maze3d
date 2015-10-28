@@ -29,6 +29,7 @@ public class MazeServerWindow extends BasicWindow {
 	private Text solvedText;
 	private Text statusText;
 	private Text NoSolutionText;
+	private Text cachedText;
 	
 	public MazeServerWindow() {
 		super("Maze Server", 600, 300);
@@ -81,6 +82,10 @@ public class MazeServerWindow extends BasicWindow {
 		new Label(statsGroup, SWT.NONE).setText("Solved: ");
 		solvedText = new Text(statsGroup, SWT.READ_ONLY);
 		solvedText.setText("0");
+		
+		new Label(statsGroup, SWT.NONE).setText("Cached Solutions: ");
+		cachedText = new Text(statsGroup, SWT.READ_ONLY);
+		cachedText.setText("0");
 	}
 	
 	void initMenu() {
@@ -111,7 +116,6 @@ public class MazeServerWindow extends BasicWindow {
 				clientRow.setText(0, ""+client.getId());
 				setClientRow(clientRow, client);
 				clientRows.put(client.getId(), clientRow);
-				connectedClientsText.setText(""+clientRows.size());
 			}
 		});
 	}
@@ -125,7 +129,6 @@ public class MazeServerWindow extends BasicWindow {
 					clientsTable.remove(clientsTable.indexOf(clientRow));
 					for(TableColumn column : clientsTable.getColumns())
 						column.pack();
-					connectedClientsText.setText(""+clientRows.size());
 				}
 			}
 		});
@@ -159,9 +162,16 @@ public class MazeServerWindow extends BasicWindow {
 	}
 
 	public void updateServerStats(ServerStats serverStats) {
-		pendingRequestsText.setText(""+serverStats.getPending());
-		solvingText.setText(""+serverStats.getSolving());
-		NoSolutionText.setText(""+serverStats.getNoSolution());
-		solvedText.setText(""+serverStats.getSolved());
+		display.syncExec(new Runnable() {
+			@Override
+			public void run() {
+				connectedClientsText.setText(""+serverStats.getConnected());
+				pendingRequestsText.setText(""+serverStats.getPending());
+				solvingText.setText(""+serverStats.getSolving());
+				NoSolutionText.setText(""+serverStats.getNoSolution());
+				solvedText.setText(""+serverStats.getSolved());
+				cachedText.setText(""+serverStats.getCached());
+			}
+		});
 	}
 }

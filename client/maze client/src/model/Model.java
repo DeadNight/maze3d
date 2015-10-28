@@ -4,14 +4,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
+import algorithms.mazeGenerators.Maze3dGenerator;
+import algorithms.mazeGenerators.Position;
+import algorithms.search.Solution;
 import presenter.MazeGeneratorTypes;
 import presenter.MazeSearcherTypes;
 import presenter.Properties;
 import presenter.ViewTypes;
-import algorithms.mazeGenerators.Maze3dGenerator;
-import algorithms.mazeGenerators.Position;
-import algorithms.search.Searcher;
-import algorithms.search.Solution;
 
 /**
  * @author Nir Leibovitch
@@ -39,11 +38,6 @@ public interface Model {
 	 * @param mazeGenerator Maze generator
 	 */
 	void setMazeGenerator(Maze3dGenerator mazeGenerator);
-	/**
-	 * Set the maze searcher algorithm to be used by the model Façade instance
-	 * @param mazeSearcher Maze searcher
-	 */
-	void setMazeSearchAlgorithm(Searcher<Position> mazeSearcher);
 	
 	/**
 	 * Start the model Façade instance and create a thread pool of the given size 
