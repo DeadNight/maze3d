@@ -32,7 +32,19 @@ public class NibblesSearchable extends CommonSearchable<Position> {
 		for(NibblesMove move : nibbles.getPossibleMoves(from.getState())) {
 			State<Position> to = new State<Position>(move.getDestination());
 			to.setCameFrom(from);
-			to.setCost(move.getCost());
+			if(to.equals(getInitialState()))
+				if(to.getState().getX() <= 3 && new Position(from.getState()).moveLeft().equals(to))
+					to.setCost(move.getCost() + 10);
+				else if(to.getState().getY() <= 3 && new Position(from.getState()).moveUp().equals(to))
+					to.setCost(move.getCost() + 10);
+				else if(to.getState().getX() >= Nibbles.BOARD_SIZE - 4 && new Position(from.getState()).moveRight().equals(to))
+					to.setCost(move.getCost() + 10);
+				else if(to.getState().getY() >= Nibbles.BOARD_SIZE - 4 && new Position(from.getState()).moveDown().equals(to))
+					to.setCost(move.getCost() + 10);
+				else
+					to.setCost(move.getCost());
+			else
+				to.setCost(move.getCost());
 			states.add(to);
 		}
 		return states;

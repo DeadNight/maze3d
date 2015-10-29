@@ -9,7 +9,7 @@ import java.io.PrintWriter;
 import java.rmi.UnexpectedException;
 import java.util.ArrayList;
 
-import algorithms.search.BFSearcher;
+import algorithms.search.AStarSearcher;
 import algorithms.search.Searcher;
 import algorithms.search.Solution;
 import algorithms.search.State;
@@ -24,7 +24,7 @@ public class Run {
 		System.out.println("press Enter to begin");
 		
 		BufferedReader bufferedIn = new BufferedReader(new InputStreamReader(System.in));
-		Searcher<Position> searcher = new BFSearcher<Position>();
+		Searcher<Position> searcher = new AStarSearcher<Position>(new NibblesManhattanDistance());
 		running = true;
 		
 		try {
@@ -41,6 +41,7 @@ public class Run {
 				
 				Position headPosition;
 				Position applePosition = null;
+				ArrayList<Position> bodyPartPositions;
 				
 				while(running) {
 					try {
@@ -55,22 +56,29 @@ public class Run {
 						applePosition = newApplePosition;
 						
 						headPosition = getHeadPosition(serverIn, serverOut);
-						
-						serverOut.println("get body");
-						serverOut.flush();
-						String body = serverIn.readLine();
-						String[] bodyParts = body.split("\t");
-						ArrayList<Position> bodyPartPositions = new ArrayList<Position>();
-						for(String bodyPart : bodyParts) {
-							String[] bodyPartCoordinates = bodyPart.split(",");
-							bodyPartPositions.add(new Position(Integer.parseInt(bodyPartCoordinates[0])
-									, Integer.parseInt(bodyPartCoordinates[1])));
-						}
+						bodyPartPositions = getBodyPositions(serverIn, serverOut);
 						
 						Nibbles nibbles = new Nibbles(headPosition, applePosition, bodyPartPositions);
+						
+						while(bodyPartPositions.contains(applePosition)) {
+							// cannot solve, wait for snake to move
+							Position newHeadPosition;
+							while((newHeadPosition = getHeadPosition(serverIn, serverOut)).equals(headPosition)) {
+								try {
+									Thread.sleep(10);
+								} catch (InterruptedException e) {
+									//OK, keep waiting
+								}
+							}
+							headPosition = newHeadPosition;
+							bodyPartPositions = getBodyPositions(serverIn, serverOut);
+						}	
+						
 						Solution<Position> solution = searcher.search(new NibblesSearchable(nibbles));
 						
 						for(State<Position> state : solution.getSequence()) {
+							if(!running) break;
+							
 							if(new Position(state.getCameFrom().getState()).moveUp().equals(state.getState()))
 								serverOut.println("up");
 							else if(new Position(state.getCameFrom().getState()).moveDown().equals(state.getState()))
@@ -107,6 +115,31 @@ public class Run {
 				serverOut.flush();
 			}
 
+			private Position getHeadPosition(BufferedReader serverIn, PrintWriter serverOut) throws IOException {
+				serverOut.println("get head");
+				serverOut.flush();
+				String head = serverIn.readLine();
+				String[] headCoordinates = head.split(",");
+				Position headPosition = new Position(Integer.parseInt(headCoordinates[0])
+						, Integer.parseInt(headCoordinates[1]));
+				return headPosition;
+			}
+
+			private ArrayList<Position> getBodyPositions(BufferedReader serverIn, PrintWriter serverOut)
+					throws IOException {
+				serverOut.println("get body");
+				serverOut.flush();
+				String body = serverIn.readLine();
+				String[] bodyParts = body.split("\t");
+				ArrayList<Position> bodyPartPositions = new ArrayList<Position>();
+				for(String bodyPart : bodyParts) {
+					String[] bodyPartCoordinates = bodyPart.split(",");
+					bodyPartPositions.add(new Position(Integer.parseInt(bodyPartCoordinates[0])
+							, Integer.parseInt(bodyPartCoordinates[1])));
+				}
+				return bodyPartPositions;
+			}
+
 			private Position getApplePosition(BufferedReader serverIn, PrintWriter serverOut) throws IOException {
 				Position applePosition;
 				serverOut.println("get apple");
@@ -127,15 +160,5 @@ public class Run {
 		} finally {
 			running = false;
 		}
-	}
-
-	private static Position getHeadPosition(BufferedReader serverIn, PrintWriter serverOut) throws IOException {
-		serverOut.println("get head");
-		serverOut.flush();
-		String head = serverIn.readLine();
-		String[] headCoordinates = head.split(",");
-		Position headPosition = new Position(Integer.parseInt(headCoordinates[0])
-				, Integer.parseInt(headCoordinates[1]));
-		return headPosition;
 	}
 }

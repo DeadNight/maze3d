@@ -3,7 +3,7 @@ package boot;
 import java.util.ArrayList;
 
 public class Nibbles {
-	static final int BOARD_SIZE = 30;
+	public static final int BOARD_SIZE = 30;
 	
 	private Position headPosition;
 	private Position applePosition;
@@ -45,23 +45,27 @@ public class Nibbles {
 		ArrayList<NibblesMove> moves = new ArrayList<NibblesMove>();
 		if(from.getX() > 0) {
 			Position to = new Position(from).moveLeft();
-			if(!bodyPositions.contains(to))
+			if(!bodyPositions.contains(to)) {
 				moves.add(new NibblesMove(from, "left", to, 1));
+			}
 		}
 		if(from.getX() < BOARD_SIZE - 1) {
 			Position to = new Position(from).moveRight();
-			if(!bodyPositions.contains(to))
+			if(!bodyPositions.contains(to)) {
 				moves.add(new NibblesMove(from, "right", to, 1));
+			}
 		}
 		if(from.getY() > 0) {
-			Position to = new Position(from).moveDown();
-			if(!bodyPositions.contains(to))
-				moves.add(new NibblesMove(from, "down", to, 1));
+			Position to = new Position(from).moveUp();
+			if(!bodyPositions.contains(to)) {
+				moves.add(new NibblesMove(from, "up", to, 1));
+			}
 		}
 		if(from.getY() < BOARD_SIZE - 1) {
-			Position to = new Position(from).moveUp();
-			if(!bodyPositions.contains(to))
-				moves.add(new NibblesMove(from, "up", to, 1));
+			Position to = new Position(from).moveDown();
+			if(!bodyPositions.contains(to)) {
+				moves.add(new NibblesMove(from, "down", to, 1));
+			}
 		}
 		return moves;
 	}
