@@ -12,6 +12,8 @@ public class Properties implements Serializable {
 	int threadPoolSize;
 	MazeGeneratorTypes mazeGeneratorType;
 	ViewTypes viewType;
+	private String host;
+	private int port;
 
 	/**
 	 * Get the configured thread pool size
@@ -61,6 +63,20 @@ public class Properties implements Serializable {
 		this.viewType = viewType;
 	}
 	
+	public String getHost() {
+		return host;
+	};
+	public void setHost(String host) {
+		this.host = host;
+	}
+	
+	public int getPort() {
+		return port;
+	};
+	public void setPort(int port) {
+		this.port = port;
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if(obj == null) return false;
@@ -69,6 +85,8 @@ public class Properties implements Serializable {
 		if(other.threadPoolSize != threadPoolSize) return false;
 		if(other.mazeGeneratorType != mazeGeneratorType) return false;
 		if(other.viewType != viewType) return false;
+		if(other.host != host) return false;
+		if(other.port != port) return false;
 		return true;
-	};
+	}
 }

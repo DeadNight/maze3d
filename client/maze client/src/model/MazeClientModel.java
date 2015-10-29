@@ -44,7 +44,7 @@ public class MazeClientModel extends CommonModel {
 	public boolean start(int poolSize) {
 		if(running) return true;
 		super.start(poolSize);
-		client = new MyClient("localhost", 5400, new ServerHandler() {
+		client = new MyClient(properties.getHost(), properties.getPort(), new ServerHandler() {
 			@Override
 			public void handleServer(InputStream inFromServer, OutputStream outToServer) {
 				serverIn = inFromServer;

@@ -9,8 +9,32 @@ import java.io.Serializable;
  */
 public class Properties implements Serializable {
 	private static final long serialVersionUID = -3274497332274620414L;
+	int port;
+	private int numOfClients;
+	private int socketTimeout;
 	int threadPoolSize;
 	MazeSearcherTypes mazeSearcherType;
+	
+	public int getPort() {
+		return port;
+	};
+	public void setPort(int port) {
+		this.port = port;
+	}
+	
+	public int getNumOfClients() {
+		return numOfClients;
+	}
+	public void setNumOfClients(int numOfClients) {
+		this.numOfClients = numOfClients;
+	}
+	
+	public int getSocketTimeout() {
+		return socketTimeout;
+	}
+	public void setSocketTimeout(int socketTimeout) {
+		this.socketTimeout = socketTimeout;
+	}
 
 	/**
 	 * Get the configured thread pool size
@@ -48,8 +72,11 @@ public class Properties implements Serializable {
 		if(obj == null) return false;
 		if(!(obj instanceof Properties)) return false;
 		Properties other = (Properties) obj;
+		if(other.port != port) return false;
+		if(other.numOfClients != numOfClients) return false;
+		if(other.socketTimeout != socketTimeout) return false;
 		if(other.threadPoolSize != threadPoolSize) return false;
 		if(other.mazeSearcherType != mazeSearcherType) return false;
 		return true;
-	};
+	}
 }

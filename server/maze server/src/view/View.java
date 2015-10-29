@@ -1,6 +1,7 @@
 package view;
 
 import common.Client;
+import common.Properties;
 import common.ServerStats;
 
 public interface View {
@@ -16,4 +17,7 @@ public interface View {
 	void displayClientUpdated(Client client);
 	void updateServerStats(ServerStats serverStats);
 	void updateClient(Client client);
+	void displayProperties(Properties properties);
+	void displayPropertiesSaved();
+	void displayFileNotFound();
 }

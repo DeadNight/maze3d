@@ -27,6 +27,9 @@ public class Setup {
 		}
 		
 		Properties props = new Properties();
+		props.setPort(5400);
+		props.setNumOfClients(10);
+		props.setSocketTimeout(20 * 1000);
 		props.setPoolSize(10);
 		props.setMazeSearcherType(MazeSearcherTypes.A_STAR_MANHATTER);
 		

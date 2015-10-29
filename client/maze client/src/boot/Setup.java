@@ -31,6 +31,8 @@ public class Setup {
 		props.setPoolSize(10);
 		props.setMazeGeneratorType(MazeGeneratorTypes.MY);
 		props.setViewType(ViewTypes.GUI);
+		props.setHost("127.0.0.1");
+		props.setPort(5400);
 		
 		xmlEncoder.writeObject(props);
 		xmlEncoder.close();

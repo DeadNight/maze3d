@@ -24,5 +24,5 @@ public interface Model {
 	
 	void loadProperties(String fileName) throws URISyntaxException, FileNotFoundException, IOException;
 	Properties getProperties();
-	void saveProperties(String fileName, int poolSize, MazeSearcherTypes searcher);
+	void saveProperties(String fileName, int port, int numOfClients, int socketTimeout, int poolSize, MazeSearcherTypes searcher);
 }

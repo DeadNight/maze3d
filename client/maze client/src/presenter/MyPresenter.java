@@ -326,7 +326,7 @@ public class MyPresenter extends CommonPresenter {
 			public void doCommand(String[] args) {
 				int poolSize = Integer.parseInt(args[0]);
 				MazeGeneratorTypes generator = MazeGeneratorTypes.valueOf(args[1]);
-				ViewTypes viewType = ViewTypes.valueOf(args[3]);
+				ViewTypes viewType = ViewTypes.valueOf(args[2]);
 				model.saveProperties(PROPERTIES_FILE_NAME, poolSize, generator, viewType);
 			}
 		});

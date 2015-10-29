@@ -27,7 +27,7 @@ public abstract class CommonPresenter implements Presenter {
 	View view;
 	
 	HashMap<String, Function<Object[], Void>> modelCommands;
-	HashMap<String, Function<Object[], Void>> viewCommands;
+	HashMap<String, Function<String[], Void>> viewCommands;
 	
 	public CommonPresenter(CommonModel model, CommonView view) throws URISyntaxException, FileNotFoundException, IOException {
 		this.model = model;
@@ -49,7 +49,7 @@ public abstract class CommonPresenter implements Presenter {
 		modelCommands = new HashMap<String, Function<Object[],Void>>();
 		initModelCommands();
 		
-		viewCommands = new HashMap<String, Function<Object[],Void>>();
+		viewCommands = new HashMap<String, Function<String[],Void>>();
 		initViewCommands();
 	}
 	
@@ -83,9 +83,9 @@ public abstract class CommonPresenter implements Presenter {
 	 * @see Command
 	 */
 	void initViewCommands() {
-		viewCommands.put("exit", new Function<Object[], Void>() {
+		viewCommands.put("exit", new Function<String[], Void>() {
 			@Override
-			public Void apply(Object[] args) {
+			public Void apply(String[] args) {
 				view.displayShuttingDown();
 				model.stop();
 				view.stop();
@@ -96,8 +96,9 @@ public abstract class CommonPresenter implements Presenter {
 	
 	@Override
 	public void start() {
-		//TODO: take from properties
-		model.start(5400, 10, 20*1000, 10);
+		Properties properties = model.getProperties();
+		model.start(properties.getPort(), properties.getNumOfClients(), properties.getSocketTimeout()
+				, properties.getPoolSize());
 		view.start();
 	}
 	

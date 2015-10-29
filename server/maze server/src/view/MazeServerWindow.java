@@ -3,6 +3,7 @@ package view;
 import java.util.HashMap;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Group;
@@ -30,6 +31,9 @@ public class MazeServerWindow extends BasicWindow {
 	private Text statusText;
 	private Text NoSolutionText;
 	private Text cachedText;
+	private MenuItem editPropertiesMenuItem;
+	private MenuItem importPropertiesMenuItem;
+	private MenuItem exportPropertiesMenuItem;
 	
 	public MazeServerWindow() {
 		super("Maze Server", 600, 300);
@@ -42,7 +46,7 @@ public class MazeServerWindow extends BasicWindow {
 		
 		shell.setLayout(new GridLayout(2, false));
 		
-		clientsTable = new Table(shell, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+		clientsTable = new Table(shell, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL | SWT.H_SCROLL);
 		clientsTable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		clientsTable.setHeaderVisible(true);
 		
@@ -53,6 +57,21 @@ public class MazeServerWindow extends BasicWindow {
 		new TableColumn(clientsTable, SWT.NONE).setText("Solved");
 		for(TableColumn column : clientsTable.getColumns())
 			column.pack();
+		
+//		Menu contextMenu = new Menu(clientsTable);
+//		clientsTable.setMenu(contextMenu);
+//	    disconnectMenuItem = new MenuItem(contextMenu, SWT.None);
+//	    disconnectMenuItem.setText("Disconnect");
+//
+//	    clientsTable.addListener(SWT.MouseDown, new Listener() {
+//			@Override
+//			public void handleEvent(Event e) {
+//				TableItem[] selection = clientsTable.getSelection();
+//	            if(selection.length!=0 && (e.button == 3)){
+//	                contextMenu.setVisible(true);
+//	            }
+//			}
+//		});
 		
 		Group statsGroup = new Group(shell, SWT.NONE);
 		statsGroup.setText("Stats");
@@ -104,6 +123,17 @@ public class MazeServerWindow extends BasicWindow {
 		Menu fileMenu = new Menu(shell, SWT.DROP_DOWN);
 		fileMenuItem.setMenu(fileMenu);
 		
+		editPropertiesMenuItem = new MenuItem(fileMenu, SWT.PUSH);
+		editPropertiesMenuItem.setText("Properties");
+		
+		importPropertiesMenuItem = new MenuItem(fileMenu, SWT.PUSH);
+		importPropertiesMenuItem.setText("Import properties");
+		
+		exportPropertiesMenuItem = new MenuItem(fileMenu, SWT.PUSH);
+		exportPropertiesMenuItem.setText("Export properties");
+		
+		new MenuItem(fileMenu, SWT.SEPARATOR);
+		
 		exitMenuItem = new MenuItem(fileMenu, SWT.PUSH);
 		exitMenuItem.setText("Exit");
 		
@@ -114,6 +144,34 @@ public class MazeServerWindow extends BasicWindow {
 		shell.addListener(SWT.Close, listener);
 		exitMenuItem.addListener(SWT.Selection, listener);
 	}
+	
+	/**
+	 * Add a listener to handle user requests to edit the game properties
+	 * @param listener Listener
+	 */
+	public void addEditPropertiesListener(SelectionListener listener) {
+		editPropertiesMenuItem.addSelectionListener(listener);
+	}
+	
+	/**
+	 * Add a listener to handle user requests to import game properties
+	 * @param listener Listener
+	 */
+	public void addImportPropertiesListener(SelectionListener listener) {
+		importPropertiesMenuItem.addSelectionListener(listener);
+	}
+	
+	/**
+	 * Add a listener to handle user requests to export the current game properties
+	 * @param listener Listener
+	 */
+	public void addExportPropertiesListener(SelectionListener listener) {
+		exportPropertiesMenuItem.addSelectionListener(listener);
+	}
+	
+//	public void addDisconnectSelectionListener(SelectionListener listener) {
+//		disconnectMenuItem.addSelectionListener(listener);
+//	}
 	
 	public void addClient(Client client) {
 		display.syncExec(new Runnable() {

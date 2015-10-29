@@ -96,7 +96,8 @@ public class MazeServerModel extends CommonModel {
 	}
 	
 	@Override
-	public void saveProperties(String fileName, int poolSize, MazeSearcherTypes searcher) {
+	public void saveProperties(String fileName, int port, int numOfClients, int socketTimeout
+			, int poolSize, MazeSearcherTypes searcher) {
 		try {
 			fileName = new URI(fileName).getPath();
 		} catch (URISyntaxException e) {
@@ -104,6 +105,9 @@ public class MazeServerModel extends CommonModel {
 		}
 		
 		properties = new Properties();
+		properties.setPort(port);
+		properties.setNumOfClients(numOfClients);
+		properties.setSocketTimeout(socketTimeout);
 		properties.setPoolSize(poolSize);
 		properties.setMazeSearcherType(searcher);
 		

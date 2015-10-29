@@ -5,12 +5,70 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.function.Function;
 
+import common.MazeSearcherTypes;
+import common.Properties;
 import model.CommonModel;
 import view.CommonView;
 
 public class MazeServerPresenter extends CommonPresenter {
 	public MazeServerPresenter(CommonModel model, CommonView view) throws URISyntaxException, FileNotFoundException, IOException {
 		super(model, view);
+	}
+	
+	@Override
+	void initViewCommands() { 
+		super.initViewCommands();
+		
+		viewCommands.put("get properties", new Function<String[], Void>() {
+			@Override
+			public Void apply(String[] args) {
+				try {
+					model.loadProperties(PROPERTIES_FILE_NAME);
+				} catch (IOException | URISyntaxException e) {
+					// ignore - will be handled by modelCommands
+				}
+				return null;
+			}
+		});
+		
+		viewCommands.put("load properties", new Function<String[], Void>() {
+			@Override
+			public Void apply(String[] args) {
+				String fileName = args[0];
+				try {
+					model.loadProperties(fileName);
+				} catch (IOException | URISyntaxException e) {
+					// ignore - will be handled by modelCommands
+				}
+				return null;
+			}
+		});
+		
+		viewCommands.put("edit properties", new Function<String[], Void>() {
+			@Override
+			public Void apply(String[] args) {
+				int port = Integer.parseInt(args[0]);
+				int numOfClients = Integer.parseInt(args[1]);
+				int socketTimeout = Integer.parseInt(args[2]);
+				int poolSize = Integer.parseInt(args[3]);
+				MazeSearcherTypes mazeSearcherType = MazeSearcherTypes.valueOf(args[4]);
+				model.saveProperties(PROPERTIES_FILE_NAME, port, numOfClients, socketTimeout, poolSize
+						, mazeSearcherType);
+				return null;
+			}
+		});
+		
+		viewCommands.put("save properties", new Function<String[], Void>() {
+			@Override
+			public Void apply(String[] args) {
+				String fileName = args[0];
+				Properties properties = model.getProperties();
+				model.saveProperties(fileName, properties.getPort(), properties.getNumOfClients()
+						, properties.getSocketTimeout(), properties.getPoolSize()
+						, properties.getMazeSearcherType());
+				return null;
+			}
+		});
 	}
 
 	@Override
@@ -64,6 +122,33 @@ public class MazeServerPresenter extends CommonPresenter {
 		modelCommands.put("no solution", updateClient);
 		modelCommands.put("solved", updateClient);
 		modelCommands.put("send solution error", noOp);
+		
+		modelCommands.put("properties not found", new Function<Object[], Void>() {
+			@Override
+			public Void apply(Object[] args) {
+				if(view != null)
+					view.displayFileNotFound();
+				return null;
+			}
+		});
+		
+		modelCommands.put("properties loaded", new Function<Object[], Void>() {
+			@Override
+			public Void apply(Object[] args) {
+				view.displayProperties(model.getProperties());
+				return null;
+			}
+		});
+		
+		modelCommands.put("properties saved", new Function<Object[], Void>() {
+			@Override
+			public Void apply(Object[] args) {
+				Properties properties = model.getProperties();
+				model.setMazeSearchAlgorithm(getMazeSearcher(properties.getMazeSearcherType()));
+				view.displayPropertiesSaved();
+				return null;
+			}
+		});
 	}
 	
 	@Override
