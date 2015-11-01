@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 
 import common.MazeSearcherTypes;
 import common.Properties;
+import presenter.CommonPresenter;
 
 /**
  * @author Nir Leibovitch
@@ -14,13 +15,13 @@ import common.Properties;
  */
 public class Setup {
 	/**
-	 * Create / edit properties.xml with default settings
+	 * Create / edit properties file with default settings
 	 * @param args Startup arguments
 	 */
 	public static void main(String[] args) {
 		XMLEncoder xmlEncoder;
 		try {
-			xmlEncoder = new XMLEncoder(new BufferedOutputStream(new FileOutputStream("properties.xml")));
+			xmlEncoder = new XMLEncoder(new BufferedOutputStream(new FileOutputStream(CommonPresenter.PROPERTIES_FILE_NAME)));
 		} catch (FileNotFoundException e) {
 			System.err.println("unable to create/open settings.xml for writing");
 			return;

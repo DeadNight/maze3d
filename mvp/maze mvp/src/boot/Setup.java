@@ -5,6 +5,7 @@ import java.io.BufferedOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
+import presenter.CommonPresenter;
 import presenter.MazeGeneratorTypes;
 import presenter.MazeSearcherTypes;
 import presenter.Properties;
@@ -16,13 +17,13 @@ import presenter.ViewTypes;
  */
 public class Setup {
 	/**
-	 * Create / edit properties.xml with default settings
+	 * Create / edit properties file with default settings
 	 * @param args Startup arguments
 	 */
 	public static void main(String[] args) {
 		XMLEncoder xmlEncoder;
 		try {
-			xmlEncoder = new XMLEncoder(new BufferedOutputStream(new FileOutputStream("properties.xml")));
+			xmlEncoder = new XMLEncoder(new BufferedOutputStream(new FileOutputStream(CommonPresenter.PROPERTIES_FILE_NAME)));
 		} catch (FileNotFoundException e) {
 			System.err.println("unable to create/open settings.xml for writing");
 			return;

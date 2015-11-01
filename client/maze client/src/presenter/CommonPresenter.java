@@ -23,7 +23,7 @@ import view.View;
  * <h1>Common implementation of the Presenter Façade</h1>
  */
 public abstract class CommonPresenter implements Presenter {
-	final static String PROPERTIES_FILE_NAME = "client properties.xml";
+	final public static String PROPERTIES_FILE_NAME = "client properties.xml";
 	Model model;
 	View view;
 	HashMap<String, Command> modelCommands;
