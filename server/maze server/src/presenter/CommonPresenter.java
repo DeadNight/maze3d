@@ -26,7 +26,7 @@ import view.View;
  * <h1>Common implementation of the Presenter Façade</h1>
  */
 public abstract class CommonPresenter implements Presenter {
-	final static String PROPERTIES_FILE_NAME = "properties.xml";
+	final static String PROPERTIES_FILE_NAME = "server properties.xml";
 	Model model;
 	View view;
 	
