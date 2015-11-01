@@ -1,8 +1,8 @@
 package presenter;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -10,8 +10,6 @@ import java.util.LinkedHashMap;
 import java.util.Observable;
 import java.util.function.Function;
 
-import model.Model;
-import view.View;
 import algorithms.mazeGenerators.Maze3dGenerator;
 import algorithms.mazeGenerators.MyMaze3dGenerator;
 import algorithms.mazeGenerators.Position;
@@ -21,13 +19,15 @@ import algorithms.search.BFSearcher;
 import algorithms.search.MazeAirDistance;
 import algorithms.search.MazeManhattanDistance;
 import algorithms.search.Searcher;
+import model.Model;
+import view.View;
 
 /**
  * @author Nir Leibovitch
  * <h1>Common implementation of the Presenter Façade</h1>
  */
 public abstract class CommonPresenter implements Presenter {
-	final public static String PROPERTIES_FILE_NAME = URI.create("properties.xml").toString();
+	final public static String PROPERTIES_FILE_NAME = "properties.xml";
 	
 	Model model;
 	View view;
@@ -48,7 +48,7 @@ public abstract class CommonPresenter implements Presenter {
 		this.model = model;
 		
 		try {
-			model.loadProperties(PROPERTIES_FILE_NAME);
+			model.loadProperties(new File(PROPERTIES_FILE_NAME).toURI().toString());
 		} catch(URISyntaxException | FileNotFoundException e) {
 			System.err.println(PROPERTIES_FILE_NAME + " not found");
 			throw e;

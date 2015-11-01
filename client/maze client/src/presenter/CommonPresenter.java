@@ -1,8 +1,8 @@
 package presenter;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -24,7 +24,7 @@ import view.View;
  * <h1>Common implementation of the Presenter Façade</h1>
  */
 public abstract class CommonPresenter implements Presenter {
-	final public static String PROPERTIES_FILE_NAME = URI.create("client%20properties.xml").toString();
+	final public static String PROPERTIES_FILE_NAME = "client properties.xml";
 	Model model;
 	View view;
 	HashMap<String, Command> modelCommands;
@@ -44,7 +44,7 @@ public abstract class CommonPresenter implements Presenter {
 		this.model = model;
 		
 		try {
-			model.loadProperties(PROPERTIES_FILE_NAME);
+			model.loadProperties(new File(PROPERTIES_FILE_NAME).toURI().toString());
 		} catch(URISyntaxException | FileNotFoundException e) {
 			System.err.println(PROPERTIES_FILE_NAME + " not found");
 			throw e;
