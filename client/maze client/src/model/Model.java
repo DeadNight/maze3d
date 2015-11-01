@@ -256,6 +256,8 @@ public interface Model {
 	 * @param poolSize Size of the thread pool
 	 * @param generator Type of maze generator to use
 	 * @param viewType Type of view to show
+	 * @param port 
+	 * @param host 
 	 */
-	void saveProperties(String fileName, int poolSize, MazeGeneratorTypes generator, ViewTypes viewType);
+	void saveProperties(String fileName, int poolSize, MazeGeneratorTypes generator, ViewTypes viewType, String host, int port);
 }

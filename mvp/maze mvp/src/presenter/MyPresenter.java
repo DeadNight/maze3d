@@ -1,5 +1,6 @@
 package presenter;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -276,7 +277,7 @@ public class MyPresenter extends CommonPresenter {
 			@Override
 			public void doCommand(String[] args) {
 				try {
-					model.loadProperties(PROPERTIES_FILE_NAME);
+					model.loadProperties(new File(PROPERTIES_FILE_NAME).toURI().toString());
 				} catch (IOException | URISyntaxException e) {
 					// ignore - will be handled by modelCommands
 				}

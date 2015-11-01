@@ -1,5 +1,6 @@
 package presenter;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -279,7 +280,7 @@ public class MazeClientPresenter extends CommonPresenter {
 			@Override
 			public void doCommand(String[] args) {
 				try {
-					model.loadProperties(PROPERTIES_FILE_NAME);
+					model.loadProperties(new File(PROPERTIES_FILE_NAME).toURI().toString());
 				} catch (IOException | URISyntaxException e) {
 					// ignore - will be handled by modelCommands
 				}
@@ -289,7 +290,7 @@ public class MazeClientPresenter extends CommonPresenter {
 		viewCommands.put("load properties", new Command() {
 			@Override
 			public String getTemplate() {
-				return "<fileName>";
+				return "<filename>";
 			}
 			
 			@Override
@@ -306,7 +307,7 @@ public class MazeClientPresenter extends CommonPresenter {
 		viewCommands.put("edit properties", new Command() {
 			@Override
 			public String getTemplate() {
-				return "<poolSize> <mazeGenerator> <mazeSearcher> <viewType>";
+				return "<poolSize> <mazeGenerator> <viewType> <host> <port>";
 			}
 			
 			@Override
@@ -315,7 +316,8 @@ public class MazeClientPresenter extends CommonPresenter {
 				try {
 					Integer.parseInt(args[0]);
 					MazeGeneratorTypes.valueOf(args[1]);
-					ViewTypes.valueOf(args[3]);
+					ViewTypes.valueOf(args[2]);
+					Integer.parseInt(args[4]);
 				} catch (IllegalArgumentException e) {
 					return false;
 				}
@@ -327,7 +329,9 @@ public class MazeClientPresenter extends CommonPresenter {
 				int poolSize = Integer.parseInt(args[0]);
 				MazeGeneratorTypes generator = MazeGeneratorTypes.valueOf(args[1]);
 				ViewTypes viewType = ViewTypes.valueOf(args[2]);
-				model.saveProperties(PROPERTIES_FILE_NAME, poolSize, generator, viewType);
+				String host = args[3];
+				int port = Integer.parseInt(args[4]);
+				model.saveProperties(PROPERTIES_FILE_NAME, poolSize, generator, viewType, host, port);
 			}
 		});
 		
@@ -342,7 +346,8 @@ public class MazeClientPresenter extends CommonPresenter {
 				String fileName = args[0];
 				Properties properties = model.getProperties();
 				model.saveProperties(fileName, properties.getPoolSize()
-						, properties.getMazeGeneratorType(), properties.getViewType());
+						, properties.getMazeGeneratorType(), properties.getViewType()
+						, properties.getHost(), properties.getPort());
 			}
 		});
 	}

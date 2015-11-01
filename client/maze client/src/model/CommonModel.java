@@ -112,7 +112,7 @@ public abstract class CommonModel extends Observable implements Model {
 	
 	@Override
 	public void saveProperties(String fileName, int poolSize, MazeGeneratorTypes generator
-			, ViewTypes viewType) {
+			, ViewTypes viewType, String host, int port) {
 		try {
 			fileName = new URI(fileName).getPath();
 		} catch (URISyntaxException e) {
@@ -123,6 +123,8 @@ public abstract class CommonModel extends Observable implements Model {
 		properties.setPoolSize(poolSize);
 		properties.setMazeGeneratorType(generator);
 		properties.setViewType(viewType);
+		properties.setHost(host);
+		properties.setPort(port);
 		
 		XMLEncoder xmlEncoder;
 		try {

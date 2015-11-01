@@ -234,7 +234,11 @@ public class CLI extends CommonView {
 
 	@Override
 	public void displayProperties(Properties properties) {
-		throw new UnsupportedOperationException();
+		System.out.println("Maze generator type: " + properties.getMazeGeneratorType());
+		System.out.println("Pool size: " + properties.getPoolSize());
+		System.out.println("View type:" + properties.getViewType());
+		System.out.println("server Host: " + properties.getHost());
+		System.out.println("Server port: " + properties.getPort());
 	}
 
 	@Override
