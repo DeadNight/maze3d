@@ -19,7 +19,7 @@ import view.View;
 
 /**
  * @author Nir Leibovitch
- * <h1>Start maze application</h1>
+ * <h1>Start maze client application</h1>
  */
 public class Run {
 	// declare the view as a static class member for use inside Function#apply()

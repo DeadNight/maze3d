@@ -5,18 +5,34 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
+/**
+ * @author Nir Leibovitch
+ * <h1>General purpose tcp/ip client</h1>
+ * Handles connection to a tcp/ip server
+ */
 public class MyClient {
 	String host;
 	int port;
 	ServerHandler sessionHandler;
 	
+	/**
+	 * Create a new tcp/ip client to connect to the given server (host:port) using the
+	 * given session protocol
+	 * @param host Host of the tcp/ip server
+	 * @param port Port of the tcp/ip server
+	 * @param sessionHandler  Defines the session protocol
+	 */
 	public MyClient(String host, int port, ServerHandler sessionHandler) {
 		this.host = host;
 		this.port = port;
 		this.sessionHandler = sessionHandler;
 	}
 	
-	public boolean start() { // use try/catch here instead!
+	/**
+	 * Connect to the tcp/ip server &amp; handle the session asynchronously
+	 * @return boolean Whether connected successfully
+	 */
+	public boolean start() {
 		System.out.print("connecting to server... ");
 		Socket server;
 		try {
@@ -37,7 +53,6 @@ public class MyClient {
 						serverOut.close();
 						server.close();
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
