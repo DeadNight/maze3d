@@ -10,7 +10,15 @@ import presenter.Presenter;
 import view.CommonView;
 import view.GUI;
 
+/**
+ * @author Nir Leibovitch
+ * <h1>Start maze server application</h1>
+ */
 public class Run {
+	/**
+	 * Wire up MVP &amp; start the presenter
+	 * @param args Startup arguments
+	 */
 	public static void main(String[] args) {
 		CommonModel model = new MazeServerModel();
 		CommonView view = new GUI();

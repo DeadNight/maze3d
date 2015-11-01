@@ -19,6 +19,12 @@ import org.eclipse.swt.widgets.Text;
 import common.Client;
 import common.ServerStats;
 
+/**
+ * @author Nir Leibovitch
+ * <h1>Maze server window</h1>
+ * Lists connected clients, shown server statistics &amp; enables to edit, import &amp; export server
+ * properties
+ */
 public class MazeServerWindow extends BasicWindow {
 	Table clientsTable;
 	HashMap<Integer, TableItem> clientRows;
@@ -35,6 +41,9 @@ public class MazeServerWindow extends BasicWindow {
 	private MenuItem importPropertiesMenuItem;
 	private MenuItem exportPropertiesMenuItem;
 	
+	/**
+	 * Initialize the server window
+	 */
 	public MazeServerWindow() {
 		super("Maze Server", 600, 300);
 		clientRows = new HashMap<Integer, TableItem>();
@@ -114,7 +123,7 @@ public class MazeServerWindow extends BasicWindow {
 		cachedText.setText("0");
 	}
 	
-	void initMenu() {
+	private void initMenu() {
 		Menu menu = new Menu(shell, SWT.BAR);
 		
 		MenuItem fileMenuItem = new MenuItem(menu, SWT.CASCADE);
@@ -140,6 +149,10 @@ public class MazeServerWindow extends BasicWindow {
 		shell.setMenuBar(menu);
 	}
 
+	/**
+	 * Add a listener to handle user requests to close the server
+	 * @param listener Listener
+	 */
 	public void addExitListener(Listener listener) {
 		shell.addListener(SWT.Close, listener);
 		exitMenuItem.addListener(SWT.Selection, listener);
@@ -173,6 +186,10 @@ public class MazeServerWindow extends BasicWindow {
 //		disconnectMenuItem.addSelectionListener(listener);
 //	}
 	
+	/**
+	 * Add a new client to the clients list
+	 * @param client Client data
+	 */
 	public void addClient(Client client) {
 		display.syncExec(new Runnable() {
 			@Override
@@ -185,6 +202,10 @@ public class MazeServerWindow extends BasicWindow {
 		});
 	}
 	
+	/**
+	 * Remove a client ftom the clents list
+	 * @param clientId Client id
+	 */
 	public void removeClient(int clientId) {
 		display.syncExec(new Runnable() {
 			@Override
@@ -199,6 +220,10 @@ public class MazeServerWindow extends BasicWindow {
 		});
 	}
 
+	/**
+	 * Update an existing client from the clients list
+	 * @param client Updated client data
+	 */
 	public void updateClient(Client client) {
 		setClientRow(clientRows.get(client.getId()), client);
 	}
@@ -217,6 +242,9 @@ public class MazeServerWindow extends BasicWindow {
 		});
 	}
 
+	/**
+	 * Inform the user that the server is shutting down
+	 */
 	public void displayShuttingDown() {
 		display.syncExec(new Runnable() {
 			@Override
@@ -226,6 +254,10 @@ public class MazeServerWindow extends BasicWindow {
 		});
 	}
 
+	/**
+	 * Update server statistics
+	 * @param serverStats Updated server statistics
+	 */
 	public void updateServerStats(ServerStats serverStats) {
 		display.syncExec(new Runnable() {
 			@Override

@@ -29,10 +29,17 @@ import common.ServerStats;
 import io.MyCompressorOutputStream;
 import io.MyDecompressorInputStream;
 
+/**
+ * @author Nir Leibovitch
+ * <h1>Maze server implementation of the Model Façade</h1>
+ */
 public class MazeServerModel extends CommonModel {
 	private final static String SOLUTIONS_FILE_NAME = "solutions.gzip";
 	ServerStats stats;
 	
+	/**
+	 * Initiate the Model Façade instance &amp; load cached solutions
+	 */
 	public MazeServerModel() {
 		stats = new ServerStats();
 		if(new File(SOLUTIONS_FILE_NAME).exists())

@@ -13,10 +13,17 @@ import common.Client;
 import common.Properties;
 import common.ServerStats;
 
+/**
+ * @author Nir Leibovitch
+ * <h1>Graphical User Interface implementation of the View Façade</h1>
+ */
 public class GUI extends CommonView {
 	ObjectInitializer objectInitializer;
 	MazeServerWindow window;
 	
+	/**
+	 * Initiate the GUI View Façade instance
+	 */
 	public GUI() {
 		objectInitializer = new ObjectInitializer();
 		window = new MazeServerWindow();
@@ -116,11 +123,6 @@ public class GUI extends CommonView {
 	@Override
 	public void displayClientDisconnected(int clientId) {
 		window.removeClient(clientId);
-	}
-
-	@Override
-	public void displayClientUpdated(Client client) {
-		window.updateClient(client);
 	}
 
 	@Override

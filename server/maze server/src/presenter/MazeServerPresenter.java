@@ -10,7 +10,20 @@ import common.Properties;
 import model.CommonModel;
 import view.CommonView;
 
+/**
+ * @author Nir Leibovitch
+ * <h1>Maze server implementation of the Presenter Façade</h1>
+ */
 public class MazeServerPresenter extends CommonPresenter {
+	/**
+	 * Initiate the Presenter Façade instance, load properties, set the View &amp; Model Façades
+	 * instances, set the Model Façade instance properties &amp; initialize the command maps
+	 * @param model Model Façade instance
+	 * @param view View Façade instance
+	 * @throws URISyntaxException When the properties file path can't be parsed
+	 * @throws FileNotFoundException When the properties file can't be opened for reading
+	 * @throws IOException When an error occurs while reading the properties file
+	 */
 	public MazeServerPresenter(CommonModel model, CommonView view) throws URISyntaxException, FileNotFoundException, IOException {
 		super(model, view);
 	}

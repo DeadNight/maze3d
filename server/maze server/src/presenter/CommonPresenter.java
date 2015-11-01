@@ -21,6 +21,10 @@ import model.Model;
 import view.CommonView;
 import view.View;
 
+/**
+ * @author Nir Leibovitch
+ * <h1>Common implementation of the Presenter Façade</h1>
+ */
 public abstract class CommonPresenter implements Presenter {
 	final static String PROPERTIES_FILE_NAME = "properties.xml";
 	Model model;
@@ -29,6 +33,15 @@ public abstract class CommonPresenter implements Presenter {
 	HashMap<String, Function<Object[], Void>> modelCommands;
 	HashMap<String, Function<String[], Void>> viewCommands;
 	
+	/**
+	 * Initiate the Presenter Façade instance, load properties, set the View &amp; Model Façades
+	 * instances, set the Model Façade instance properties &amp; initialize the command maps
+	 * @param model Model Façade instance
+	 * @param view View Façade instance
+	 * @throws URISyntaxException When the properties file path can't be parsed
+	 * @throws FileNotFoundException When the properties file can't be opened for reading
+	 * @throws IOException When an error occurs while reading the properties file
+	 */
 	public CommonPresenter(CommonModel model, CommonView view) throws URISyntaxException, FileNotFoundException, IOException {
 		this.model = model;
 		this.view = view;

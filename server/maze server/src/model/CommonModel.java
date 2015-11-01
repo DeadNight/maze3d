@@ -24,6 +24,10 @@ import algorithms.search.Solution;
 import common.Client;
 import common.Properties;
 
+/**
+ * @author Nir Leibovitch
+ * <h1>Common implementation of the Model Façade</h1>
+ */
 public abstract class CommonModel extends Observable implements Model {
 	Properties properties;
 	ExecutorService threadPool;
@@ -35,6 +39,9 @@ public abstract class CommonModel extends Observable implements Model {
 	Searcher<Position> mazeSearchAlgorithm;
 	HashMap<Maze3dSearchable, Solution<Position>> solutionCache;
 	
+	/**
+	 * Initiate the Model Façade instance
+	 */
 	public CommonModel() {
 		solutionCache = new HashMap<Maze3dSearchable, Solution<Position>>();
 		clients = new HashMap<Integer, Client>();
@@ -42,6 +49,9 @@ public abstract class CommonModel extends Observable implements Model {
 		initClientCommands();
 	}
 	
+	/**
+	 * Populate client commands map.
+	 */
 	protected abstract void initClientCommands();
 	
 	@Override
@@ -117,7 +127,7 @@ public abstract class CommonModel extends Observable implements Model {
 	}
 	
 	/**
-	 * Utility to run tasks in the background, handle cancelation by cancel or interrupt &amp;
+	 * Utility to run tasks in the background, handle cancellation by cancel or interrupt &amp;
 	 * handle exceptions
 	 * @param task Task to run
 	 * @see Task
