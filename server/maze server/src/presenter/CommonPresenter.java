@@ -49,10 +49,10 @@ public abstract class CommonPresenter implements Presenter {
 		try {
 			model.loadProperties(PROPERTIES_FILE_NAME);
 		} catch(URISyntaxException | FileNotFoundException e) {
-			System.err.println("properties.xml not found");
+			System.err.println(PROPERTIES_FILE_NAME + " not found");
 			throw e;
 		} catch (IOException e) {
-			System.err.println("error loading properties.xml");
+			System.err.println("error loading " + PROPERTIES_FILE_NAME);
 			throw e;
 		}
 		
