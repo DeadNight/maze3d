@@ -47,5 +47,11 @@ public class Setup {
 		xmlEncoder.close();
 		
 		System.out.println("default properties file created");
+		System.out.println("Press return to exit...");
+		try {
+			new BufferedReader(new InputStreamReader(System.in)).readLine();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
