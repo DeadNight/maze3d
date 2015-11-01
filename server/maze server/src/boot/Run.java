@@ -1,6 +1,8 @@
 package boot;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 
 import model.CommonModel;
@@ -27,6 +29,12 @@ public class Run {
 		try {
 			presenter = new MazeServerPresenter(model, view);
 		} catch (IOException | URISyntaxException e) {
+			System.out.println("Press return to exit...");
+			try {
+				new BufferedReader(new InputStreamReader(System.in)).readLine();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
 			System.err.println("run Setup.bat to create a defualt properties file");
 			return;
 		}

@@ -46,6 +46,12 @@ public class Run {
 				default:
 					System.err.println("missing view type");
 					System.err.println("run Setup.bat to create a defualt properties file");
+					System.out.println("Press return to exit...");
+					try {
+						new BufferedReader(new InputStreamReader(System.in)).readLine();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
 					return null;
 				}
 				
@@ -58,6 +64,12 @@ public class Run {
 			presenter = new MazeClientPresenter(model, createView);
 		} catch (IOException | URISyntaxException e) {
 			System.err.println("run Setup.bat to create a defualt properties file");
+			System.out.println("Press return to exit...");
+			try {
+				new BufferedReader(new InputStreamReader(System.in)).readLine();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
 			return;
 		}
 		
