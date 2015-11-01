@@ -15,12 +15,12 @@ import common.ViewTypes;
 
 /**
  * @author Nir Leibovitch
- * <h1>My implementation of the Presenter Façade</h1>
+ * <h1>Maze client implementation of the Presenter Façade</h1>
  */
-public class MyPresenter extends CommonPresenter {
+public class MazeClientPresenter extends CommonPresenter {
 	/**
-	 * Initiate the Presenter Façade instance, load properties, create the View Façade instance to be used by the
-	 * application, set the Model Façade instance properties &amp; initialize command maps
+	 * Initiate the Presenter Façade instance, load properties, create the View Façade instance, set the
+	 * Model Façade instance properties &amp; initialize the command maps
 	 * @param model Model Façade instance
 	 * @param createView Function to create the view to be used by the application according to
 	 * properties file
@@ -28,7 +28,7 @@ public class MyPresenter extends CommonPresenter {
 	 * @throws FileNotFoundException When the properties file can't be opened for reading
 	 * @throws IOException When an error occurs while reading the properties file
 	 */
-	public MyPresenter(Model model, Function<ViewTypes, View> createView) throws URISyntaxException, FileNotFoundException, IOException {
+	public MazeClientPresenter(Model model, Function<ViewTypes, View> createView) throws URISyntaxException, FileNotFoundException, IOException {
 		super(model, createView);
 	}
 	

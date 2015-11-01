@@ -10,7 +10,7 @@ import java.util.function.Function;
 import common.ViewTypes;
 import model.CommonModel;
 import model.MazeClientModel;
-import presenter.MyPresenter;
+import presenter.MazeClientPresenter;
 import presenter.Presenter;
 import view.CLI;
 import view.CommonView;
@@ -55,7 +55,7 @@ public class Run {
 		
 		Presenter presenter;
 		try {
-			presenter = new MyPresenter(model, createView);
+			presenter = new MazeClientPresenter(model, createView);
 		} catch (IOException | URISyntaxException e) {
 			System.err.println("run Setup.bat to create a defualt properties file");
 			return;

@@ -30,8 +30,8 @@ public abstract class CommonPresenter implements Presenter {
 	LinkedHashMap<String, Command> viewCommands;
 	
 	/**
-	 * Initiate the Presenter Façade instance, load properties, create the View Façade instance to be used by the
-	 * application, set the Model Façade instance properties &amp; initialize command maps
+	 * Initiate the Presenter Façade instance, load properties, create the View Façade instance, set the
+	 * Model Façade instance properties &amp; initialize the command maps
 	 * @param model Model Façade instance
 	 * @param createView Function to create the view to be used by the application according to
 	 * properties file

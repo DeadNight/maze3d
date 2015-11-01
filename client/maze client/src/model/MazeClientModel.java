@@ -28,7 +28,7 @@ import io.MyDecompressorInputStream;
 
 /**
  * @author Nir Leibovitch
- * <h1>My implementation of the Model Façade</h1>
+ * <h1>Maze client implementation of the Model Façade</h1>
  */
 public class MazeClientModel extends CommonModel {
 	MyClient client;

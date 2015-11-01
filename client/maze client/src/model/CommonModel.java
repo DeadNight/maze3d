@@ -141,7 +141,7 @@ public abstract class CommonModel extends Observable implements Model {
 	}
 	
 	/**
-	 * Utility to run tasks in the background, handle cancelation by cancel or interrupt &amp;
+	 * Utility to run tasks in the background, handle cancellation by cancel or interrupt &amp;
 	 * handle exceptions
 	 * @param task Task to run
 	 * @see Task

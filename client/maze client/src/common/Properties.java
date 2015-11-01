@@ -63,16 +63,32 @@ public class Properties implements Serializable {
 		this.viewType = viewType;
 	}
 	
+	/**
+	 * Get the host of the server
+	 * @return Strig host
+	 */
 	public String getHost() {
 		return host;
 	};
+	/**
+	 * Set the host of the server
+	 * @param host Host
+	 */
 	public void setHost(String host) {
 		this.host = host;
 	}
 	
+	/**
+	 * Get the port of the server
+	 * @return int Port
+	 */
 	public int getPort() {
 		return port;
 	};
+	/**
+	 * Set the port of the server
+	 * @param port Port
+	 */
 	public void setPort(int port) {
 		this.port = port;
 	}
