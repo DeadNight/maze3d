@@ -28,9 +28,9 @@ public class Maze3dSearchable implements Searchable<Position> {
 	}
 	
 	/**
-	 * Wrap a maze to be used as a Searchable, and use the given initial state
+	 * Wrap a maze to be used as a Searchable, and use the given initial position
 	 * @param maze The maze to be used as a Searchable
-	 * @param initialState The initial state
+	 * @param initialPosition The initial position
 	 */
 	public Maze3dSearchable(Maze3d maze, Position initialPosition) {
 		this.maze = maze;
