@@ -2,8 +2,11 @@ package boot;
 
 import java.beans.XMLEncoder;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 import presenter.CommonPresenter;
 import presenter.MazeGeneratorTypes;
@@ -26,6 +29,12 @@ public class Setup {
 			xmlEncoder = new XMLEncoder(new BufferedOutputStream(new FileOutputStream(CommonPresenter.PROPERTIES_FILE_NAME)));
 		} catch (FileNotFoundException e) {
 			System.err.println("unable to create/open properties file for writing");
+			System.out.println("Press return to exit...");
+			try {
+				new BufferedReader(new InputStreamReader(System.in)).readLine();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
 			return;
 		}
 		
