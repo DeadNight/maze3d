@@ -2,6 +2,7 @@ package presenter;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -26,7 +27,7 @@ import algorithms.search.Searcher;
  * <h1>Common implementation of the Presenter Façade</h1>
  */
 public abstract class CommonPresenter implements Presenter {
-	final public static String PROPERTIES_FILE_NAME = "properties.xml";
+	final public static String PROPERTIES_FILE_NAME = URI.create("properties.xml").toString();
 	
 	Model model;
 	View view;

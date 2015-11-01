@@ -24,7 +24,7 @@ public class Setup {
 		try {
 			xmlEncoder = new XMLEncoder(new BufferedOutputStream(new FileOutputStream(CommonPresenter.PROPERTIES_FILE_NAME)));
 		} catch (FileNotFoundException e) {
-			System.err.println("unable to create/open settings.xml for writing");
+			System.err.println("unable to create/open properties file for writing");
 			return;
 		}
 		
