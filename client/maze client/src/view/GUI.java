@@ -497,7 +497,9 @@ public class GUI extends CommonView {
 				.add("edit properties")
 				.add(""+newProperties.getPoolSize())
 				.add(""+newProperties.getMazeGeneratorType())
-				.add(""+newProperties.getViewType());
+				.add(""+newProperties.getViewType())
+				.add(""+newProperties.getHost())
+				.add(""+newProperties.getPort());
 			userCommand = stringJoiner.toString();
 			setChanged();
 			notifyObservers();
